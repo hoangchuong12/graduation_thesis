@@ -1,8 +1,4 @@
 
-// import BrandEdit from "../pages/backend/brand/BrandEdit";
-// import BrandIndex from "../pages/backend/brand/BrandIndex";
-// import BrandTrash from "../pages/backend/brand/BrandTrash";
-
 import UserIndex from "../pages/admin/user/UserIndex";
 import UserAdd from "../pages/admin/user/UserAdd";
 import UserEdit from "../pages/admin/user/UserEdit";
@@ -23,15 +19,33 @@ import NotificationAdd from "../pages/admin/notification/NotificationAdd";
 import NotificationEdit from "../pages/admin/notification/NotificationEdit";
 import NotificationTrash from "../pages/admin/notification/NotificationTrash";
 
-import BannerIndex from "../pages/admin/banner/BannerIndex";
-import BannerTrash from "../pages/admin/banner/BannerTrash";
-import BannerAdd from "../pages/admin/banner/BannerAdd";
-import BannerEdit from "../pages/admin/banner/BannerEdit";
+import BrandAdd from "../pages/admin/brand/BrandAdd";
+import BrandEdit from "../pages/admin/brand/BrandEdit";
+import BrandIndex from "../pages/admin/brand/BrandIndex";
+import BrandTrash from "../pages/admin/brand/BrandTrash";
 
+import CategoryAdd from "../pages/admin/category/CategoryAdd";
 import CategoryEdit from "../pages/admin/category/CategoryEdit";
 import CategoryIndex from "../pages/admin/category/CategoryIndex";
 import CategoryTrash from "../pages/admin/category/CategoryTrash";
-import CategoryAdd from "../pages/admin/category/CategoryAdd";
+
+import TagAdd from "../pages/admin/tag/TagAdd";
+import TagEdit from "../pages/admin/tag/TagEdit";
+import TagIndex from "../pages/admin/tag/TagIndex";
+import TagTrash from "../pages/admin/tag/TagTrash";
+
+import ProductAdd from "../pages/admin/product/ProductAdd";
+import ProductEdit from "../pages/admin/product/ProductEdit";
+import ProductIndex from "../pages/admin/product/ProductIndex";
+import ProductTrash from "../pages/admin/product/ProductTrash";
+import ProductSaleTrash from "../pages/admin/product/ProductSaleTrash";
+import ProductSaleAdd from "../pages/admin/product/ProductSaleAdd";
+import ProductSaleIndex from "../pages/admin/product/ProductSaleIndex";
+import ProductSaleEdit from "../pages/admin/product/ProductSaleEdit";
+import ProductOptionAdd from "../pages/admin/product/ProductOptionAdd";
+import ProductOptionIndex from "../pages/admin/product/ProductOptionIndex";
+import ProductOptionEdit from "../pages/admin/product/ProductOptionEdit";
+import ProductOptionTrash from "../pages/admin/product/ProductOptionTrash";
 
 const RouteAdmin = [
     //user
@@ -54,21 +68,35 @@ const RouteAdmin = [
     { path: '/admin/notification/trash', component: NotificationTrash },
     { path: '/admin/notification/add/:id', component: NotificationAdd },
     { path: '/admin/notification/edit/:id', component: NotificationEdit },
-
-
-    { path: '/admin/banner/index', component: BannerIndex },
-    { path: '/admin/banner/trash', component: BannerTrash },
-    { path: '/admin/banner/add', component: BannerAdd },
-    { path: '/admin/banner/edit/:id', component: BannerEdit },
-
-
+    //brand
+    { path: '/admin/brand/index', component: BrandIndex },
+    { path: '/admin/brand/trash', component: BrandTrash },
+    { path: '/admin/brand/add', component: BrandAdd },
+    { path: '/admin/brand/edit/:id', component: BrandEdit },
+    //category
     { path: '/admin/category/index', component: CategoryIndex },
     { path: '/admin/category/trash', component: CategoryTrash },
     { path: '/admin/category/add', component: CategoryAdd },
     { path: '/admin/category/edit/:id', component: CategoryEdit },
-
-    { path: '/admin/product/trash', component: BannerTrash },
-    { path: '/admin/product/add', component: BannerAdd },
-    { path: '/admin/product/edit/:id', component: BannerEdit },
+    //tag
+    { path: '/admin/tag/index', component: TagIndex },
+    { path: '/admin/tag/trash', component: TagTrash },
+    { path: '/admin/tag/add', component: TagAdd },
+    { path: '/admin/tag/edit/:id', component: TagEdit },
+    //product
+    { path: '/admin/product/index', component: ProductIndex },
+    { path: '/admin/product/add', component: ProductAdd },
+    { path: '/admin/product/edit/:id', component: ProductEdit },
+    { path: '/admin/product/trash', component: ProductTrash },
+    //product sale
+    { path: '/admin/product/sale-index', component: ProductSaleIndex },
+    { path: '/admin/product/sale-trash', component: ProductSaleTrash },
+    { path: '/admin/product/sale-add/:id', component: ProductSaleAdd },
+    { path: '/admin/product/sale-edit/:id', component: ProductSaleEdit },
+    //product option
+    // { path: '/admin/product/option-index', component: ProductOptionIndex },
+    { path: '/admin/product/option-edit/:id', component: ProductOptionEdit },
+    { path: '/admin/product/option-add/:id', component: ProductOptionAdd },
+    // { path: '/admin/product/option-trash', component: ProductOptionTrash },
 ];
 export default RouteAdmin;

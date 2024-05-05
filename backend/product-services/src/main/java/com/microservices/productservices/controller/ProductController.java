@@ -1,6 +1,7 @@
 package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.ProductRequest;
+import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.ProductResponse;
 import com.microservices.productservices.service.ProductService;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,29 @@ public class ProductController {
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        productService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        productService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        productService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
+    @PutMapping("/display/{id}")
+    public ResponseEntity<Void> display(@PathVariable UUID id) {
+        productService.isDisplay(id);
+        return ResponseEntity.ok().build();
+    }  
+
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID id) {
         ProductResponse product = productService.getById(id);
@@ -39,6 +63,18 @@ public class ProductController {
     @GetMapping("/get-all")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = productService.getAll();
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/get-new-all")
+    public ResponseEntity<List<ProductResponse>> getAllProductNews() {
+        List<ProductResponse> productNews = productService.getNewProducts();
+        return ResponseEntity.ok(productNews);
+    }
+
+    @GetMapping("/get-by-brand/{id}")
+    public ResponseEntity<List<ProductResponse>> getByBrand(@PathVariable UUID id) {
+        List<ProductResponse> products = productService.findByBrandId(id);
         return ResponseEntity.ok(products);
     }
 

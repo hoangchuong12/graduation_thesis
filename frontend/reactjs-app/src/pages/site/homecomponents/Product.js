@@ -3,6 +3,7 @@ import Sidebar from './productcomponents/Sidebar';
 import Minimal from './productcomponents/Minimal';
 import Featured from './productcomponents/Featured';
 import Grid from './productcomponents/Grid';
+import Sale from './productcomponents/Sale';
 
 const Product = () => {
     return (
@@ -26,6 +27,8 @@ const Product = () => {
                 - PRODUCT GRID
             */}
             <Grid></Grid>
+
+            <Sale></Sale>
             </div>
         </div>
         </div>

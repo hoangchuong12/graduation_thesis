@@ -10,8 +10,9 @@ import com.microservices.productservices.repository.ProductRepository;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Sort;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,51 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void setImage(UUID id, String image){
+        Product product = productRepository.findById(id).orElse(null);
+        product.setImage(image);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = product.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        product.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        productRepository.save(product);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        product.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        productRepository.save(product);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = product.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         product.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         productRepository.save(product);
+    }
+
+    @Override
     public ProductResponse getById(UUID id) {
         Product product = productRepository.findById(id).orElse(null);
         if (product != null) {
@@ -82,6 +128,19 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ProductResponse> getNewProducts() {
+        // Create a PageRequest for retrieving 5 newest products sorted by createdAt in descending order
+        PageRequest pageRequest = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // Retrieve the newest products from the repository
+        List<Product> newestProducts = productRepository.findAll(pageRequest).getContent();
+
+        // Map ProductNew entities to ProductNewResponse DTOs
+        return newestProducts.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
+    }
     @Override
     public ProductResponse update(UUID id, ProductRequest productRequest) {
         Product existingProduct = productRepository.findById(id).orElse(null);

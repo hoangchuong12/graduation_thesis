@@ -9,6 +9,14 @@ import java.util.UUID;
 public interface ProductService {
     
     ProductResponse create(ProductRequest productRequest);
+
+    void setImage(UUID id, String image);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
+    void isDisplay(UUID id);
     
     ProductResponse getById(UUID id);
     
@@ -20,4 +28,5 @@ public interface ProductService {
     
     List<ProductResponse> findByBrandId(UUID brandId);
     
+    List<ProductResponse> getNewProducts();
 }

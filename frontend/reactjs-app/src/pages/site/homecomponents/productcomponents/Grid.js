@@ -1,464 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonIcon } from '@ionic/react';
-import { star, starOutline,bagAddOutline,repeatOutline,eyeOutline , heartOutline } from 'ionicons/icons';
+import { Link } from 'react-router-dom';
+import { star, starOutline, bagAddOutline, repeatOutline, eyeOutline, heartOutline } from 'ionicons/icons';
+import ProductService from '../../../../services/ProductService';
+import { urlImageProduct } from '../../../../config';
+
 const Grid = () => {
+    const [products, setProducts] = useState([]);
+    const [reload, setReload] = useState(0);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                let result = await ProductService.getnew();
+                result = result.filter(product => product.status !== 2);
+                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setProducts(sortedProducts);
+            } catch (error) {
+                console.error("Error fetching:", error);
+            }
+        };
+        fetchProducts();
+    }, [reload]);
+
     return (
         <div className="product-main">
-        <h2 className="title">New Products</h2>
-        <div className="product-grid">
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/jacket-3.jpg")} alt="Mens Winter Leathers Jackets" width={300} className="product-img default" />
-            <img src={require("../../../../assets/images/products/jacket-4.jpg")} alt="Mens Winter Leathers Jackets" width={300} className="product-img hover" />
-            <p className="showcase-badge">15%</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">jacket</a>
-            <a href="#">
-                <h3 className="showcase-title">Mens Winter Leathers Jackets</h3>
-            </a>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$48.00</p>
-                <del>$75.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/shirt-1.jpg")} alt="Pure Garment Dyed Cotton Shirt" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/shirt-2.jpg")} alt="Pure Garment Dyed Cotton Shirt" className="product-img hover" width={300} />
-            <p className="showcase-badge angle black">sale</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">shirt</a>
-            <h3>
-                <a href="#" className="showcase-title">Pure Garment Dyed Cotton Shirt</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$45.00</p>
-                <del>$56.00</del>
-            </div>
+            <h2 className="title">New Products</h2>
+            <div className="product-grid">
+                {products.map(product => (
+                    <div className="showcase" key={product.id}>
+                        <div className="showcase-banner">
+                        <img src={urlImageProduct + product.image}  width={300} className="product-img default" />
+                        <img src={urlImageProduct + product.image}  width={300} className="product-img hover" />
+                            <p className="showcase-badge">New</p>
+                            <div className="showcase-actions">
+                                <button className="btn-action">
+                                    <IonIcon icon={heartOutline} />
+                                </button>
+                                <button className="btn-action">
+                                <Link to={'/productdetail/' + product.id}>
+                                    <IonIcon icon={eyeOutline} />
+                                </Link>
+                                </button>  
+                                <button className="btn-action">
+                                    <IonIcon icon={repeatOutline} />
+                                </button>
+                                <button className="btn-action">
+                                    <IonIcon icon={bagAddOutline} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="showcase-content">
+                            <a href="#" className="showcase-category">{product.category}</a>
+                            <a href="#">
+                                <h3 className="showcase-title">{product.name}</h3>
+                            </a>
+                            <a href="#">
+                        <h3 className="showcase-title">{product.description}</h3>
+                    </a>
+                            <div className="showcase-rating">
+                                    {Array(product.evaluate)
+                                        .fill()
+                                        .map((_, index) => (
+                                            <IonIcon key={index} icon={star} />
+                                        ))}
+                                    {Array(5 - product.evaluate)
+                                        .fill()
+                                        .map((_, index) => (
+                                            <IonIcon key={product.evaluate + index} icon={starOutline} />
+                                        ))}
+                                </div>
+                                <div className="price-box">
+                                <p className="price">${product.price}</p>
+                                <del>${product.previousPrice}</del>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/jacket-5.jpg")} alt="MEN Yarn Fleece Full-Zip Jacket" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/jacket-6.jpg")} alt="MEN Yarn Fleece Full-Zip Jacket" className="product-img hover" width={300} />
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">Jacket</a>
-            <h3>
-                <a href="#" className="showcase-title">MEN Yarn Fleece Full-Zip Jacket</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$58.00</p>
-                <del>$65.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/clothes-3.jpg")} alt="Black Floral Wrap Midi Skirt" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/clothes-4.jpg")} alt="Black Floral Wrap Midi Skirt" className="product-img hover" width={300} />
-            <p className="showcase-badge angle pink">new</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">skirt</a>
-            <h3>
-                <a href="#" className="showcase-title">Black Floral Wrap Midi Skirt</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-            </div>
-            <div className="price-box">
-                <p className="price">$25.00</p>
-                <del>$35.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/shoe-2.jpg")} alt="Casual Men's Brown shoes" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/shoe-2_1.jpg")} alt="Casual Men's Brown shoes" className="product-img hover" width={300} />
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">casual</a>
-            <h3>
-                <a href="#" className="showcase-title">Casual Men's Brown shoes</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-            </div>
-            <div className="price-box">
-                <p className="price">$99.00</p>
-                <del>$105.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/watch-3.jpg")} alt="Pocket Watch Leather Pouch" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/watch-4.jpg")} alt="Pocket Watch Leather Pouch" className="product-img hover" width={300} />
-            <p className="showcase-badge angle black">sale</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">watches</a>
-            <h3>
-                <a href="#" className="showcase-title">Pocket Watch Leather Pouch</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$150.00</p>
-                <del>$170.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/watch-1.jpg")} alt="Smart watche Vital Plus" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/watch-2.jpg")} alt="Smart watche Vital Plus" className="product-img hover" width={300} />
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">watches</a>
-            <h3>
-                <a href="#" className="showcase-title">Smart watche Vital Plus</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$100.00</p>
-                <del>$120.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/party-wear-1.jpg")} alt="Womens Party Wear Shoes" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/party-wear-2.jpg")} alt="Womens Party Wear Shoes" className="product-img hover" width={300} />
-            <p className="showcase-badge angle black">sale</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">party wear</a>
-            <h3>
-                <a href="#" className="showcase-title">Womens Party Wear Shoes</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$25.00</p>
-                <del>$30.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/jacket-1.jpg")} alt="Mens Winter Leathers Jackets" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/jacket-2.jpg")} alt="Mens Winter Leathers Jackets" className="product-img hover" width={300} />
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">jacket</a>
-            <h3>
-                <a href="#" className="showcase-title">Mens Winter Leathers Jackets</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$32.00</p>
-                <del>$45.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/sports-2.jpg")} alt="Trekking & Running Shoes - black" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/sports-4.jpg")} alt="Trekking & Running Shoes - black" className="product-img hover" width={300} />
-            <p className="showcase-badge angle black">sale</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">sports</a>
-            <h3>
-                <a href="#" className="showcase-title">Trekking &amp; Running Shoes - black</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$58.00</p>
-                <del>$64.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/shoe-1.jpg")} alt="Men's Leather Formal Wear shoes" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/shoe-1_1.jpg")} alt="Men's Leather Formal Wear shoes" className="product-img hover" width={300} />
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">formal</a>
-            <h3>
-                <a href="#" className="showcase-title">Men's Leather Formal Wear shoes</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$50.00</p>
-                <del>$65.00</del>
-            </div>
-            </div>
-        </div>
-        <div className="showcase">
-            <div className="showcase-banner">
-            <img src={require("../../../../assets/images/products/shorts-1.jpg")} alt="Better Basics French Terry Sweatshorts" className="product-img default" width={300} />
-            <img src={require("../../../../assets/images/products/shorts-2.jpg")} alt="Better Basics French Terry Sweatshorts" className="product-img hover" width={300} />
-            <p className="showcase-badge angle black">sale</p>
-            <div className="showcase-actions">
-                <button className="btn-action">
-                <IonIcon icon={heartOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={eyeOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={repeatOutline} />
-                </button>
-                <button className="btn-action">
-                <IonIcon icon={bagAddOutline} />
-                </button>
-            </div>
-            </div>
-            <div className="showcase-content">
-            <a href="#" className="showcase-category">shorts</a>
-            <h3>
-                <a href="#" className="showcase-title">Better Basics French Terry Sweatshorts</a>
-            </h3>
-            <div className="showcase-rating">
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={star} />
-                <IonIcon icon={starOutline} />
-                <IonIcon icon={starOutline} />
-            </div>
-            <div className="price-box">
-                <p className="price">$78.00</p>
-                <del>$85.00</del>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
     );
 };
 
