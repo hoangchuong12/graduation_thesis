@@ -20,8 +20,10 @@ const Grid = () => {
                 console.error("Error fetching:", error);
             }
         };
+        
         fetchProducts();
     }, [reload]);
+
 
     return (
         <div className="product-main">

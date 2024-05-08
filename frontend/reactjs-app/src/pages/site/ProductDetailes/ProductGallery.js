@@ -26,37 +26,32 @@ const ProductGallery = () => {
         const fetchData = async () => {
             try {
                 const galleryResults = await ProductGallaryService.getByProductId(id);
+                const optionsResults = await ProductOptionService.getByProductId(id);
+                const productData = await ProductService.getById(id);
+                const sales = await ProductSaleService.getByProduct(id);
+
                 if (galleryResults && galleryResults.length > 0) {
                     setGalleries(galleryResults);
                     setMainImage(galleryResults[0].image);
                 }
-                
-                const optionsResults = await ProductOptionService.getByProductId(id);
+
                 if (optionsResults) {
                     setOptions(optionsResults);
                 }
-                
-                const productData = await ProductService.getById(id);
+
                 if (productData) {
                     setProduct(productData);
                 }
-                
-                const sales = await ProductSaleService.getByProductId(id);
-                if (sales.length === 0 && productData) {
-                    // No sales found, use the regular price from product data
+
+                setSale(sales);
+
+                // Determine the price to display based on the presence of sales
+                if (sales && sales.length > 0) {
+                    setPriceToDisplay(sales[0].priceSale);  // Assuming `priceSale` is the property in the sale object
+                } else if (productData) {
                     setPriceToDisplay(productData.price);
-                } else {
-                    const now = new Date();
-                    const currentSale = sales.find(sale => new Date(sale.dateBegin) <= now && now <= new Date(sale.dateEnd));
-                    if (currentSale) {
-                        setSale(currentSale);
-                        setIsSaleActive(true);
-                        setPriceToDisplay(currentSale.priceSale);  // Set the sale price
-                    } else {
-                        // No active sale, use the regular product price
-                        setPriceToDisplay(productData.price);
-                    }
                 }
+
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
