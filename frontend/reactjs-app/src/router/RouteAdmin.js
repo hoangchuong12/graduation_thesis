@@ -46,6 +46,16 @@ import ProductOptionAdd from "../pages/admin/product/ProductOptionAdd";
 import ProductOptionIndex from "../pages/admin/product/ProductOptionIndex";
 import ProductOptionEdit from "../pages/admin/product/ProductOptionEdit";
 import ProductOptionTrash from "../pages/admin/product/ProductOptionTrash";
+import SliderIndex from "../pages/admin/slider/SliderIndex";
+import SliderTrash from "../pages/admin/slider/SliderTrash";
+import SliderAdd from "../pages/admin/slider/SliderAdd";
+import SliderEdit from "../pages/admin/slider/SliderEdit";
+
+import BannerIndex from "../pages/admin/banner/BannerIndex";
+import BannerTrash from "../pages/admin/banner/BannerTrash";
+import BannerAdd from "../pages/admin/banner/BannerAdd";
+import BannerEdit from "../pages/admin/banner/BannerEdit";
+import ProductGallaryIndex from "../pages/admin/product/ProductGallaryIndex";
 
 const RouteAdmin = [
     //user
@@ -94,9 +104,23 @@ const RouteAdmin = [
     { path: '/admin/product/sale-add/:id', component: ProductSaleAdd },
     { path: '/admin/product/sale-edit/:id', component: ProductSaleEdit },
     //product option
-    // { path: '/admin/product/option-index', component: ProductOptionIndex },
+    { path: '/admin/product/option-index', component: ProductOptionIndex },
     { path: '/admin/product/option-edit/:id', component: ProductOptionEdit },
     { path: '/admin/product/option-add/:id', component: ProductOptionAdd },
-    // { path: '/admin/product/option-trash', component: ProductOptionTrash },
+    { path: '/admin/product/option-trash', component: ProductOptionTrash },
+
+    //slider
+    { path: '/admin/slider/index', component: SliderIndex },
+    { path: '/admin/slider/trash', component: SliderTrash },
+    { path: '/admin/slider/add', component: SliderAdd },
+    { path: '/admin/slider/edit/:id', component: SliderEdit },
+    //slider
+    { path: '/admin/banner/index', component:  BannerIndex},
+    { path: '/admin/banner/trash', component: BannerTrash },
+    { path: '/admin/banner/add', component:  BannerAdd },
+    { path: '/admin/banner/edit/:id', component: BannerEdit },
+
+    //product gallary
+    { path: '/admin/product/gallary-index/:id', component: ProductGallaryIndex },
 ];
 export default RouteAdmin;

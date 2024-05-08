@@ -1,20 +1,18 @@
 package com.microservices.configservices.payload.response;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
-import jakarta.persistence.*;
 import lombok.Data;
 
 
 @Data
 public class InfomationsResponse {
 
-    private Long id;
+    private UUID id;
 
     private String name;
 
-    @Lob
-    private byte[] logo;
+    private String logo;
 
     private String address;
 
@@ -30,7 +28,7 @@ public class InfomationsResponse {
 
     private String repersentPhone;
 
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     private UUID updatedBy;
 }

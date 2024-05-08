@@ -1,5 +1,6 @@
 package com.microservices.configservices.controller;
 
+import com.microservices.configservices.payload.request.SetImageRequest;
 import com.microservices.configservices.payload.request.SliderRequest;
 import com.microservices.configservices.payload.response.SliderResponse;
 import com.microservices.configservices.service.SliderService;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/sliders")
+@RequestMapping("/config-services/api/sliders")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class SliderController {
 
     private final SliderService sliderService;
@@ -26,10 +28,31 @@ public class SliderController {
         return new ResponseEntity<>(createdSlider, HttpStatus.CREATED);
     }
 
+    @PutMapping("/set-image")
+    public ResponseEntity<Void> setImage(@RequestBody SetImageRequest setImageRequest) {
+        sliderService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        sliderService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        sliderService.trash(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<SliderResponse> getSliderById(@PathVariable UUID id) {
         SliderResponse slider = sliderService.getById(id);
-        return ResponseEntity.ok(slider);
+        if (slider != null) {
+            return ResponseEntity.ok(slider);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/get-all")
@@ -39,14 +62,20 @@ public class SliderController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<SliderResponse> updateSlider(@RequestBody SliderRequest sliderRequest, @PathVariable UUID id) {
-        SliderResponse updatedSlider = sliderService.update(sliderRequest, id);
-        return ResponseEntity.ok(updatedSlider);
+    public ResponseEntity<SliderResponse> updateSlider(@PathVariable UUID id, @RequestBody SliderRequest sliderRequest) {
+        SliderResponse updatedSlider = sliderService.update(id, sliderRequest);
+        if (updatedSlider != null) {
+            return ResponseEntity.ok(updatedSlider);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<SliderResponse> deleteSlider(@PathVariable UUID id) {
         SliderResponse deletedSlider = sliderService.delete(id);
-        return ResponseEntity.ok(deletedSlider);
+        if (deletedSlider != null) {
+            return ResponseEntity.ok(deletedSlider);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

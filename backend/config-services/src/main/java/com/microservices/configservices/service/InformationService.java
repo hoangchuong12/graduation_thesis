@@ -1,19 +1,26 @@
 package com.microservices.configservices.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.microservices.configservices.payload.request.InformationRequest;
+
 import com.microservices.configservices.payload.response.InfomationsResponse;
+
 
 public interface InformationService {
 
-    InfomationsResponse create(InformationRequest informationRequest);
+    InfomationsResponse create(InformationRequest InformationRequest);
 
-    InfomationsResponse getById(Long id);
+    void setImage(UUID id, String image);
+
+    void trash(UUID id);
+
+    InfomationsResponse getById(UUID id);
 
     List<InfomationsResponse> getAll();
 
-    InfomationsResponse update(InformationRequest informationRequest, Long id);
+    InfomationsResponse update(UUID id, InformationRequest InformationRequest);
 
-    InfomationsResponse delete(Long id);
+    InfomationsResponse delete(UUID id);
 }

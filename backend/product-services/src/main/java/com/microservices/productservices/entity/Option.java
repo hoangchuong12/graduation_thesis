@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Options {
+public class Option {
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
+    private UUID productId;
+
     private String name;
 
     private String description;
-
-    private String detail;
 
     private LocalDateTime createdAt;
 

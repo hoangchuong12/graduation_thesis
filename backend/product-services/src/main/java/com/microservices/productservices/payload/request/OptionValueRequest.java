@@ -10,7 +10,6 @@ public class OptionValueRequest {
 
     private UUID optionId;
 
-    private Integer value;
-
-    private UUID createdBy;
+    private String value;
 }
+        

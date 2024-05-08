@@ -1,10 +1,11 @@
 package com.microservices.configservices.payload.response;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
-import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class SliderResponse {
 
@@ -12,16 +13,15 @@ public class SliderResponse {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    private String image;
 
     private String desciption;
 
     private UUID createdBy;
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     private UUID updatedBy;
 

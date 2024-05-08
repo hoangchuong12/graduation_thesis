@@ -2,35 +2,29 @@ import httpAxios from '../httpAxios';
 
 const BannerService = {
 
-    create: (BannerData, image) => {
-        const formData = new FormData();
-        formData.append('BannerRequest', new Blob([JSON.stringify(BannerData)], {
-            type: "application/json"
-        }));
-        formData.append('image', image);
-        return httpAxios.post(`banner-services/api/banners/create`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-        });
+    create: (brandData) => {
+        return httpAxios.post(`config-services/api/banners/create`, brandData);
+    },
+    setImage: (data) => {
+        return httpAxios.put(`config-services/api/banners/set-image`, data);
     },
     getById: (id) => {
-        return httpAxios.get(`banner-services/api/banners/get-by-id/${id}`);
+        return httpAxios.get(`config-services/api/banners/get-by-id/${id}`);
     },
     getAll: () => {
-        return httpAxios.get(`banner-services/api/banners/get-all`);
+        return httpAxios.get(`config-services/api/banners/get-all`);
     },
-    update: (id, banner) => {
-        return httpAxios.put(`banner-services/api/banners/update/${id}`, banner);
+    update: (id, brand) => { 
+        return httpAxios.put(`config-services/api/banners/update/${id}`, brand);
     },
     sitchStatus: (id) => {
-        return httpAxios.put(`banner-services/api/banners/switch-status/${id}`);
+        return httpAxios.put(`config-services/api/banners/switch-status/${id}`);
     },
     trash: (id) => {
-        return httpAxios.put(`banner-services/api/banners/trash/${id}`);
+        return httpAxios.put(`config-services/api/banners/trash/${id}`);
     },
     delete: (id) => {
-        return httpAxios.delete(`banner-services/api/banners/delete/${id}`);
+        return httpAxios.delete(`config-services/api/banners/delete/${id}`);
     },
 };
 

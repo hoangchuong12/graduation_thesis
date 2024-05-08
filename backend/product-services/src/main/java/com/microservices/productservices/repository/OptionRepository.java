@@ -1,11 +1,13 @@
 package com.microservices.productservices.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.microservices.productservices.entity.Options;
+import com.microservices.productservices.entity.Option;
 
-public interface OptionRepository extends JpaRepository<Options, UUID> {
-
+public interface OptionRepository extends JpaRepository<Option, UUID> {
+    
+    List<Option> findByProductId(UUID productId);
 }

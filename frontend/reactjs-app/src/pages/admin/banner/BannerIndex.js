@@ -7,23 +7,21 @@ import BannerService from '../../../services/BannerService';
 import { urlImageBanner } from '../../../config';
 
 const BannerIndex = () => {
-    const [banners, setBanners] = useState([]);
+    const [banners, setBanner] = useState([]);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        const fetchBanner = async () => {
             try {
-                const result = await BannerService.getAll();
-                if (Array.isArray(result)) {
-                    const sortedBanners = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    setBanners(sortedBanners);
-                } else {
-                    console.error("Error fetching banners: Data returned is not an array.");
-                }
+                let result = await BannerService.getAll();
+                result = result.filter(banner => banner.status !== 2);
+                const sortedBanner = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setBanner(sortedBanner);
             } catch (error) {
-                console.error("Error fetching banners:", error);
+                console.error("Error fetching:", error);
             }
-        })();
+        };
+        fetchBanner();
     }, [reload]);
 
     const HandTrash = async (id) => {
@@ -32,12 +30,20 @@ const BannerIndex = () => {
         toast.success("Chuyển vào thùng rác");
     };
 
-    
-
+    const handleStatus = async (id, currentStatus) => {
+        try {
+            await BannerService.sitchStatus(id);
+            setReload(Date.now());
+            toast.success("Thành công");
+        } catch (error) {
+            console.error('Error switching status:', error);
+            toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
+        }
+    };
     return (
         <div className="content">
             <section className="content-header my-2">
-                <h1 className="d-inline">Danh sách người dùng</h1>
+                <h1 className="d-inline">Quản lý banner</h1>
                 <Link to="/admin/banner/add" className="btn-add">Thêm mới</Link>
                 <div className="row mt-3 align-items-center">
                     <div className="col-12">
@@ -54,43 +60,57 @@ const BannerIndex = () => {
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
                             </th>
-                            <th>id banner</th>
-                            <th>name banner</th>
-                            <th>image banner</th>
-                            <th>description</th>
+                            <th>Tên loại</th>
+                            <th>Biểu tượng</th>
+                            <th>Mô tả</th>
+                            <th>Ngày tạo</th>
+                            <th>ID người tạo</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {banners && banners.length > 0 &&
+                        {banners && banners.length > 0 &&
                             banners.map((banner, index) => {
                                 return (
                                     <tr key={banner.id} className="datarow">
                                         <td className="text-center">
                                             <input type="checkbox" id={`checkId${index}`} />
                                         </td>
-                                   
                                         <td>
                                             <div className="name">
                                                 <a href="menu_index.html">
-                                                    {banner.id}
+                                                    {banner.name}
                                                 </a>
                                             </div>
                                             <div className="function_style">
-                                                <Link to={"/admin/user/edit/" + banner.id} className='px-1 text-primary'>
-                                                    <FaEdit size={20}/>
-                                                </Link>
-                                                <button
-                                                    onClick={() => HandTrash(banner.id)}
-                                                    className="btn-none px-1 text-danger">
-                                                    <FaTrash />
-                                                </button>
-                                            </div>
+                                                    <button
+                                                        onClick={() => handleStatus(banner.id, banner.status)}
+                                                        className={
+                                                            banner.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
+                                                        }>
+                                                        {banner.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                                    </button>
+                                                    <Link to={"/admin/banner/edit/" + banner.id} className='px-1 text-primary'>
+                                                        <FaEdit size={20}/>
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => HandTrash(banner.id)}
+                                                        className="btn-none px-1 text-danger">
+                                                        <FaTrash />
+                                                    </button>
+                                                </div>
                                         </td>
-                                             <td>{banner.name}</td>     
                                         <td>
-                                            <img src={urlImageBanner + banner.image} className="img-fluid user-avatar" alt="User" />
+                                            {banner.image ? (
+                                                <img src={urlImageBanner + banner.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
                                         </td>
-                                        <td>{banner.description}</td>                                   
+                                        <td>{banner.desciption}</td>
+                                        <td>{banner.createdAt}</td>
+                                        <td>{banner.createdBy}</td>
+                                        <td>
+                                        </td>
                                     </tr>
                                 );
                             })

@@ -7,8 +7,6 @@ import com.microservices.productservices.repository.ProductGallaryRepository;
 import com.microservices.productservices.service.ProductGallaryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,9 +24,15 @@ public class ProductGallaryServiceImpl implements ProductGallaryService {
     public ProductGallaryResponse create(ProductGallaryRequest productGallaryRequest) {
         ProductGallary productGallary = new ProductGallary();
         mapRequestToEntity(productGallaryRequest, productGallary);
-        productGallary.setCreatedAt(LocalDateTime.now());
         ProductGallary savedProductGallary = productGallaryRepository.save(productGallary);
         return mapProductGallaryToResponse(savedProductGallary);
+    }
+
+    @Override
+    public void setImage(UUID id, String image){
+        ProductGallary productGallary = productGallaryRepository.findById(id).orElse(null);
+        productGallary.setImage(image);
+        productGallaryRepository.save(productGallary);
     }
 
     @Override
@@ -53,7 +57,6 @@ public class ProductGallaryServiceImpl implements ProductGallaryService {
         ProductGallary existingProductGallary = productGallaryRepository.findById(id).orElse(null);
         if (existingProductGallary != null) {
             mapRequestToEntity(productGallaryRequest, existingProductGallary);
-            existingProductGallary.setUpdatedAt(LocalDateTime.now());
             ProductGallary updatedProductGallary = productGallaryRepository.save(existingProductGallary);
             return mapProductGallaryToResponse(updatedProductGallary);
         }
@@ -71,6 +74,11 @@ public class ProductGallaryServiceImpl implements ProductGallaryService {
     }
 
     @Override
+    public void deleteByProductId(UUID productId) {
+        productGallaryRepository.deleteByProductId(productId);
+    }
+
+    @Override
     public List<ProductGallaryResponse> findByProductId(UUID productId) {
         List<ProductGallary> productGallaries = productGallaryRepository.findByProductId(productId);
         return productGallaries.stream()
@@ -83,10 +91,6 @@ public class ProductGallaryServiceImpl implements ProductGallaryService {
                 .id(productGallary.getId())
                 .productId(productGallary.getProductId())
                 .image(productGallary.getImage())
-                .createdAt(productGallary.getCreatedAt())
-                .updatedAt(productGallary.getUpdatedAt())
-                .createdBy(productGallary.getCreatedBy())
-                .updatedBy(productGallary.getUpdatedBy())
                 .build();
     }
 

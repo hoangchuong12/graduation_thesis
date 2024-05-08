@@ -14,7 +14,13 @@ public interface OptionService {
 
     List<OptionResponse> getAll();
 
+    List<OptionResponse> getByProductId(UUID productId);
+
     OptionResponse update(UUID id, OptionRequest optionRequest);
 
     OptionResponse delete(UUID id);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
 }

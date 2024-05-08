@@ -10,6 +10,8 @@ public interface ProductGallaryService {
 
     ProductGallaryResponse create(ProductGallaryRequest productGallaryRequest);
 
+    void setImage(UUID id, String image);
+
     ProductGallaryResponse getById(UUID id);
 
     List<ProductGallaryResponse> getAll();
@@ -17,6 +19,8 @@ public interface ProductGallaryService {
     ProductGallaryResponse update(UUID id, ProductGallaryRequest productGallaryRequest);
 
     ProductGallaryResponse delete(UUID id);
+
+    void deleteByProductId(UUID productId);
 
     List<ProductGallaryResponse> findByProductId(UUID productId);
 }

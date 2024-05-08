@@ -10,7 +10,5 @@ public class ProductGallaryRequest {
 
     private UUID productId;
 
-    private UUID createdBy;
-
-    private UUID updatedBy;
+    private String image;
 }

@@ -7,7 +7,7 @@ const ProductOptionService = {
     getById: (id) => {
         return httpAxios.get(`product-services/api/options/get-by-id/${id}`);
     },
-    getByProduct: (id) => {
+    getByProductId: (id) => {
         return httpAxios.get(`product-services/api/options/get-by-product-id/${id}`);
     },
     getAll: () => {

@@ -7,13 +7,21 @@ import com.microservices.configservices.payload.response.SliderResponse;
 
 public interface SliderService {
 
-    SliderResponse create(SliderRequest sliderRequest);
+    SliderResponse create(SliderRequest SliderRequest);
+
+    void setImage(UUID id, String image);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
 
     SliderResponse getById(UUID id);
 
     List<SliderResponse> getAll();
 
-    SliderResponse update(SliderRequest sliderRequest, UUID id);
+    SliderResponse update(UUID id, SliderRequest SliderRequest);
 
     SliderResponse delete(UUID id);
+
 }

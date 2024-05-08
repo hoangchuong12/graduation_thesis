@@ -1,6 +1,6 @@
 package com.microservices.configservices.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.*;
@@ -16,18 +16,17 @@ public class Slider {
 
     private String name;
 
-    @Lob
-    private byte[] image;
+    private String image;
 
     private String desciption;
 
     private UUID createdBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-    private Date updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     private UUID updatedBy;
 

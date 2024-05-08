@@ -11,7 +11,7 @@ const Category = () => {
         const fetchCategories = async () => {
             try {
                 let result = await CategoryService.getAll();
-                const sortedCategories = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                const sortedCategories = result.filter(category => category.status == 3);
                 setCategories(sortedCategories);
             } catch (error) {
                 console.error("Error fetching:", error);

@@ -1,6 +1,7 @@
 package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.ProductGallaryRequest;
+import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.ProductGallaryResponse;
 import com.microservices.productservices.service.ProductGallaryService;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,12 @@ public class ProductGallaryController {
     public ResponseEntity<ProductGallaryResponse> createProductGallary(@RequestBody ProductGallaryRequest productGallaryRequest) {
         ProductGallaryResponse createdProductGallary = productGallaryService.create(productGallaryRequest);
         return new ResponseEntity<>(createdProductGallary, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        productGallaryService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
     }
 
     @GetMapping("/get-all")
@@ -64,5 +71,11 @@ public class ProductGallaryController {
             return ResponseEntity.ok(deletedProductGallary);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/delete-by-product-id/{productId}")
+    public ResponseEntity<Void> deleteProductGallariesByProductId(@PathVariable UUID productId) {
+        productGallaryService.deleteByProductId(productId);
+        return ResponseEntity.noContent().build();
     }
 }

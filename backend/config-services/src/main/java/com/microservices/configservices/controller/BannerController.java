@@ -1,6 +1,7 @@
 package com.microservices.configservices.controller;
 
 import com.microservices.configservices.payload.request.BannerRequest;
+import com.microservices.configservices.payload.request.SetImageRequest;
 import com.microservices.configservices.payload.response.BannerResponse;
 import com.microservices.configservices.service.BannerService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/config-services/api/banners")
+@CrossOrigin(origins = { "http://localhost:3000" })
 public class BannerController {
 
     private final BannerService bannerService;
@@ -26,10 +28,30 @@ public class BannerController {
         return new ResponseEntity<>(createdBanner, HttpStatus.CREATED);
     }
 
+    @PutMapping("/set-image")
+    public ResponseEntity<Void> setImage(@RequestBody SetImageRequest setImageRequest) {
+        bannerService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        bannerService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        bannerService.trash(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<BannerResponse> getBannerById(@PathVariable UUID id) {
         BannerResponse banner = bannerService.getById(id);
-        return ResponseEntity.ok(banner);
+        if (banner != null) {
+            return ResponseEntity.ok(banner);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/get-all")
@@ -39,14 +61,20 @@ public class BannerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BannerResponse> updateBanner(@RequestBody BannerRequest bannerRequest, @PathVariable UUID id) {
-        BannerResponse updatedBanner = bannerService.update(bannerRequest, id);
-        return ResponseEntity.ok(updatedBanner);
+    public ResponseEntity<BannerResponse> updateBanner(@PathVariable UUID id, @RequestBody BannerRequest bannerRequest) {
+        BannerResponse updatedBanner = bannerService.update(id, bannerRequest);
+        if (updatedBanner != null) {
+            return ResponseEntity.ok(updatedBanner);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<BannerResponse> deleteBanner(@PathVariable UUID id) {
         BannerResponse deletedBanner = bannerService.delete(id);
-        return ResponseEntity.ok(deletedBanner);
+        if (deletedBanner != null) {
+            return ResponseEntity.ok(deletedBanner);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

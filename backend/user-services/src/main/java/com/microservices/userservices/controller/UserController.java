@@ -127,7 +127,7 @@ public class UserController {
             throw new RuntimeException("invalid access");
         }
     }
-
+    
     @GetMapping("/validate")
     public String validateToken(@RequestParam("token") String token) {
         userService.validateToken(token);

@@ -9,6 +9,9 @@ import com.microservices.productservices.entity.ProductGallary;
 
 public interface ProductGallaryRepository extends JpaRepository<ProductGallary, UUID> {
 
+    
     List<ProductGallary> findByProductId(UUID productId);
+
+    void deleteByProductId(UUID productId);
 
 }

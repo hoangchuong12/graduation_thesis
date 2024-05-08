@@ -1,48 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import UserService from '../../../services/UserService';
-import RoleService from '../../../services/RoleService';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave } from 'react-icons/fa';
+import BannerService from '../../../services/BannerService';
 
 const BannerEdit = () => {
     const { id } = useParams();
-    const [roles, setRoles] = useState([]);
     const navigate = useNavigate();
     const [name, setName] = useState("");
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-    const [address, setAddress] = useState("");
-    const [selectedRole, setSelectedRole] = useState('');
+    const [description, setDescription] = useState("");
+    const [createdBy, setCreatedBy] = useState("");
     const [status, setStatus] = useState(1);
-    const [avatar, setAvatar] = useState(null);
-
-    const sessionUserAdmin = sessionStorage.getItem('useradmin');
-    let updatedBy = null;
-    if (sessionUserAdmin !== null) {
-        const parsedUser = JSON.parse(sessionUserAdmin);
-        updatedBy = parsedUser.userId;
-    }
+    const [image, setImage] = useState(null);
+    const [stringImageDefault, setStringImageDefault] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userData = await UserService.getUserById(id);
-                const rolesData = await RoleService.getAll();
-
-                setName(userData.name);
-                setUserName(userData.userName);
-                setPassword(userData.password);
-                setPhone(userData.phone);
-                setEmail(userData.email);
-                setAddress(userData.address);
-                setSelectedRole(userData.role || '');
-                setStatus(userData.status);
-
-                setRoles(rolesData.filter(role => role.role !== 1));
+                const bannerData = await BannerService.getById(id);
+                setName(bannerData.name);
+                setDescription(bannerData.desciption);
+                setCreatedBy(bannerData.createdBy);
+                setStatus(bannerData.status);
+                setStringImageDefault(bannerData.image);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 toast.error("Failed to fetch data.");
@@ -56,24 +38,52 @@ const BannerEdit = () => {
         e.preventDefault();
     
         try {
-            const userData = {
+            const bannerData = {
                 name: name,
-                userName: userName,
-                password: password,
-                phone: phone,
-                email: email,
-                address: address,
-                updatedBy: updatedBy,
-                role: selectedRole,
+                description: description,
+                createdBy: createdBy,
                 status: status,
             };
     
+            const path = {
+                path: "banners"
+            };
+            const deleteIfExitsImage = await BannerService.getById(id);
+            console.log("image old = ", deleteIfExitsImage.image);
+            if(image !== null){
+                if(deleteIfExitsImage.image !== null){
+                    const deleteImage = {
+                        path: "banners",
+                        filename: deleteIfExitsImage.image
+                    };
+                    console.log("delete data = ", deleteImage);
+                    await UserService.deleteImage(deleteImage);
+                }
+            }
     
-            // Sending the FormData to the update API
-            console.log("update data = ", userData);
-            await UserService.update(id, userData, avatar);
-            toast.success("User updated successfully!");
-            navigate("/admin/user/index", { replace: true });
+            const result = await BannerService.update(id, bannerData);
+            if (result) {
+                if (image !== null) { // Kiểm tra image khác null
+                    const stringImage = await UserService.saveImage(id, path, image);
+                    if(stringImage !== null){
+                        const data = {
+                            id: result.id,
+                            image: stringImage
+                        };
+                        console.log("setimage data is: ", data);
+                        await BannerService.setImage(data);
+                    }
+                }else{
+                    const data = {
+                        id: result.id,
+                        image: stringImageDefault
+                    };
+                    console.log("setimage data is: ", data);
+                    await BannerService.setImage(data);
+                }
+                toast.success("User updated successfully!");
+                navigate("/admin/banner/index", { replace: true });
+            }
         } catch (error) {
             console.error('Error updating user:', error);
             toast.error("Failed to update user.");
@@ -84,10 +94,10 @@ const BannerEdit = () => {
         <form onSubmit={handleSubmit}>
             <div className="content">
                 <section className="content-header my-2">
-                    <h1 className="d-inline">Cập nhật người dùng</h1>
+                    <h1 className="d-inline">Cập nhật banner</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
-                            <Button variant="success" size="sm" as={Link} to="/admin/user/index">
+                            <Button variant="success" size="sm" as={Link} to="/admin/banner/index">
                                 <FaSave /> Về danh sách
                             </Button>
                         </div>
@@ -97,51 +107,38 @@ const BannerEdit = () => {
                     <div className="row">
                         <div className="col-md-6">
                             <div className="mb-3">
-                                <label><strong>Tên đăng nhập(*)</strong></label>
-                                <input type="text" name="username" className="form-control" placeholder="Tên đăng nhập" value={userName} onChange={e => setUserName(e.target.value)} />
+                                <label><strong>Tên loại slider(*)</strong></label>
+                                <input type="text" name="name" className="form-control" placeholder="Tên loại sản phẩm" value={name} onChange={e => setName(e.target.value)} />
+
                             </div>
                             <div className="mb-3">
-                                <label><strong>Mật khẩu(*)</strong></label>
-                                <input type="password" name="password" className="form-control" placeholder="Mật khẩu" value={password} onChange={e => setPassword(e.target.value)} />
-                            </div>
-                            <div className="mb-3">
-                                <label><strong>Họ tên (*)</strong></label>
-                                <input type="text" name="name" className="form-control" placeholder="Họ tên" value={name} onChange={e => setName(e.target.value)} />
-                            </div>
-                            <div className="mb-3">
-                                <label><strong>Email(*)</strong></label>
-                                <input type="email" name="email" className="form-control" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-                            </div>
-                            <div className="mb-3">
-                                <label><strong>Điện thoại(*)</strong></label>
-                                <input type="text" name="phone" className="form-control" placeholder="Điện thoại" value={phone} onChange={e => setPhone(e.target.value)} />
-                            </div>
-                            <div className="mb-3">
-                                <label><strong>Địa chỉ(*)</strong></label>
-                                <input type="text" name="address" className="form-control" placeholder="Địa chỉ" value={address} onChange={e => setAddress(e.target.value)} />
+                                <label><strong>Mô tả</strong></label>
+                                <input type="text" name="description" className="form-control" placeholder="Mô tả thương hiệu" value={description} onChange={e => setDescription(e.target.value)} />
                             </div>
                         </div>
                         <div className="col-md-6">
+                            
                             <div className="mb-3">
-                                <label><strong>Ảnh đại diện</strong></label>
-                                <input type="file" id="image" className="form-control" onChange={(e) => setAvatar(e.target.files[0])} />
-                            </div>
-                            <div className="mb-3">
-                                <label><strong>Quyền (*)</strong></label>
-                                <select name="role" className="form-select" value={selectedRole} onChange={e => setSelectedRole(e.target.value)}>
-                                    <option value="selectedRole">Chọn Quyền</option>
-                                    {roles.map((role) => (
-                                        <option key={role.id} value={role.id}>{role.name}</option>
-                                    ))}
-                                </select>
+                                <label><strong>Biểu tượng</strong></label>
+                                <input type="file" id="image" className="form-control" onChange={(e) => setImage(e.target.files[0])} />
                             </div>
                             <div className="mb-3">
                                 <label><strong>Trạng thái</strong></label>
-                                <select name="status" className="form-select" onChange={e => setStatus(e.target.value)} value={status}>
+                                <select name="status" className="form-select" onChange={(e) => { setStatus(e.target.value) }}
+                                    value={status}>
                                     <option value="1">Hoạt động</option>
                                     <option value="2">Không hoạt động</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="content-header my-2">
+                    <div className="row mt-2 align-items-center">
+                        <div className="col-md-12 text-end">
+                            <button type="submit" className="btn btn-success btn-sm mr-2" name="THEM">
+                                <i className="fa fa-save"></i> Lưu [Thêm]
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -158,5 +155,6 @@ const BannerEdit = () => {
         </form>
     );
 };
+
 
 export default BannerEdit;

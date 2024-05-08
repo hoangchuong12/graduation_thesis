@@ -2,6 +2,7 @@ package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.OptionRequest;
 import com.microservices.productservices.payload.response.OptionResponse;
+import com.microservices.productservices.payload.response.ProductCategoryResponse;
 import com.microservices.productservices.service.OptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,26 @@ public class OptionController {
         OptionResponse deletedOption = optionService.delete(id);
         if (deletedOption != null) {
             return ResponseEntity.ok(deletedOption);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        optionService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        optionService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
+    @GetMapping("/get-by-product-id/{id}")
+    public ResponseEntity<List<OptionResponse>> getByProductId(@PathVariable UUID id) {
+        List<OptionResponse> options = optionService.getByProductId(id);
+        if (options != null) {
+            return ResponseEntity.ok(options);
         }
         return ResponseEntity.notFound().build();
     }

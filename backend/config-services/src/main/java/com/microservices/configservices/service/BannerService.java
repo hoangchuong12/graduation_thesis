@@ -5,15 +5,23 @@ import java.util.UUID;
 import com.microservices.configservices.payload.request.BannerRequest;
 import com.microservices.configservices.payload.response.BannerResponse;
 
+
 public interface BannerService {
 
-    BannerResponse create(BannerRequest bannerRequest);
+    BannerResponse create(BannerRequest BannerRequest);
+
+    void setImage(UUID id, String image);
+
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
 
     BannerResponse getById(UUID id);
 
     List<BannerResponse> getAll();
 
-    BannerResponse update(BannerRequest bannerRequest, UUID id);
+    BannerResponse update(UUID id, BannerRequest BannerRequest);
 
     BannerResponse delete(UUID id);
 }

@@ -7,8 +7,6 @@ import com.microservices.productservices.repository.OptionValueRepository;
 import com.microservices.productservices.service.OptionValueService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,7 +24,6 @@ public class OptionValueServiceImpl implements OptionValueService {
     public OptionValueResponse create(OptionValueRequest optionValueRequest) {
         OptionValue optionValue = new OptionValue();
         mapRequestToEntity(optionValueRequest, optionValue);
-        optionValue.setCreatedAt(LocalDateTime.now());
         OptionValue savedOptionValue = optionValueRepository.save(optionValue);
         return mapOptionValueToResponse(savedOptionValue);
     }
@@ -53,7 +50,6 @@ public class OptionValueServiceImpl implements OptionValueService {
         OptionValue existingOptionValue = optionValueRepository.findById(id).orElse(null);
         if (existingOptionValue != null) {
             mapRequestToEntity(optionValueRequest, existingOptionValue);
-            existingOptionValue.setUpdatedAt(LocalDateTime.now());
             OptionValue updatedOptionValue = optionValueRepository.save(existingOptionValue);
             return mapOptionValueToResponse(updatedOptionValue);
         }
@@ -78,15 +74,19 @@ public class OptionValueServiceImpl implements OptionValueService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteByOptionId(UUID optionId) {
+        List<OptionValue> optionValues = optionValueRepository.findByOptionId(optionId);
+        optionValueRepository.deleteAll(optionValues);
+    }
+    
+
+
     private OptionValueResponse mapOptionValueToResponse(OptionValue optionValue) {
         return OptionValueResponse.builder()
                 .id(optionValue.getId())
                 .optionId(optionValue.getOptionId())
                 .value(optionValue.getValue())
-                .createdAt(optionValue.getCreatedAt())
-                .updatedAt(optionValue.getUpdatedAt())
-                .createdBy(optionValue.getCreatedBy())
-                .updatedBy(optionValue.getUpdatedBy())
                 .build();
     }
 

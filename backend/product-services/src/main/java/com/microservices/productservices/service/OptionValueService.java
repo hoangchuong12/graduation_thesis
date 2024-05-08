@@ -19,4 +19,7 @@ public interface OptionValueService {
     OptionValueResponse delete(UUID id);
 
     List<OptionValueResponse> findByOptionId(UUID optionId);
+
+    void deleteByOptionId(UUID optionId);
+
 }
