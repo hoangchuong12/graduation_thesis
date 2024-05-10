@@ -59,6 +59,12 @@ public class ProductStoreController {
         return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/delete-by-option-value/{id}")
+    public ResponseEntity<Void> deleteProductStoresByOptionValueId(@PathVariable UUID id) {
+        productStoreService.deleteByOptionValueId(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/get-by-product/{productId}")
     public ResponseEntity<List<ProductStoreResponse>> getProductStoresByProductId(@PathVariable UUID productId) {
         List<ProductStoreResponse> productStores = productStoreService.getByProductId(productId);

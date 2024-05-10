@@ -18,7 +18,5 @@ public interface ProductImportService {
 
     ProductImportResponse delete(UUID id);
 
-    List<ProductImportResponse> getByProductId(UUID productId);
-
     List<ProductImportResponse> getByUser(UUID userId);
 }

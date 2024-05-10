@@ -10,6 +10,9 @@ const ProductStoreService = {
     getById: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-id/${id}`);
     },
+    getImportById: (id) => {
+        return httpAxios.get(`store-services/api/product-imports/get-by-id/${id}`);
+    },
     getAll: () => {
         return httpAxios.get(`store-services/api/product-stores/get-all`);
     },
@@ -18,6 +21,9 @@ const ProductStoreService = {
     },
     update: (id, data) => { 
         return httpAxios.put(`store-services/api/product-stores/update/${id}`, data);
+    },
+    updateImport: (id, data) => { 
+        return httpAxios.put(`store-services/api/product-imports/update/${id}`, data);
     },
     delete: (id) => {
         return httpAxios.delete(`store-services/api/product-stores/delete/${id}`);

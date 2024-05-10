@@ -11,7 +11,7 @@ public class ProductImportResponse {
 
     private UUID id;
 
-    private UUID productId;
+    private UUID storeId;
 
     private Double quantity;
 

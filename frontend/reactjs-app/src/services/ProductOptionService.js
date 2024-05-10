@@ -10,8 +10,14 @@ const ProductOptionService = {
     getByProductId: (id) => {
         return httpAxios.get(`product-services/api/options/get-by-product-id/${id}`);
     },
+    getOptionValue: (id) => {
+        return httpAxios.get(`product-services/api/option-values/get-by-id/${id}`);
+    },
     getAll: () => {
         return httpAxios.get(`product-services/api/options/get-all`);
+    },
+    getByProduct: (id) => {
+        return httpAxios.get(`product-services/api/options/get-by-product-id/${id}`);
     },
     update: (id, data) => { 
         return httpAxios.put(`product-services/api/options/update/${id}`, data);

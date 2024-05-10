@@ -71,6 +71,13 @@ public class ProductStoreServiceImpl implements ProductStoreService {
     }
 
     @Override
+    public void deleteByOptionValueId(UUID optionValueId) {
+        List<ProductStore> productStores = productStoreRepository.findByOptionValueId(optionValueId);
+        productStores.forEach(productStoreRepository::delete);
+    }
+
+
+    @Override
     public List<ProductStoreResponse> getByProductId(UUID productId) {
         List<ProductStore> productStores = productStoreRepository.findByProductId(productId);
         return productStores.stream()
@@ -90,10 +97,10 @@ public class ProductStoreServiceImpl implements ProductStoreService {
         return ProductStoreResponse.builder()
                 .id(productStore.getId())
                 .productId(productStore.getProductId())
+                .optionValueId(productStore.getOptionValueId())
                 .quantity(productStore.getQuantity())
                 .soldQuantity(productStore.getSoldQuantity())
                 .price(productStore.getPrice())
-                .description(productStore.getDescription())
                 .createdAt(productStore.getCreatedAt())
                 .updatedAt(productStore.getUpdatedAt())
                 .createdBy(productStore.getCreatedBy())

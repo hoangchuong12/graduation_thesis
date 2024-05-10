@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProductOptionService from '../../../services/ProductOptionService';
+import ProductStoreService from '../../../services/ProductStoreService';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 import { FaSave, FaArrowLeft, FaTrash } from 'react-icons/fa';
@@ -13,6 +14,7 @@ const ProductOptionEdit = () => {
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState(1);
     const [values, setValues] = useState([]);
+    const [valuesOld, setValuesOld] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -23,6 +25,7 @@ const ProductOptionEdit = () => {
                 setDescription(result.description);
                 setStatus(result.status);
                 setValues(result.values);
+                setValuesOld(result.values);
             } catch (error) {
                 console.error('Error fetching:', error);
             }
@@ -42,15 +45,31 @@ const ProductOptionEdit = () => {
             values: updatedValues // Truyền danh sách các chuỗi
         };
         try {
+            valuesOld.forEach(async (value) => {
+                await ProductStoreService.deleteByOptionValue(value.id);
+            });
             console.log("update option: ",updatedOption);
             const result = await ProductOptionService.update(id, updatedOption);
             toast.success(result.message);
+
+            // Thêm ProductStore cho mỗi OptionValue
+            result.values.forEach(async (value) => {
+                const productStoreData = {
+                    productId: productId,
+                    optionValueId: value.id, // ID của OptionValue vừa cập nhật
+                    quantity: 0, // Cài đặt quantity tùy theo yêu cầu
+                    soldQuantity: 0,
+                    price: 0, // Cài đặt giá tùy theo yêu cầu
+                    createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                };
+                await ProductStoreService.create(productStoreData);
+            });
+
             navigate("/admin/product/option-index", { replace: true });
         } catch (error) {
             toast.error("Đã xảy ra lỗi khi cập nhật.");
         }
     };
-    
 
     const handleValueChange = (index, newValue) => {
         const updatedValues = [...values];

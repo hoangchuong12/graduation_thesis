@@ -13,13 +13,13 @@ public class ProductStoreResponse {
 
     private UUID productId;
 
+    private UUID optionValueId;
+
     private Integer quantity;
 
     private Integer soldQuantity;
 
     private Double price;
-
-    private String description;
 
     private LocalDateTime createdAt;
 

@@ -51,8 +51,6 @@ const LayoutAdmin = () => {
         }
     }, [navigate]);
 
-
-
     const login = async (authRequest) => {
         try {
             const response = await UserService.loginAdmin(authRequest);
@@ -60,6 +58,7 @@ const LayoutAdmin = () => {
                 // console.log("userid and token : ", response);
                 const { userId, token } = response;
                 const userData = { userId, token };
+                // console.log("user login = ",userData)
                 sessionStorage.setItem('useradmin', JSON.stringify(userData));
                 UserService.getUserById(userData.userId)
                         .then(userGet => {
@@ -75,7 +74,7 @@ const LayoutAdmin = () => {
                         .catch(error => {
                             console.error('Error fetching user:', error);
                         });
-                toast.success('Đăng nhập thành công');
+                        console.log('Đăng nhập thành công');
                 navigate("/admin");
             } else {
                 toast.error("Đăng nhập thất bại!");
@@ -89,9 +88,8 @@ const LayoutAdmin = () => {
     const logout = () => {
         sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
         setUser(null);
-        navigate("/admin/login");
+        navigate("/admin");
     };
-
 
     function handleItemClick(item) {
         const hdlitem = document.getElementById(item);
@@ -149,16 +147,22 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/product/index" className="margin-left-submenu">Tất cả sản phẩm</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/product/import" className="margin-left-submenu">Nhập hàng</a>
+                                                                <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/category/index" className="margin-left-submenu">Danh mục</a>
+                                                                <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/product/sale" className="margin-left-submenu">Khuyễn mãi</a>
+                                                                <a href="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</a>
                                                             </li>
                                                         </ul>
                                                     </li>
@@ -209,11 +213,14 @@ const LayoutAdmin = () => {
                                                         <a href="#nqt">Giao diện</a>
                                                         <i className="fa-solid fa-plus icon-right"></i>
                                                         <ul className="submenu">
-                                                            <li>
+                                                            {/* <li>
                                                                 <a href="/admin/menu/index">Menu</a>
-                                                            </li>
+                                                            </li> */}
                                                             <li>
                                                                 <a href="/admin/banner/index">Banner</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="/admin/slider/index">Slider</a>
                                                             </li>
                                                         </ul>
                                                     </li>
@@ -230,7 +237,7 @@ const LayoutAdmin = () => {
                                                                 <a href="/admin/notification/index">Thông báo</a>
                                                             </li>
                                                             <li>
-                                                                <a href="/admin/config/index">Cấu hình</a>
+                                                                <a href="/admin/information/index">Cấu hình</a>
                                                             </li>
                                                             <li>
                                                                 <a href="/admin/role/index">Quyền</a>

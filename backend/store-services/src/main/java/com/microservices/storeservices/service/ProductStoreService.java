@@ -22,4 +22,6 @@ public interface ProductStoreService {
 
     List<ProductStoreResponse> getByCreatedBy(UUID createdBy);
 
+    void deleteByOptionValueId(UUID optionValueId);
+
 }

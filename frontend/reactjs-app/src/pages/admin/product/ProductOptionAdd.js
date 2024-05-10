@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import ProductOptionService from "../../../services/ProductOptionService";
+import ProductStoreService from "../../../services/ProductStoreService"; 
 
 const ProductOptionAdd = () => {
     const { id } = useParams();
@@ -27,19 +28,37 @@ const ProductOptionAdd = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
+        // Kiểm tra nếu danh sách values rỗng thì thêm giá trị "N/A"
+        const updatedValues = values.length === 0 ? ["N/A"] : values;
+    
         const productOption = {
             productId: id,
             name: name,
             description: description,
             createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId,
             status: status,
-            values: values
+            values: updatedValues
         };
         console.log("product option adding: ", productOption);
-
+    
         try {
             const result = await ProductOptionService.create(productOption);
             if (result !== null) {
+                // console.log("crated options: ", result);
+                result.values.forEach(async (value) => {
+                    const productStoreData = {
+                        productId: id,
+                        optionValueId: value.id,
+                        quantity: 0,
+                        soldQuantity: 0,
+                        price: 0,
+                        createdBy: JSON.parse(sessionStorage.getItem('useradmin'))?.userId
+                    };
+                    const store =  await ProductStoreService.create(productStoreData);
+                    if(store !== null){
+                        console.log("created store: ", store);
+                    }
+                });
                 toast.success("Tạo lựa chọn sản phẩm thành công");
                 navigate('/admin/product/index', { replace: true });
             }
@@ -47,6 +66,7 @@ const ProductOptionAdd = () => {
             toast.error("Lỗi khi tạo lựa chọn sản phẩm");
         }
     }
+    
 
     return (
         <form onSubmit={handleSubmit}>

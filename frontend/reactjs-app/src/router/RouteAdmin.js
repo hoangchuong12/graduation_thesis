@@ -57,6 +57,12 @@ import BannerAdd from "../pages/admin/banner/BannerAdd";
 import BannerEdit from "../pages/admin/banner/BannerEdit";
 import ProductGallaryIndex from "../pages/admin/product/ProductGallaryIndex";
 
+import ProductStoreIndex from "../pages/admin/store/ProductStoreIndex";
+import ProductStoreEdit from "../pages/admin/store/ProductStoreEdit";
+import ProductImportAdd from "../pages/admin/store/ProductImportAdd";
+import ProductImportIndex from "../pages/admin/store/ProductImportIndex";
+import ProductImportEdit from "../pages/admin/store/ProductImportEdit";
+
 const RouteAdmin = [
     //user
     { path: '/admin/user/index', component: UserIndex },
@@ -108,6 +114,13 @@ const RouteAdmin = [
     { path: '/admin/product/option-edit/:id', component: ProductOptionEdit },
     { path: '/admin/product/option-add/:id', component: ProductOptionAdd },
     { path: '/admin/product/option-trash', component: ProductOptionTrash },
+
+    //product store
+    { path: '/admin/product/store/index', component: ProductStoreIndex },
+    { path: '/admin/product/import/index', component: ProductImportIndex },
+    { path: '/admin/product/store/edit/:id', component: ProductStoreEdit },
+    { path: '/admin/product/import/add/:id', component: ProductImportAdd },
+    { path: '/admin/product/import/edit/:id', component: ProductImportEdit },
 
     //slider
     { path: '/admin/slider/index', component: SliderIndex },

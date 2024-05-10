@@ -59,12 +59,6 @@ public class ProductImportController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/get-by-product/{productId}")
-    public ResponseEntity<List<ProductImportResponse>> getProductImportsByProductId(@PathVariable UUID productId) {
-        List<ProductImportResponse> productImports = productImportService.getByProductId(productId);
-        return ResponseEntity.ok(productImports);
-    }
-
     @GetMapping("/get-by-user/{userId}")
     public ResponseEntity<List<ProductImportResponse>> getProductImportsByUser(@PathVariable UUID userId) {
         List<ProductImportResponse> productImports = productImportService.getByUser(userId);

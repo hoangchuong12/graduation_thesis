@@ -9,8 +9,6 @@ import com.microservices.storeservices.entity.ProductImport;
 
 public interface ProductImportRepository extends JpaRepository<ProductImport, UUID> {
 
-    List<ProductImport> findByProductId(UUID productId);
-
     List<ProductImport> findByCreatedBy(UUID userId);
 
 }

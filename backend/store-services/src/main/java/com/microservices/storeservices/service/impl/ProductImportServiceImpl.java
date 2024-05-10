@@ -71,14 +71,6 @@ public class ProductImportServiceImpl implements ProductImportService {
     }
 
     @Override
-    public List<ProductImportResponse> getByProductId(UUID productId) {
-        List<ProductImport> productImports = productImportRepository.findByProductId(productId);
-        return productImports.stream()
-                .map(this::mapProductImportToResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<ProductImportResponse> getByUser(UUID userId) {
         List<ProductImport> productImports = productImportRepository.findByCreatedBy(userId);
         return productImports.stream()
@@ -89,7 +81,7 @@ public class ProductImportServiceImpl implements ProductImportService {
     private ProductImportResponse mapProductImportToResponse(ProductImport productImport) {
         return ProductImportResponse.builder()
                 .id(productImport.getId())
-                .productId(productImport.getProductId())
+                .storeId(productImport.getStoreId())
                 .quantity(productImport.getQuantity())
                 .price(productImport.getPrice())
                 .description(productImport.getDescription())

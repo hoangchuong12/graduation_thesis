@@ -16,7 +16,7 @@ const ProductFortune = () => {
     });
     const [reload, setReload] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(9);
+    const [itemsPerPage, setItemsPerPage] = useState(3);
 
     useEffect(() => {
         const fetchProducts = async () => {

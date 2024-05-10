@@ -2,7 +2,6 @@ package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.OptionRequest;
 import com.microservices.productservices.payload.response.OptionResponse;
-import com.microservices.productservices.payload.response.ProductCategoryResponse;
 import com.microservices.productservices.service.OptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

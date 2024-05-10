@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class ProductImportRequest {
 
-    private UUID productId;
+    private UUID storeId;
 
     private Double quantity;
 
