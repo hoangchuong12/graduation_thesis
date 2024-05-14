@@ -60,6 +60,13 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
+
+    @GetMapping("/related/{id}")
+    public ResponseEntity<List<ProductResponse>> getRelatedProducts(@PathVariable("id") UUID id) {
+        List<ProductResponse> relatedProducts = productService.getRelatedProducts(id);
+        return new ResponseEntity<>(relatedProducts, HttpStatus.OK);
+    }
+
     @GetMapping("/get-all")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = productService.getAll();

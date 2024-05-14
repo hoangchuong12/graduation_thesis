@@ -9,7 +9,7 @@
     #progressbar-2 li {
     list-style-type: none;
     font-size: 13px;
-    width: 33.33%;
+    width: 50.33%;
     float: left;
     position: relative;
     }
@@ -78,18 +78,13 @@
     width: 100%;
     }
     
-    #progressbar-2 li:nth-child(3):after {
-    left: 1%;
-    width: 100%;
-    background: #c5cae9 !important;
-    }
-    
-    #progressbar-2 li:nth-child(4) {
+
+    #progressbar-2 li:nth-child(3) {
     left: 0;
     width: 37px;
     }
     
-    #progressbar-2 li:nth-child(4):after {
+    #progressbar-2 li:nth-child(3):after {
     left: 0;
     width: 0;
     }

@@ -5,11 +5,15 @@ import com.microservices.orderservices.payload.request.OrderRequest;
 import com.microservices.orderservices.payload.response.OrderResponse;
 import com.microservices.orderservices.repository.OrderRepository;
 import com.microservices.orderservices.service.OrderService;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -76,6 +80,29 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(this::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Optional<OrderResponse> getCart(UUID userId) {
+        // Check if there's an existing order with status = 3
+        Optional<Order> existingOrder = orderRepository.findFirstByUserIdAndStatus(userId, 3);
+        if (existingOrder.isPresent()) {
+            return Optional.of(mapOrderToOrderResponse(existingOrder.get()));
+        } else {
+            // Create a new order if not found
+            Order newOrder = new Order();
+            newOrder.setUserId(userId);
+            newOrder.setStatus(3);
+            newOrder.setCreatedAt(LocalDateTime.now());
+            newOrder.setTotalPrice(0.0); 
+            newOrder.setDeliveryName("");  
+            newOrder.setDeliveryAddress("");  
+            newOrder.setDeliveryPhone(""); 
+
+            Order savedOrder = orderRepository.save(newOrder);
+            return Optional.of(mapOrderToOrderResponse(savedOrder));
+        }
     }
 
     private OrderResponse mapOrderToOrderResponse(Order order) {

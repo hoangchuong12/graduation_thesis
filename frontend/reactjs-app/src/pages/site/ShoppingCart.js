@@ -1,148 +1,233 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import OrderService from '../../services/OrderService';
+import OrderItemService from '../../services/OrderItemService';
+import ProductService from '../../services/ProductService';
+import UserService from '../../services/UserService';
+import ProductStoreService from '../../services/ProductStoreService';
+import { urlImageProduct } from '../../config';
+import { toast } from 'react-toastify';
 
-const ShoppingCart = () => {
+const CartItem = ({ item }) => {
+    const [product, setProduct] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const product = await ProductService.getById(item.productId);
+                setProduct(product);
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            }
+        };
+
+        if (item) {
+            fetchProduct();
+        }
+    }, [item]);
+
+    if (!item || !product) {
+        return <div>Loading...</div>; // Hiển thị thông báo hoặc hiệu ứng tải dữ liệu
+    }
+
     return (
-        <section className="h-100 h-custom" style={{backgroundColor: '#d2c9ff'}}>
-        <div className="container py-5 h-100">
-            <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12">
-                <div className="card card-registration card-registration-2" style={{borderRadius: 15}}>
-                <div className="card-body p-0">
-                    <div className="row g-0">
-                    <div className="col-lg-8">
-                        <div className="p-5">
-                        <div className="d-flex justify-content-between align-items-center mb-5">
-                            <h1 className="fw-bold mb-0 text-black">Shopping Cart</h1>
-                            <h6 className="mb-0 text-muted">3 items</h6>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="row mb-4 d-flex justify-content-between align-items-center">
-                            <div className="col-md-2 col-lg-2 col-xl-2">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img5.webp" className="img-fluid rounded-3" alt="Cotton T-shirt" />
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3">
-                            <h6 className="text-muted">Shirt</h6>
-                            <h6 className="text-black mb-0">Cotton T-shirt</h6>
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3 d-flex">
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i className="fas" > <FontAwesomeIcon icon={faMinus} /> </i>
-                            </button>
-                            <input id="form1" min={0} name="quantity" defaultValue={1} type="number" className="form-control form-control-sm" />
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                
-                                <i className="fas" ><FontAwesomeIcon icon={faPlus} /> </i>
-                            </button>
-                            </div>
-                            <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                            <h6 className="mb-0">€ 44.00</h6>
-                            </div>
-                            <div className="col-md-1 col-lg-1 col-xl-1 text-end">
-                            <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
-                            </div>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="row mb-4 d-flex justify-content-between align-items-center">
-                            <div className="col-md-2 col-lg-2 col-xl-2">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img6.webp" className="img-fluid rounded-3" alt="Cotton T-shirt" />
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3">
-                            <h6 className="text-muted">Shirt</h6>
-                            <h6 className="text-black mb-0">Cotton T-shirt</h6>
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3 d-flex">
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i className="fas" > <FontAwesomeIcon icon={faMinus} /> </i>
-                            </button>
-                            <input id="form1" min={0} name="quantity" defaultValue={1} type="number" className="form-control form-control-sm" />
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                
-                                <i className="fas" ><FontAwesomeIcon icon={faPlus} /> </i>
-                            </button>
-                            </div>
-                            <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                            <h6 className="mb-0">€ 44.00</h6>
-                            </div>
-                            <div className="col-md-1 col-lg-1 col-xl-1 text-end">
-                            <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
-                            </div>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="row mb-4 d-flex justify-content-between align-items-center">
-                            <div className="col-md-2 col-lg-2 col-xl-2">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img7.webp" className="img-fluid rounded-3" alt="Cotton T-shirt" />
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3">
-                            <h6 className="text-muted">Shirt</h6>
-                            <h6 className="text-black mb-0">Cotton T-shirt</h6>
-                            </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3 d-flex">
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i className="fas" > <FontAwesomeIcon icon={faMinus} /> </i>
-                            </button>
-                            <input id="form1" min={0} name="quantity" defaultValue={1} type="number" className="form-control form-control-sm" />
-                            <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                
-                                <i className="fas" ><FontAwesomeIcon icon={faPlus} /> </i>
-                            </button>
-                            </div>
-                            <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                            <h6 className="mb-0">€ 44.00</h6>
-                            </div>
-                            <div className="col-md-1 col-lg-1 col-xl-1 text-end">
-                            <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
-                            </div>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="pt-5">
-                            <h6 className="mb-0"><a href="#!" className="text-body"><i className="fas fa-long-arrow-alt-left me-2" />Back to shop</a></h6>
-                        </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 bg-grey">
-                        <div className="p-5">
-                        <h3 className="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                        <hr className="my-4" />
-                        <div className="d-flex justify-content-between mb-4">
-                            <h5 className="text-uppercase">items 3</h5>
-                            <h5>€ 132.00</h5>
-                        </div>
-                        <h5 className="text-uppercase mb-3">Shipping</h5>
-                        <div className="mb-4 pb-2">
-                            <select data-mdb-select-init>
-                            <option value={1}>Standard-Delivery- €5.00</option>
-                            <option value={2}>Two</option>
-                            <option value={3}>Three</option>
-                            <option value={4}>Four</option>
-                            </select>
-                        </div>
-                        <h5 className="text-uppercase mb-3">Give code</h5>
-                        <div className="mb-5">
-                            <div data-mdb-input-init className="form-outline">
-                            <input type="text" id="form3Examplea2" className="form-control form-control-lg" />
-                            <label className="form-label" htmlFor="form3Examplea2">Enter your code</label>
-                            </div>
-                        </div>
-                        <hr className="my-4" />
-                        <div className="d-flex justify-content-between mb-5">
-                            <h5 className="text-uppercase">Total price</h5>
-                            <h5>€ 137.00</h5>
-                        </div>
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Register</button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
+        <div className="row mb-4 d-flex justify-content-between align-items-center">
+            <div className="col-md-2 col-lg-2 col-xl-2">
+                <img src={urlImageProduct + product.image} className="img-fluid rounded-3" alt={product.name} />
             </div>
+            <div className="col-md-3 col-lg-3 col-xl-3">
+                <h6 className="text-muted">Sản phẩm</h6>
+                <h6 className="text-black mb-0">{product.name}</h6>
+            </div>
+            <div className="col-md-3 col-lg-3 col-xl-3 d-flex">
+                <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2">
+                    <i className="fas"><FontAwesomeIcon icon={faMinus} /></i>
+                </button>
+                <input id="quantity" min={0} name="quantity" defaultValue={item.quantity} type="number" className="form-control form-control-sm" />
+                <button data-mdb-button-init data-mdb-ripple-init className="btn btn-link px-2">
+                    <i className="fas"><FontAwesomeIcon icon={faPlus} /></i>
+                </button>
+            </div>
+            <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                <h6 className="mb-0">{item.price}</h6>
+            </div>
+            <div className="col-md-1 col-lg-1 col-xl-1 text-end">
+                <a href="#!" className="text-muted"><i className="fas fa-times" /></a>
             </div>
         </div>
-        </section>
-
     );
 };
 
-export default ShoppingCart;
+const Cart = () => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    console.log("user in cart", user);
+
+    const [orderItems, setOrderItems] = useState(null);
+    const [cart, setCart] = useState(null);
+
+    const [deliveryAddress, setDeliveryAddress] = useState("");
+    const [deliveryPhone, setDeliveryPhone] = useState("");
+    const [deliveryName, setDeliveryName] = useState("");
+
+
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            try {
+                const cart = await OrderService.getCart(user.userId);
+                const getUserFull = await UserService.getUserById(user.userId);
+                if (getUserFull) {
+                    console.log("full user in cart:", getUserFull);
+                    setDeliveryAddress(getUserFull.address);
+                    setDeliveryPhone(getUserFull.phone);
+                    setDeliveryName(getUserFull.name);
+                }
+                if (cart) {
+                    console.log("cart in cart:", cart);
+                    setCart(cart);
+                    const cartItems = await OrderItemService.getByOrder(cart.id);
+                    if (cartItems) {
+                        console.log("items in cart", cartItems);
+                        const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
+                            const product = await ProductService.getById(item.productId);
+                            return { ...item, product };
+                        }));
+                        setOrderItems(itemsWithProducts);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+        };
+
+        fetchCartItems();
+    }, [user.userId]);
+
+    const submitOrderInCart = async () => {
+        const dataUpdateCart = {
+            userId: cart.userId,
+            totalPrice: cart.totalPrice,
+            deliveryAddress: deliveryAddress,
+            deliveryPhone: deliveryPhone,
+            deliveryName: deliveryName,
+            status: 1,
+        };
+        const updateCartToOrder = await OrderService.update(cart.id, dataUpdateCart);
+        if(updateCartToOrder !== null){
+            //Chạy vòng lặp orderItems ở đây
+            if (orderItems) {
+                for (const item of orderItems) {
+                    console.log("Inside loop:", item);
+                    const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
+                    console.log("store of item:", storeOfItem);
+                    if(storeOfItem !== null){
+                        const updatedProductStore = {
+                            productId: storeOfItem.productId,
+                            optionValueId: storeOfItem.optionValueId,
+                            quantity: storeOfItem.quantity - item.quantity,
+                            soldQuantity: storeOfItem.soldQuantity + item.quantity,
+                            price: storeOfItem.price,
+                            createdBy: storeOfItem.createdBy,
+                        };
+                        try {
+                            await ProductStoreService.update(storeOfItem.id, updatedProductStore);
+                        } catch (error) {
+                            console.error('Error updating product store:', error);
+                            toast.error("Đã xảy ra lỗi khi cập nhật kho hàng sản phẩm.");
+                        }
+                    }
+                }
+            }        
+            const cart = await OrderService.getCart(user.userId);
+            if (cart) {
+                setCart(cart);
+                const cartItems = await OrderItemService.getByOrder(cart.id);
+                if (cartItems) {
+                    const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
+                        const product = await ProductService.getById(item.productId);
+                        return { ...item, product };
+                    }));
+                    setOrderItems(itemsWithProducts);
+                }
+            }
+            console.log("UPDATE cart to order:",updateCartToOrder);
+            toast.success("Đặt hàng thành công");
+        }
+    }
+
+    return (
+        <section className="h-100 h-custom" style={{ backgroundColor: '#d2c9ff' }}>
+            <div className="container py-5 h-100">
+                <div className="row d-flex justify-content-center align-items-center h-100">
+                    <div className="col-12">
+                        <div className="card card-registration card-registration-2" style={{ borderRadius: 15 }}>
+                            <div className="card-body p-0">
+                                <div className="row g-0">
+                                    <div className="col-lg-8">
+                                        <div className="p-5">
+                                            <div className="d-flex justify-content-between align-items-center mb-5">
+                                                <h1 className="fw-bold mb-0 text-black">Giỏ Hàng</h1>
+                                            </div>
+                                            <hr className="my-4" />
+                                            {orderItems && orderItems.map((item, index) => (
+                                                <CartItem key={index} item={item} />
+                                            ))}
+                                            <hr className="my-4" />
+                                            <div className="pt-5">
+                                                <h6 className="mb-0"><a href="/" className="text-body"><i className="fas fa-long-arrow-alt-left me-2" />Quay về trang chủ</a></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-4 bg-grey">
+                                        {cart && (
+                                            <div className="p-5">
+                                                <h3 className="fw-bold mb-5 mt-2 pt-1">Tổng đơn</h3>
+                                                <hr className="my-4" />
+                                                {/* <div className="d-flex justify-content-between mb-4">
+                                                    <h5 className="text-uppercase">Tổng giá</h5>
+                                                    <h5>{order.totalPrice}</h5>
+                                                </div> */}
+                                                {/* <h5 className="text-uppercase mb-3">Shipping</h5>
+                                                <div className="mb-4 pb-2">
+                                                    <select data-mdb-select-init>
+                                                        <option value={1}>Standard-Delivery- €5.00</option>
+                                                        <option value={2}>Two</option>
+                                                        <option value={3}>Three</option>
+                                                        <option value={4}>Four</option>
+                                                    </select>
+                                                </div> */}
+                                                <h5 className="text-uppercase mb-3">Thông tin nhận hàng</h5>
+                                                <div className="mb-5">
+                                                    <div data-mdb-input-init className="form-outline">
+                                                        <label className="form-label" htmlFor="form3Examplea2">Địa chỉ</label>
+                                                        <input type="text" id="deliveryAddress" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} className="form-control form-control-lg" />
+                                                    </div>
+                                                    <div data-mdb-input-init className="form-outline">
+                                                        <label className="form-label" htmlFor="form3Examplea2">Số điện thoại</label>
+                                                        <input type="text" id="deliveryPhone" value={deliveryPhone} onChange={e => setDeliveryPhone(e.target.value)} className="form-control form-control-lg" />
+                                                    </div>
+                                                    <div data-mdb-input-init className="form-outline">
+                                                        <label className="form-label" htmlFor="form3Examplea2">Tên</label>
+                                                        <input type="text" id="deliveryName" value={deliveryName} onChange={e => setDeliveryName(e.target.value)} className="form-control form-control-lg" />
+                                                    </div>
+                                                </div>
+                                                <hr className="my-4" />
+                                                <div className="justify-content-between mb-5">
+                                                    <h5 className="text-uppercase">Tổng thanh toán</h5>
+                                                    <h5>{cart.totalPrice}</h5>
+                                                </div>
+                                                <button type="button" onClick={submitOrderInCart} data-mdb-button-init data-mdb-ripple-init className="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Đặt hàng</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default Cart;

@@ -75,7 +75,7 @@ const Menu = () => {
             <ul className="desktop-menu-category-list">
 
                 <li className="menu-category">
-                    <a href="#tag" className="menu-title">Home</a>
+                    <a href="/" className="menu-title">Home</a>
                 </li>
 
                 <li className="menu-category">

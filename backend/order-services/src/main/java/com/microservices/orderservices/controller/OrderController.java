@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -63,6 +64,16 @@ public class OrderController {
     public ResponseEntity<List<OrderResponse>> getOrdersByUser(@PathVariable UUID userId) {
         List<OrderResponse> orders = orderService.getByUserId(userId);
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/get-cart/{userId}")
+    public ResponseEntity<OrderResponse> getFirstOrderWithStatusThreeByUserId(@PathVariable UUID userId) {
+        Optional<OrderResponse> orderResponse = orderService.getCart(userId);
+        if (orderResponse.isPresent()) {
+            return ResponseEntity.ok(orderResponse.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

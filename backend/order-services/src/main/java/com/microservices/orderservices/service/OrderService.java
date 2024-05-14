@@ -4,6 +4,7 @@ import com.microservices.orderservices.payload.request.OrderRequest;
 import com.microservices.orderservices.payload.response.OrderResponse;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderService {
@@ -20,4 +21,5 @@ public interface OrderService {
     
     List<OrderResponse> getByUserId(UUID userId);
 
+    Optional<OrderResponse> getCart(UUID userId);
 }

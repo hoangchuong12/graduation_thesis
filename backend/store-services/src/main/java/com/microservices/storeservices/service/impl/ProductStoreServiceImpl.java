@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -91,6 +92,17 @@ public class ProductStoreServiceImpl implements ProductStoreService {
         return productStores.stream()
                 .map(this::mapProductStoreToResponse)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public ProductStoreResponse getByOptionValueId(UUID optionValueId) {
+        Optional<ProductStore> productStore = productStoreRepository.findByOptionValueId(optionValueId)
+            .stream().findFirst();
+
+        if (productStore.isPresent()) {
+            return mapProductStoreToResponse(productStore.get());
+        }
+        return null;
     }
 
     private ProductStoreResponse mapProductStoreToResponse(ProductStore productStore) {

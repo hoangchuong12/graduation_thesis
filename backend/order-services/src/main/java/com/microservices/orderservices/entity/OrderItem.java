@@ -13,7 +13,6 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "order_items")
 public class OrderItem {
 
     @Id
@@ -21,24 +20,19 @@ public class OrderItem {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    @Column(name = "order_id", nullable = false)
     private UUID orderId;
 
-    @Column(name = "product_id")
-    private Integer productId;
+    private UUID productId;
 
-    @Column(nullable = false)
+    private UUID optionValueId;
+
     private Integer quantity;
 
-    @Column(name = "total_price")
     private Double totalPrice;
 
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
     private Integer status;
 }

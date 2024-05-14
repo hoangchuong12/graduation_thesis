@@ -20,9 +20,7 @@ public class Favorite {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    @Column(name = "product_id", nullable = false)
     private UUID productId;
 
-    @Column(name = "user_id", nullable = false)
     private UUID userId;
 }

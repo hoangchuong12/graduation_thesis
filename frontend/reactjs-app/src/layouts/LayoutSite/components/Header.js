@@ -2,60 +2,60 @@ import React from 'react';
 import IonIcon from '@reacticons/ionicons';
 import logo from '../../../assets/images/logo/logo.svg'
 import Menu from '../../../pages/site/header/menu';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
+    const navigate = useNavigate();
+
+    const handleGoToCartClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/card` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/card");
+        }
+        // Proceed with adding the item to the cart
+    }
+    const handleGoToFavoriteClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/favorite` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/favorite");
+        }
+        // Proceed with adding the item to the cart
+    }
+    const handleGoToUserClick = () => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (!user) {
+            navigate("/login", { state: { redirectTo: `/user` } });
+            return;
+        }
+        else{
+            
+            console.log(JSON.parse(sessionStorage.getItem('user')));
+            navigate("/user");
+        }
+        // Proceed with adding the item to the cart
+    }
+
     return (
         <>
             <header>
-
-                <div className="header-top">
-                    <div className="container">
-                        <ul className="header-social-container">
-                            <li>
-                                <a href="#tag" className="social-link">
-                                    <IonIcon name="logo-facebook" role="img" className="md hydrated" aria-label="logo facebook"></IonIcon>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#tag" className="social-link">
-                                    <IonIcon name="logo-twitter" role="img" className="md hydrated" aria-label="logo twitter"></IonIcon>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#tag" className="social-link">
-                                    <IonIcon name="logo-instagram" role="img" className="md hydrated" aria-label="logo instagram"></IonIcon>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#tag" className="social-link">
-                                    <IonIcon name="logo-linkedin" role="img" className="md hydrated" aria-label="logo linkedin"></IonIcon>
-                                </a>
-                            </li>
-                        </ul>
-                        <div className="header-alert-news">
-                            <p>
-                                <b>Free Shipping</b> This Week Order Over - $55
-                            </p>
-                        </div>
-                        <div className="header-top-actions">
-                            <select name="currency">
-                                <option value="usd">USD $</option>
-                                <option value="eur">EUR €</option>
-                            </select>
-                            <select name="language">
-                                <option value="en-US">English</option>
-                                <option value="es-ES">Español</option>
-                                <option value="fr">Français</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
                 <div className="header-main">
 
                     <div className="container">
 
-                        <a href="#tag" className="header-logo">
+                        <a href="/" className="header-logo">
                             <img src={logo} alt="Anon's logo" width="120" height="36" />
                         </a>
 
@@ -71,16 +71,16 @@ export default function Header() {
 
                         <div className="header-user-actions">
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToUserClick}>
                                 <IonIcon name="person-outline" role="img" className="md hydrated" aria-label="person outline"></IonIcon>
                             </button>
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToFavoriteClick}>
                                 <IonIcon name="heart-outline" role="img" className="md hydrated" aria-label="heart outline"></IonIcon>
                                 <span className="count">0</span>
                             </button>
 
-                            <button className="action-btn">
+                            <button className="action-btn" onClick={handleGoToCartClick}>
                                 <IonIcon name="bag-handle-outline" role="img" className="md hydrated" aria-label="bag handle outline"></IonIcon>
                                 <span className="count">0</span>
                             </button>
@@ -95,8 +95,8 @@ export default function Header() {
 
                     <div className="container">
 
-                
-                <Menu></Menu>
+
+                        <Menu></Menu>
 
                     </div>
 
@@ -143,7 +143,7 @@ export default function Header() {
                     <ul className="mobile-menu-category-list">
 
                         <li className="menu-category">
-                            <a href="#tag" className="menu-title">Home</a>
+                            <a href="/" className="menu-title">Home</a>
                         </li>
 
                         <li className="menu-category">

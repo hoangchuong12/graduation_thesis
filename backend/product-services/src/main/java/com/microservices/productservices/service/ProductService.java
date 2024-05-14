@@ -29,4 +29,6 @@ public interface ProductService {
     List<ProductResponse> findByBrandId(UUID brandId);
     
     List<ProductResponse> getNewProducts();
+
+    List<ProductResponse> getRelatedProducts(UUID id);
 }

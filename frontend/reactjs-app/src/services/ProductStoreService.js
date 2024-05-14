@@ -37,5 +37,8 @@ const ProductStoreService = {
     getbyUserId: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-user/${id}`);
     },
+    getByOptionValue: (id) => {
+        return httpAxios.get(`store-services/api/product-stores/get-by-option-value/${id}`);
+    },
 }
 export default ProductStoreService;

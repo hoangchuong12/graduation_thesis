@@ -170,6 +170,31 @@ public class ProductServiceImpl implements ProductService {
         }
         return null;
     }
+    @Override
+    public List<ProductResponse> getRelatedProducts(UUID id) {
+        // Lấy thông tin sản phẩm hiện tại
+        Product currentProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    
+        // Lấy danh sách sản phẩm liên quan dựa trên brandId của sản phẩm hiện tại
+        List<Product> relatedProducts = productRepository.findByBrandId(currentProduct.getBrandId());
+    
+        // Loại bỏ sản phẩm hiện tại khỏi danh sách sản phẩm liên quan
+        relatedProducts.removeIf(product -> product.getId().equals(id));
+    
+        // Tạo danh sách để lưu các đối tượng ProductResponse
+        List<ProductResponse> relatedProductResponses = new ArrayList<>();
+    
+        // Chuyển đổi từng sản phẩm trong danh sách sản phẩm liên quan sang đối tượng ProductResponse
+        for (Product product : relatedProducts) {
+            relatedProductResponses.add(mapProductToResponse(product));
+        }
+    
+        // Trả về danh sách sản phẩm liên quan dưới dạng ProductResponse
+        return relatedProductResponses;
+    }
+    
+
 
     @Override
     public List<ProductResponse> findByBrandId(UUID brandId) {

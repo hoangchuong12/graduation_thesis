@@ -76,4 +76,13 @@ public class ProductStoreController {
         List<ProductStoreResponse> productStores = productStoreService.getByCreatedBy(userId);
         return ResponseEntity.ok(productStores);
     }
+    
+    @GetMapping("/get-by-option-value/{optionValueId}")
+    public ResponseEntity<ProductStoreResponse> getProductStoreByOptionValueId(@PathVariable UUID optionValueId) {
+        ProductStoreResponse productStore = productStoreService.getByOptionValueId(optionValueId);
+        if (productStore != null) {
+            return ResponseEntity.ok(productStore);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
