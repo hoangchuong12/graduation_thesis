@@ -1,5 +1,6 @@
 import React, {createContext, useContext} from 'react';
 import '../../assets/styles/style-prefix.css';
+import '../../assets/styles/style.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import Header from './components/Header';

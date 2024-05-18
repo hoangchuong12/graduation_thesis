@@ -35,18 +35,18 @@ const Category = () => {
                                 <div className="category-item" key={category.id} >
                                     <div className="category-img-box">
                                         {category.image ? (
-                                            <img src={urlImageCategory + category.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                            <img src={urlImageCategory + category.image} width={40}  alt="Hinh anh" />
                                         ) : (
                                             <p>Không có ảnh</p>
                                         )}
                                     </div>
                                     <div className="category-content-box">
                                         <div className="category-content-flex">
-                                            <h3>{category.name}</h3>
+                                            <h3 className="category-item-title">{category.name}</h3>
                                             <p className="category-item-amount">(53)</p>
                                         </div>
                                         {/* Replace <a> with <Link> */}
-                                        <Link to={'/productdetail/' + category.id}>Show all</Link>
+                                        <Link to={'/CategoryFortune/' + category.id} className="category-btn">Show all</Link>
                                     </div>
                                 </div>
                             );

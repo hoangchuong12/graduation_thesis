@@ -1,180 +1,137 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link
-import bag from '../../../../assets/images/icons/bag.svg'
-import glasses from '../../../../assets/images/icons/glasses.svg'
-import cosmetics from '../../../../assets/images/icons/cosmetics.svg'
-import perfume from '../../../../assets/images/icons/perfume.svg'
-import jewelry from '../../../../assets/images/icons/jewelry.svg'
-import shoes from '../../../../assets/images/icons/shoes.svg'
-import dress from '../../../../assets/images/icons/dress.svg'
 import { IonIcon } from '@ionic/react';
-import { closeOutline, addOutline, removeOutline, star, starHalfOutline } from 'ionicons/icons';
+import { Link } from 'react-router-dom';
+import { closeOutline, addOutline, removeOutline } from 'ionicons/icons';
 import CategoryService from '../../../../services/CategoryService';
-import BrandService from '../../../../services/BrandService';
-import { urlImageCategory } from '../../../../config';
-
+import ProductService from '../../../../services/ProductService';
+import ProductSaleService from '../../../../services/ProductSaleService';
+import { urlImageProduct } from '../../../../config';
 
 const Sidebar = () => {
-
     const [categories, setCategories] = useState([]);
-    const [brands, setBrands] = useState([]);
-    const [reload, setReload] = useState(0);
+    const [sales, setSales] = useState([]);
+    const [expandedCategory, setExpandedCategory] = useState(null);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                let result = await CategoryService.getAll();
-                const sortedCategories = result.filter(category => category.status !== 0 && category.status !== 2);
-                setCategories(sortedCategories);
+                const categoriesData = await CategoryService.getAll();
+                const activeCategories = categoriesData.filter(category => category.status === 1);
+                setCategories(activeCategories);
             } catch (error) {
-                console.error("Error fetching:", error);
+                console.error("Error fetching categories:", error);
             }
         };
-        const fetchBrands = async () => {
+
+        const fetchSales = async () => {
             try {
-                let result = await BrandService.getAll();
-                const sortedbrands = result.filter(brand => brand.status !== 0 && brand.status !== 2);
-                setBrands(sortedbrands);
+                const salesData = await ProductSaleService.getAll();
+                const filteredSales = salesData.filter(sale => sale.status !== 2);
+                const salesWithProductDetails = await Promise.all(filteredSales.map(async sale => {
+                    const product = await ProductService.getById(sale.productId);
+                    return {
+                        ...sale,
+                        productName: product.name,
+                        discount: ((product.price - sale.priceSale) / product.price) * 100
+                    };
+                }));
+                filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setSales(salesWithProductDetails);
             } catch (error) {
-                console.error("Error fetching:", error);
+                console.error("Error fetching sales:", error);
             }
         };
-        fetchBrands();
+
         fetchCategories();
-    }, [reload]);
+        fetchSales();
+    }, []);
 
-
-    const renderCategories = () => {
-        if (!brands) {
-            return <div>Loading brands...</div>;
-        }
-
-        return categories.map(category => (
-            <li key={category.id} className="dropdown-item">
-                <button className="sidebar-accordion-menu" data-accordion-btn>
-                    <div className="menu-title-flex">
-                        {/* {category.image ? (
-                            <img src={urlImageCategory + category.image} className="menu-title-img" alt="Hinh anh" />
-                        ) : (
-                            <p>Không có ảnh</p>
-                        )} */}
-                        <p className="menu-title">{category.name}</p>
-                    </div>
-                    <div>
-                        <IonIcon icon={addOutline} className="add-icon" />
-                    </div>
-                </button>
-            </li>
-        ));
+    const toggleCategory = (categoryId) => {
+        setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
     };
 
     return (
-        <div className="sidebar  has-scrollbar" data-mobile-menu>
-            <div className="sidebar-category">
-                <div className="sidebar-top">
+        <div className="sidebar has-scrollbar p-3" data-mobile-menu>
+            <div className="sidebar-category mb-4">
+                <div className="sidebar-top d-flex justify-content-between align-items-center mb-2">
                     <h2 className="sidebar-title">Category</h2>
-                    <button className="sidebar-close-btn" data-mobile-menu-close-btn>
+                    <button className="btn sidebar-close-btn" data-mobile-menu-close-btn>
                         <IonIcon icon={closeOutline} />
                     </button>
                 </div>
                 <ul className="sidebar-menu-category-list">
-                    {renderCategories()}
-
+                    {categories.map(category => (
+                        <div key={category.id} className="mb-3">
+                            <button className={`btn btn-toggle d-flex justify-content-between align-items-center rounded collapsed  menu-title-flex ${expandedCategory === category.id ? 'active' : ''}`} onClick={() => toggleCategory(category.id)}>
+                                <div className="menu-title-flex">{category.name}</div>
+                                <div className="add-icon ">
+                                    <IonIcon icon={expandedCategory === category.id ? removeOutline : addOutline} />
+                                </div>
+                                
+                            </button>
+                            {expandedCategory === category.id && (
+                                <div className="bg-white p-2">
+                                    <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                        {category.subCategories && category.subCategories.map(subCategory => (
+                                            <li key={subCategory.id}><a href="#" className="link-dark rounded">{subCategory.name}</a></li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </ul>
             </div>
             <div className="product-showcase">
-                <h3 className="showcase-heading">best sellers</h3>
+                <h3 className="showcase-heading mb-2">Best Sellers</h3>
                 <div className="showcase-wrapper">
-                    <div className="showcase-container">
-                        <div className="showcase">
-                            <a href="#" className="showcase-img-box">
-                                <img src={require("../../../../assets/images/products/1.jpg")} alt="baby fabric shoes" width={75} height={75} className="showcase-img" />
-                            </a>
-                            <div className="showcase-content">
-                                <a href="#">
-                                    <h4 className="showcase-title">baby fabric shoes</h4>
-                                </a>
-                                <div className="showcase-rating">
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                </div>
-                                <div className="price-box">
-                                    <del>$5.00</del>
-                                    <p className="price">$4.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="showcase">
-                            <a href="#" className="showcase-img-box">
-                                <img src={require("../../../../assets/images/products/2.jpg")} alt="men's hoodies t-shirt" className="showcase-img" width={75} height={75} />
-                            </a>
-                            <div className="showcase-content">
-                                <a href="#">
-                                    <h4 className="showcase-title">men's hoodies t-shirt</h4>
-                                </a>
-                                <div className="showcase-rating">
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={starHalfOutline} />
-                                </div>
-                                <div className="price-box">
-                                    <del>$17.00</del>
-                                    <p className="price">$7.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="showcase">
-                            <a href="#" className="showcase-img-box">
-                                <img src={require("../../../../assets/images/products/3.jpg")} alt="girls t-shirt" className="showcase-img" width={75} height={75} />
-                            </a>
-                            <div className="showcase-content">
-                                <a href="#">
-                                    <h4 className="showcase-title">girls t-shirt</h4>
-                                </a>
-                                <div className="showcase-rating">
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={starHalfOutline} />
-                                </div>
-                                <div className="price-box">
-                                    <del>$5.00</del>
-                                    <p className="price">$3.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="showcase">
-                            <a href="#" className="showcase-img-box">
-                                <img src={require("../../../../assets/images/products/4.jpg")} alt="woolen hat for men" className="showcase-img" width={75} height={75} />
-                            </a>
-                            <div className="showcase-content">
-                                <a href="#">
-                                    <h4 className="showcase-title">woolen hat for men</h4>
-                                </a>
-                                <div className="showcase-rating">
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                    <IonIcon icon={star} />
-                                </div>
-                                <div className="price-box">
-                                    <del>$15.00</del>
-                                    <p className="price">$12.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {sales.map((sale) => (
+                        <ProductSaleTableRow key={sale.id} sale={sale} />
+                    ))}
                 </div>
             </div>
         </div>
+    );
+};
 
+const ProductSaleTableRow = ({ sale }) => {
+    const [product, setProduct] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const fetchedProduct = await ProductService.getById(sale.productId);
+                setProduct(fetchedProduct);
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            }
+        };
+        fetchProduct();
+    }, [sale.productId]);
+
+    if (!product) {
+        return <div>Loading...</div>; // Or any loading indicator you prefer
+    }
+
+    const productImage = product.image ? `${urlImageProduct}/${product.image}` : 'placeholder-image.jpg';
+    const discountPercentage = ((product.price - sale.priceSale) / product.price) * 100;
+
+    return (
+        <div className="showcase mb-3">
+                 <Link to={'/productdetail/' + sale.id} className="showcase-img-box">
+                <img src={productImage} alt={sale.productName} width={75} height={75} className="showcase-img" />
+                </Link>
+            <div className="showcase-content">
+            <Link to={'/productdetail/' + sale.id}>
+                    <h4 className="showcase-title">{sale.productName}</h4>
+            </Link>
+                <div className="price-box">
+                    <del>${product.price.toFixed(2)}</del>
+                    <p className="price">${sale.priceSale.toFixed(2)} </p>
+                    
+                </div>
+            </div>
+        </div>
     );
 };
 

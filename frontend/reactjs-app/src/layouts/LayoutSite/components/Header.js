@@ -3,6 +3,7 @@ import IonIcon from '@reacticons/ionicons';
 import logo from '../../../assets/images/logo/logo.svg'
 import Menu from '../../../pages/site/header/menu';
 import { useNavigate } from 'react-router-dom';
+import Notification from "../../../pages/site/Notification";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -49,6 +50,8 @@ export default function Header() {
 
     return (
         <>
+       
+            <Notification></Notification>
             <header>
 
                 <div className="header-main">

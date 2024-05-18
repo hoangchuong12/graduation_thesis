@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
 import { urlImageProduct } from '../../config';
+import BrandService from '../../services/BrandService';
 
 const ProductFortune = () => {
     const [products, setProducts] = useState([]);
-    
+    const [brands, setBrands] = useState([]);
     const [filters, setFilters] = useState({
         brands: [],
         priceRange: { min: 0, max: 10000 },
@@ -29,15 +30,19 @@ const ProductFortune = () => {
                 console.error("Error fetching:", error);
             }
         };
+        const fetchBrands = async () => {
+            try {
+                const data = await BrandService.getAll(); // Assuming this returns a promise
+                setBrands(data);
+            } catch (error) {
+                console.error("Error fetching brands:", error);
+            }
+        };
+        fetchBrands();
         fetchProducts();
     }, [reload]);
 
-    const handleBrandFilterChange = (brand) => {
-        const updatedBrands = filters.brands.includes(brand)
-            ? filters.brands.filter(item => item !== brand)
-            : [...filters.brands, brand];
-        setFilters(prevFilters => ({ ...prevFilters, brands: updatedBrands }));
-    };
+
 
     const handlePriceRangeFilterChange = (value) => {
         setFilters(prevFilters => ({
@@ -46,37 +51,37 @@ const ProductFortune = () => {
         }));
     };
 
-    const handleSizeFilterChange = (size) => {
-        const updatedSizes = filters.sizes.includes(size)
-            ? filters.sizes.filter(item => item !== size)
-            : [...filters.sizes, size];
-        setFilters(prevFilters => ({ ...prevFilters, sizes: updatedSizes }));
-    };
+
 
     const handleRatingFilterChange = (rating) => {
-        const updatedRatings = filters.ratings.includes(rating)
-            ? filters.ratings.filter(item => item !== rating)
-            : [...filters.ratings, rating];
+        // Convert rating to integer if it's coming from an input element as a string
+        const ratingValue = parseInt(rating, 10); // Make sure rating is treated as an integer
+        const updatedRatings = filters.ratings.includes(ratingValue)
+            ? filters.ratings.filter(r => r !== ratingValue) // Remove the rating if it's already in the filter
+            : [...filters.ratings, ratingValue]; // Add the rating if it's not already in the filter
+    
         setFilters(prevFilters => ({ ...prevFilters, ratings: updatedRatings }));
     };
 
+    const handleBrandFilterChange = (brandId) => {
+        const updatedBrands = filters.brands.includes(brandId)
+            ? filters.brands.filter(id => id !== brandId)
+            : [...filters.brands, brandId];
+        setFilters(prevFilters => ({ ...prevFilters, brands: updatedBrands }));
+    };
+
     const filteredProducts = products.filter(product => {
-        if (filters.brands.length > 0 && !filters.brands.includes(product.brand)) {
+        if (filters.brands.length > 0 && !filters.brands.includes(product.brandId)) {
             return false;
         }
         const price = parseFloat(product.price);
         if (price < filters.priceRange.min || price > filters.priceRange.max) {
             return false;
         }
-        if (filters.sizes.length > 0 && !filters.sizes.includes(product.size)) {
-            return false;
-        }
-        if (filters.ratings.length > 0 && product.rating < Math.min(...filters.ratings)) {
+        if (filters.ratings.length > 0 && !filters.ratings.includes(product.evaluate)) {
             return false;
         }
         return true;
-
-        
     });
 
     // Calculate current items
@@ -94,7 +99,7 @@ const ProductFortune = () => {
     }
 
     return (
-<div className="container">
+        <div className="container">
             <div className="row">
                 <div className="col-lg-3">
                     <div className="card">
@@ -102,22 +107,22 @@ const ProductFortune = () => {
                         <div className="card-body">
                             {/* Brands Filter */}
                             <h6 className="fw-bold">Brands</h6>
-                            {['Mercedes', 'Toyota', 'Mitsubishi', 'Nissan', 'Honda', 'Suzuki'].map((brand, index) => (
-                                <div className="form-check">
+                            {brands.map((brand) => (
+                                <div className="form-check" key={brand.id}>
                                     <input
                                         className="form-check-input"
                                         type="checkbox"
-                                        value={brand}
-                                        id={`brand-${brand}`}
-                                        checked={filters.brands.includes(brand)}
-                                        onChange={() => handleBrandFilterChange(brand)}
+                                        value={brand.id}
+                                        id={`brand-${brand.id}`}
+                                        checked={filters.brands.includes(brand.id)}
+                                        onChange={() => handleBrandFilterChange(brand.id)}
                                     />
-                                    <label className="form-check-label" htmlFor={`brand-${brand}`}>
-                                        {brand}
+                                    <label className="form-check-label" htmlFor={`brand-${brand.id}`}>
+                                        {brand.name}
                                     </label>
                                 </div>
                             ))}
-                            {/* Price Range Filter */}
+
                             <h6 className="fw-bold mt-3">Price Range</h6>
                             <input
                                 type="range"
@@ -129,22 +134,7 @@ const ProductFortune = () => {
                             />
                             <div>Max Price: ${filters.priceRange.max}</div>
                             {/* Sizes Filter */}
-                            <h6 className="fw-bold mt-3">Sizes</h6>
-                            {['XS', 'SM', 'LG', 'XXL'].map((size, index) => (
-                                <div className="form-check">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        value={size}
-                                        id={`size-${size}`}
-                                        checked={filters.sizes.includes(size)}
-                                        onChange={() => handleSizeFilterChange(size)}
-                                    />
-                                    <label className="form-check-label" htmlFor={`size-${size}`}>
-                                        {size}
-                                    </label>
-                                </div>
-                            ))}
+
                             {/* Ratings Filter */}
                             <h6 className="fw-bold mt-3">Ratings</h6>
                             {[1, 2, 3, 4, 5].map((rating, index) => (
@@ -168,37 +158,37 @@ const ProductFortune = () => {
                 <div className="col-lg-9">
                     {/* Product Grid */}
                     <div className="row">
-                    {currentItems && currentItems.length > 0 &&
+                        {currentItems && currentItems.length > 0 &&
                             currentItems.map((product, index) => {
                                 return (
-                                <div key={product.id} className="col-lg-4 col-md-6 mb-4 d-flex">
-                                <div className="card w-100 my-2 shadow-2-strong">
-                                <img src={urlImageProduct + product.image} className="card-img-top" alt="Hinh anh" />
-                                    <div className="card-body d-flex flex-column">
-                                        <h5 className="card-title">${product.price.toFixed(2)}</h5>
-                                        <p className="card-text">{product.description || 'No description available.'}</p>
-                                        <div className="d-flex align-items-center">
-                                            {Array.from({ length: product.evaluate }, (_, i) => (
-                                                <FontAwesomeIcon key={i} icon={faStar} />
-                                            ))}
-                                        </div>
-                                        <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                            <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
-                                            <a href="#!" className="btn btn-light border icon-hover px-2 pt-2">
-                                                <FontAwesomeIcon icon={faHeart} />
-                                            </a>
+                                    <div key={product.id} className="col-lg-4 col-md-6 mb-4 d-flex">
+                                        <div className="card w-100 my-2 shadow-2-strong">
+                                            <img src={urlImageProduct + product.image} className="card-img-top" alt="Hinh anh" />
+                                            <div className="card-body d-flex flex-column">
+                                                <h5 className="card-title">${product.price.toFixed(2)}</h5>
+                                                <p className="card-text">{product.description || 'No description available.'}</p>
+                                                <div className="d-flex align-items-center">
+                                                    {Array.from({ length: product.evaluate }, (_, i) => (
+                                                        <FontAwesomeIcon key={i} icon={faStar} />
+                                                    ))}
+                                                </div>
+                                                <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                                    <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                                    <a href="#!" className="btn btn-light border icon-hover px-2 pt-2">
+                                                        <FontAwesomeIcon icon={faHeart} />
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                             );
+                                );
                             })
                         }
                     </div>
                     {/* Pagination */}
                     <nav>
                         <ul className='pagination'>
-                        {pageNumbers.map((number) => (
+                            {pageNumbers.map((number) => (
                                 <li key={number} className='page-item'>
                                     <a onClick={() => paginate(number)} href='#!' className='page-link'>
                                         {number}

@@ -6,6 +6,9 @@ import ShoppingCart from "../pages/site/ShoppingCart";
 import Login from "../layouts/LayoutSite/Login";
 import user from "../pages/site/user";
 import Register from "../layouts/LayoutSite/Register";
+import CategoryFortune from "../pages/site/Categoryfortune";
+import BrandFortune from "../pages/site/Brandfortune";
+import TagFortune from "../pages/site/Tagfortune";
 const RouteSite = [
     { path: '/', component: Home },
 
@@ -23,5 +26,10 @@ const RouteSite = [
 
     { path: '/user', component: user },
     
+    { path: '/categoryFortune/:id', component: CategoryFortune },
+
+    { path: '/brandFortune/:id', component: BrandFortune },
+
+    { path: '/tagFortune/:id', component: TagFortune },
 ];
 export default RouteSite;
