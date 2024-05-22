@@ -48,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponse> getAll() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
+                .filter(order -> order.getStatus() != 3)
                 .map(this::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
     }
@@ -78,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponse> getByUserId(UUID userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream()
+                .filter(order -> order.getStatus() != 3)
                 .map(this::mapOrderToOrderResponse)
                 .collect(Collectors.toList());
     }
@@ -95,10 +97,10 @@ public class OrderServiceImpl implements OrderService {
             newOrder.setUserId(userId);
             newOrder.setStatus(3);
             newOrder.setCreatedAt(LocalDateTime.now());
-            newOrder.setTotalPrice(0.0); 
-            newOrder.setDeliveryName("");  
-            newOrder.setDeliveryAddress("");  
-            newOrder.setDeliveryPhone(""); 
+            newOrder.setTotalPrice(0.0);
+            newOrder.setDeliveryName("");
+            newOrder.setDeliveryAddress("");
+            newOrder.setDeliveryPhone("");
 
             Order savedOrder = orderRepository.save(newOrder);
             return Optional.of(mapOrderToOrderResponse(savedOrder));

@@ -41,21 +41,23 @@ const BannerIndex = () => {
         }
     };
     return (
-        <div className="content">
+        <div className="content mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý banner</h1>
-                <Link to="/admin/banner/add" className="btn-add">Thêm mới</Link>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý banner</h1>
+                    <Link to="/admin/banner/add" className="btn btn-primary">Thêm mới</Link>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/banner/trash">Thùng rác</a>
+                            <Link to="/admin/banner/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -65,55 +67,51 @@ const BannerIndex = () => {
                             <th>Mô tả</th>
                             <th>Ngày tạo</th>
                             <th>ID người tạo</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         {banners && banners.length > 0 &&
-                            banners.map((banner, index) => {
-                                return (
-                                    <tr key={banner.id} className="datarow">
-                                        <td className="text-center">
-                                            <input type="checkbox" id={`checkId${index}`} />
-                                        </td>
-                                        <td>
-                                            <div className="name">
-                                                <a href="menu_index.html">
-                                                    {banner.name}
-                                                </a>
-                                            </div>
-                                            <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(banner.id, banner.status)}
-                                                        className={
-                                                            banner.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {banner.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/banner/edit/" + banner.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(banner.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
-                                        </td>
-                                        <td>
-                                            {banner.image ? (
-                                                <img src={urlImageBanner + banner.image} className="img-fluid user-avatar" alt="Hinh anh" />
-                                            ) : (
-                                                <p>Không có ảnh</p>
-                                            )}
-                                        </td>
-                                        <td>{banner.desciption}</td>
-                                        <td>{banner.createdAt}</td>
-                                        <td>{banner.createdBy}</td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                );
-                            })
+                            banners.map((banner, index) => (
+                                <tr key={banner.id} className="datarow">
+                                    <td className="text-center">
+                                        <input type="checkbox" id={`checkId${index}`} />
+                                    </td>
+                                    <td>
+                                        <div className="name">
+                                            <Link to={`#nqt`}>{banner.name}</Link>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {banner.image ? (
+                                            <img src={`${urlImageBanner}/${banner.image}`} className="img-fluid user-avatar" alt="Hinh anh" />
+                                        ) : (
+                                            <p>Không có ảnh</p>
+                                        )}
+                                    </td>
+                                    <td>{banner.description}</td>
+                                    <td>{banner.createdAt}</td>
+                                    <td>{banner.createdBy}</td>
+                                    <td>
+                                        <div className="d-flex justify-content-start">
+                                            <button
+                                                onClick={() => handleStatus(banner.id)}
+                                                className={`btn ${banner.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                            >
+                                                {banner.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
+                                            </button>
+                                            <Link to={`/admin/banner/edit/${banner.id}`} className='btn btn-primary me-1'>
+                                                <FaEdit size={20} />
+                                            </Link>
+                                            <button
+                                                onClick={() => HandTrash(banner.id)}
+                                                className="btn btn-danger">
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
                         }
                     </tbody>
                 </table>

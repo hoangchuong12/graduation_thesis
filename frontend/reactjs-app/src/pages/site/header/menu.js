@@ -56,11 +56,11 @@ const Menu = () => {
             columns.push(
                 <ul key={i} className="dropdown-panel-list">
                     {columnItems.map(category => (
-                        <li key={category.id} className="panel-list-item">
-                            <Link to={`/categoryFortune/${category.id}`} className="menu-title">
-                                {category.name}
-                            </Link>
-                        </li>
+                        <li key={category.id} className="text-truncate">
+                        <Link to={`/categoryFortune/${category.id}`} className="text-decoration-none text-reset">
+                            {category.name}
+                        </Link>
+                    </li>
                     ))}
                 </ul>
             );
@@ -88,14 +88,22 @@ const Menu = () => {
             return <div>Loading tags...</div>;
         }
     
-        return tags.map(tag => (
-            <li key={tag.id} className="dropdown-item">
-                <Link to={`/tagFortune/${tag.id}`} className="menu-title">
-                    {tag.name}
-                </Link>
-            </li>
-        ));
+        return (
+            <ul>
+                {tags.map(tag => (
+                    <li key={tag.id} className="text-truncate">
+                        <Link 
+                            to={`/tagFortune/${tag.id}`} 
+                            className="text-decoration-none text-reset d-block"
+                        >
+                            {tag.name}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        );
     };
+    
     
     
 
@@ -137,59 +145,7 @@ const Menu = () => {
                 </li>
 
                 <li className="menu-category">
-                    <a href="#tag" className="menu-title">Jewelry</a>
-
-                    <ul className="dropdown-list">
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Earrings</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Couple Rings</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Necklace</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Bracelets</a>
-                        </li>
-
-                    </ul>
-                </li>
-
-                <li className="menu-category">
-                    <a href="#tag" className="menu-title">Perfume</a>
-
-                    <ul className="dropdown-list">
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Clothes Perfume</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Deodorant</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Flower Fragrance</a>
-                        </li>
-
-                        <li className="dropdown-item">
-                            <a href="#tag">Air Freshener</a>
-                        </li>
-
-                    </ul>
-                </li>
-
-                <li className="menu-category">
-                    <a href="#tag" className="menu-title">Blog</a>
-                </li>
-
-                <li className="menu-category">
-                    <a href="#tag" className="menu-title">Hot Offers</a>
+                    <a href="/productfortune" className="menu-title">products</a>
                 </li>
 
             </ul>

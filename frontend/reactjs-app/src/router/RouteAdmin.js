@@ -63,6 +63,15 @@ import ProductImportAdd from "../pages/admin/store/ProductImportAdd";
 import ProductImportIndex from "../pages/admin/store/ProductImportIndex";
 import ProductImportEdit from "../pages/admin/store/ProductImportEdit";
 
+import InformationIndex from "../pages/admin/information/InformationIndex";
+import InformationAdd from "../pages/admin/information/InformationAdd";
+import InformationEdit from "../pages/admin/information/InformationEdit";
+import InformationTrash from "../pages/admin/information/InformationTrash";
+
+import OrderItemIndex from "../pages/admin/orderItem/OrderItemIndex";
+import OrderItemTrash from "../pages/admin/orderItem/OrderItemTrash";
+import ProductExportIndex from "../pages/admin/store/ProductExportIndex";
+
 const RouteAdmin = [
     //user
     { path: '/admin/user/index', component: UserIndex },
@@ -127,7 +136,7 @@ const RouteAdmin = [
     { path: '/admin/slider/trash', component: SliderTrash },
     { path: '/admin/slider/add', component: SliderAdd },
     { path: '/admin/slider/edit/:id', component: SliderEdit },
-    //slider
+    //banner
     { path: '/admin/banner/index', component:  BannerIndex},
     { path: '/admin/banner/trash', component: BannerTrash },
     { path: '/admin/banner/add', component:  BannerAdd },
@@ -135,5 +144,16 @@ const RouteAdmin = [
 
     //product gallary
     { path: '/admin/product/gallary-index/:id', component: ProductGallaryIndex },
+
+    //information
+    { path: '/admin/information/index', component: InformationIndex },
+    { path: '/admin/information/trash', component: InformationTrash },
+    { path: '/admin/information/add', component: InformationAdd },
+    { path: '/admin/information/edit/:id', component: InformationEdit },
+    //order-item
+    { path: '/admin/order-item/index', component: OrderItemIndex },
+    { path: '/admin/order-item/trash', component: OrderItemTrash },
+    //order-export
+    { path: '/admin/order/export', component: ProductExportIndex },
 ];
 export default RouteAdmin;

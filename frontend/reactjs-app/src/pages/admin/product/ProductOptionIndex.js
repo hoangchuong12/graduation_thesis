@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 
+
 const ProductOptionIndex = () => {
     const [options, setOptions] = useState([]);
     const [reload, setReload] = useState(0);
@@ -14,8 +15,8 @@ const ProductOptionIndex = () => {
     useEffect(() => {
         (async () => {
             const result = await ProductOptionService.getAll();
-            if(result !== null){
-                console.log("option list: ",result);
+            if (result !== null) {
+                console.log("option list: ", result);
             }
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
@@ -43,26 +44,24 @@ const ProductOptionIndex = () => {
     };
 
     return (
-        <div className="content">
+        <div >
             <section className="content-header my-2">
-                <h1 className="d-inline">Sản phẩm | Lựa chọn của sản phẩm</h1>
-                <div className="row mt-3 align-items-center">
-                    <div className="col-12">
-                        <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/option-trash">Thùng rác</a>
-                        </button>
-                    </div>
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Sản phẩm | Lựa chọn của sản phẩm</h1>
+                    <button type="button" className="btn btn-warning">
+                        <Link to="/admin/product/option-trash" className="text-white text-decoration-none">Thùng rác</Link>
+                    </button>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
                             </th>
                             <th>Tên sản phẩm</th>
-                            <th>Ảnh</th> 
+                            <th>Ảnh</th>
                             <th>Tên lựa chọn</th>
                             <th>Mô tả</th>
                             <th>Các lựa chọn</th>
@@ -116,18 +115,19 @@ const ProductOptionTableRow = ({ option, HandTrash, handleStatus }) => {
                         <span>Loading...</span>
                     )}
                 </div>
-                <div className="function_style">
+                <div className="d-flex justify-content-start">
                     <button
                         onClick={() => handleStatus(option.id, option.status)}
-                        className={option.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"}>
+                        className={`btn ${option.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                    >
                         {option.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                     </button>
-                    <Link to={`/admin/product/option-edit/${option.id}`} className='px-1 text-primary'>
+                    <Link to={`/admin/product/option-edit/${option.id}`} className='btn btn-primary me-1'>
                         <FaEdit />
                     </Link>
                     <button
                         onClick={() => HandTrash(option.id)}
-                        className="btn-none px-1 text-danger">
+                        className="btn btn-danger">
                         <FaTrash />
                     </button>
                 </div>

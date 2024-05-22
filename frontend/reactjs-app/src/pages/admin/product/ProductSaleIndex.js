@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 
+
 const ProductSaleIndex = () => {
     const [sales, setSales] = useState([]);
     const [reload, setReload] = useState(0);
@@ -40,20 +41,18 @@ const ProductSaleIndex = () => {
     };
 
     return (
-        <div className="content">
+        <div className=" mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Giảm giá</h1>
-                <div className="row mt-3 align-items-center">
-                    <div className="col-12">
-                        <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/sale-trash">Thùng rác</a>
-                        </button>
-                    </div>
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Giảm giá</h1>
+                    <button type="button" className="btn btn-warning">
+                        <Link to="/admin/product/sale-trash" className="text-white text-decoration-none">Thùng rác</Link>
+                    </button>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -114,18 +113,19 @@ const ProductSaleTableRow = ({ sale, HandTrash, handleStatus }) => {
                         <span>Loading...</span>
                     )}
                 </div>
-                <div className="function_style">
+                <div className="d-flex justify-content-start">
                     <button
                         onClick={() => handleStatus(sale.id, sale.status)}
-                        className={sale.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"}>
+                        className={`btn ${sale.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                    >
                         {sale.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                     </button>
-                    <Link to={`/admin/product/sale-edit/${sale.id}`} className='px-1 text-primary'>
+                    <Link to={`/admin/product/sale-edit/${sale.id}`} className='btn btn-primary me-1'>
                         <FaEdit />
                     </Link>
                     <button
                         onClick={() => HandTrash(sale.id)}
-                        className="btn-none px-1 text-danger">
+                        className="btn btn-danger">
                         <FaTrash />
                     </button>
                 </div>

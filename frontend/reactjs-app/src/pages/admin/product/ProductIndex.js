@@ -7,10 +7,13 @@ import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { MdOutlineCollections } from "react-icons/md";
 
+
 const ProductIndex = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 5;
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -64,36 +67,51 @@ const ProductIndex = () => {
         }
     };
 
-    // const getBrandName = async (id) => {
-    //     try {
-    //         const brand = await BrandService.getById(id);
-    //         if(brand !== null){
-    //             return brand.name;
-    //         }
-    //         return "N/A";
-    //     } catch (error) {
-    //         console.error("Error fetching brand:", error);
-    //         return "N/A";
-    //     }
-    // }
-    
+    // Pagination logic
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(products.length / productsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
 
     return (
-        <div className="content">
+        <div className="mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý sản phẩm</h1>
-                <Link to="/admin/product/add" className="btn-add">Thêm mới</Link>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý sản phẩm</h1>
+                    <Link to="/admin/product/add" className="btn btn-primary">Thêm mới</Link>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/trash">Thùng rác</a>
+                            <Link to="/admin/product/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -108,8 +126,8 @@ const ProductIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products && products.length > 0 &&
-                            products.map((product, index) => {
+                        {currentProducts && currentProducts.length > 0 &&
+                            currentProducts.map((product, index) => {
                                 return (
                                     <tr key={product.id} className="datarow">
                                         <td className="text-center">
@@ -121,32 +139,31 @@ const ProductIndex = () => {
                                                     {product.name}
                                                 </a>
                                             </div>
-                                            <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(product.id, product.status)}
-                                                        className={
-                                                            product.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {product.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/product/edit/" + product.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <Link to={'/admin/product/sale-add/' + product.id} className="px-1 text-info">
-                                                        <FaTag />
-                                                    </Link>
-                                                    <Link to={'/admin/product/option-add/' + product.id} className="px-1">
-                                                        <FaHandLizard />
-                                                    </Link>
-                                                    <Link to={'/admin/product/gallary-index/' + product.id} className="px-1">
-                                                        <MdOutlineCollections size={24}/>
-                                                    </Link>
-                                                    <button 
-                                                        onClick={() => HandTrash(product.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                            <div className="d-flex justify-content-start">
+                                                <button
+                                                    onClick={() => handleStatus(product.id, product.status)}
+                                                    className={`btn ${product.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                                >
+                                                    {product.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                                </button>
+                                                <Link to={"/admin/product/edit/" + product.id} className='btn btn-primary me-1'>
+                                                    <FaEdit size={20}/>
+                                                </Link>
+                                                <Link to={'/admin/product/sale-add/' + product.id} className="btn btn-info me-1">
+                                                    <FaTag />
+                                                </Link>
+                                                <Link to={'/admin/product/option-add/' + product.id} className="btn btn-secondary me-1">
+                                                    <FaHandLizard />
+                                                </Link>
+                                                <Link to={'/admin/product/gallary-index/' + product.id} className="btn btn-light me-1">
+                                                    <MdOutlineCollections size={24}/>
+                                                </Link>
+                                                <button 
+                                                    onClick={() => HandTrash(product.id)}
+                                                    className="btn btn-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>{brandNames[product.brandId]}</td>
                                         <td>
@@ -160,13 +177,17 @@ const ProductIndex = () => {
                                         <td>{product.evaluate}</td>
                                         <td>{product.createdAt}</td>
                                         <td>{product.createdBy}</td>
-                                        
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );

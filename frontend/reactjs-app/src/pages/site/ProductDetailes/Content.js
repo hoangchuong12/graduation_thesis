@@ -86,7 +86,7 @@ const Content = () => {
                                                 </div>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <p className="small mb-0 text-break" style={{ color: '#aaa', marginLeft: '2rem' }}>
-                                                        {feedback.description}
+                                                        {feedback.detail}
                                                     </p>
                                                     <div className="text-warning mb-1 me-2">
                                                         {[...Array(feedback.evaluate)].map((star, index) => (

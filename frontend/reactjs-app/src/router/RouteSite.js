@@ -9,6 +9,12 @@ import Register from "../layouts/LayoutSite/Register";
 import CategoryFortune from "../pages/site/Categoryfortune";
 import BrandFortune from "../pages/site/Brandfortune";
 import TagFortune from "../pages/site/Tagfortune";
+import FavoriteProduct from "../pages/site/FavoriteProduct";
+import OrderItemDetail from "../pages/site/OrderItemDetail";
+import CreateFeedback from "../pages/site/CreateFeedback";
+
+
+
 const RouteSite = [
     { path: '/', component: Home },
 
@@ -31,5 +37,11 @@ const RouteSite = [
     { path: '/brandFortune/:id', component: BrandFortune },
 
     { path: '/tagFortune/:id', component: TagFortune },
+
+    { path: '/favorite', component: FavoriteProduct },
+
+    { path: '/order-item-detail/:id', component: OrderItemDetail },
+
+    { path: '/create-feedback', component: CreateFeedback },
 ];
 export default RouteSite;

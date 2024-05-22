@@ -10,4 +10,8 @@ import com.microservices.productservices.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     List<Product> findByBrandId(UUID brandId);
+
+    List<Product> findByNameContainingIgnoreCase(String name);
+
+    List<Product> findByCreatedBy(UUID id);
 }

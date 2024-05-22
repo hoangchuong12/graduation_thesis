@@ -31,7 +31,8 @@ public class AuthConfig {
                 "/user-services/api/users/token",
                 "/user-services/api/users/validate",
                 "/image-service/**",
-                "/user-services/api/**").permitAll()
+                "/user-services/api/**",
+                "/onfig-services/api/sliders/get-all").permitAll()
                 .and()
                 .build();
     }

@@ -204,6 +204,21 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ProductResponse> findByUser(UUID id) {
+        List<Product> products = productRepository.findByCreatedBy(id);
+        return products.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<ProductResponse> searchByName(String name) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(name);
+        return products.stream()
+                .map(this::mapProductToResponse)
+                .collect(Collectors.toList());
+    }
+
     private ProductResponse mapProductToResponse(Product product) {
         return ProductResponse.builder()
                 .id(product.getId())

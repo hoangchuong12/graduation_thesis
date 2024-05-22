@@ -1,396 +1,124 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { IonIcon } from '@ionic/react';
+import { Link } from 'react-router-dom';
+import { star, starOutline, bagAddOutline, repeatOutline, eyeOutline, heartOutline, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import ProductService from '../../../../services/ProductService';
+import { urlImageProduct } from '../../../../config';
+import '../../../../assets/styles/minimal.css';
 
 const Minimal = () => {
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const productsPerPage = 4;
+    const autoScrollInterval = 3000; // 3 seconds
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                let result = await ProductService.getAll();
+                result = result.filter(product => product.status !== 2);
+                const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setProducts(sortedProducts);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentPage(prevPage => {
+                const nextPage = (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1;
+                return nextPage;
+            });
+        }, autoScrollInterval);
+
+        return () => clearInterval(interval);
+    }, [products]);
+
+    const handlePrevious = () => {
+        setCurrentPage(prevPage => prevPage === 0 ? Math.floor(products.length / productsPerPage) : prevPage - 1);
+    };
+
+    const handleNext = () => {
+        setCurrentPage(prevPage => (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1);
+    };
+
+    const displayedProducts = products.slice(currentPage * productsPerPage, (currentPage + 1) * productsPerPage);
+
     return (
-        <div className="product-minimal">
-        <div className="product-showcase">
-        <h2 className="title">New Arrivals</h2>
-        <div className="showcase-wrapper has-scrollbar">
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/clothes-1.jpg")} alt="relaxed short full sleeve t-shirt" width={70} className="showcase-img" />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Relaxed Short full Sleeve T-Shirt</h4>
-                </a>
-                <a href="#" className="showcase-category">Clothes</a>
-                <div className="price-box">
-                    <p className="price">$45.00</p>
-                    <del>$12.00</del>
-                </div>
-                </div>
+        <div className="product-main">
+            <h2 className="title">Best Selling Items</h2>
+            <div className="product-grid">
+                {displayedProducts.map(product => (
+                    <ProductShowcase key={product.id} product={product} />
+                ))}
             </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/clothes-2.jpg")}  alt="girls pink embro design top" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Girls pnk Embro design Top</h4>
-                </a>
-                <a href="#" className="showcase-category">Clothes</a>
-                <div className="price-box">
-                    <p className="price">$61.00</p>
-                    <del>$9.00</del>
-                </div>
-                </div>
+            <div className="slider-controls">
+            <div className="slider-controls">
+                <button onClick={handlePrevious} className="btn-action">
+                    <IonIcon icon={chevronBackOutline} style={{ fontSize: '24px' }} />
+                </button>
+                <button onClick={handleNext} className="btn-action">
+                    <IonIcon icon={chevronForwardOutline} style={{ fontSize: '24px' }} />
+                </button>
             </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/clothes-3.jpg")}  alt="black floral wrap midi skirt" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Black Floral Wrap Midi Skirt</h4>
-                </a>
-                <a href="#" className="showcase-category">Clothes</a>
-                <div className="price-box">
-                    <p className="price">$76.00</p> 
-                    <del>$25.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shirt-1.jpg")} alt="pure garment dyed cotton shirt" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Pure Garment Dyed Cotton Shirt</h4>
-                </a>
-                <a href="#" className="showcase-category">Mens Fashion</a>
-                <div className="price-box">
-                    <p className="price">$68.00</p>
-                    <del>$31.00</del>
-                </div>
-                </div>
-            </div>
-            </div>
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jacket-5.jpg")} alt="men yarn fleece full-zip jacket" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">MEN Yarn Fleece Full-Zip Jacket</h4>
-                </a>
-                <a href="#" className="showcase-category">Winter wear</a>
-                <div className="price-box">
-                    <p className="price">$61.00</p>
-                    <del>$11.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jacket-1.jpg")}  alt="mens winter leathers jackets" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Mens Winter Leathers Jackets</h4>
-                </a>
-                <a href="#" className="showcase-category">Winter wear</a>
-                <div className="price-box">
-                    <p className="price">$32.00</p>
-                    <del>$20.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jacket-3.jpg")}  alt="mens winter leathers jackets" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Mens Winter Leathers Jackets</h4>
-                </a>
-                <a href="#" className="showcase-category">Jackets</a>
-                <div className="price-box">
-                    <p className="price">$50.00</p>
-                    <del>$25.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shorts-1.jpg")} alt="better basics french terry sweatshorts" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Better Basics French Terry Sweatshorts</h4>
-                </a>
-                <a href="#" className="showcase-category">Shorts</a>
-                <div className="price-box">
-                    <p className="price">$20.00</p>
-                    <del>$10.00</del>
-                </div>
-                </div>
-            </div>
+
             </div>
         </div>
-        </div>
-        <div className="product-showcase">
-        <h2 className="title">Trending</h2>
-        <div className="showcase-wrapper  has-scrollbar">
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/sports-1.jpg")} alt="running & trekking shoes - white" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
+    );
+};
+
+const ProductShowcase = ({ product }) => {
+    const productImage = product.image ? `${urlImageProduct}/${product.image}` : 'placeholder-image.jpg';
+
+    return (
+        <div className="showcase">
+            <div className="showcase-banner">
+                <img src={productImage} className="product-img default" alt="Product" />
+                <img src={productImage} width={300} className="product-img hover" alt="Product Hover" />
+                <p className="showcase-badge angle black">New Arrival</p>
+                <div className="showcase-actions">
+                    <button className="btn-action">
+                        <IonIcon icon={heartOutline} />
+                    </button>
+                    <button className="btn-action">
+                        <Link to={`/productdetail/${product.id}`}>
+                            <IonIcon icon={eyeOutline} />
+                        </Link>
+                    </button>
+                    <button className="btn-action">
+                        <IonIcon icon={repeatOutline} />
+                    </button>
+                    <button className="btn-action">
+                        <IonIcon icon={bagAddOutline} />
+                    </button>
+                </div>
+            </div>
+            <div className="showcase-content">
+                <a href="#" className="showcase-category">{product.category}</a>
                 <a href="#">
-                    <h4 className="showcase-title">Running &amp; Trekking Shoes - White</h4>
+                    <h3 className="showcase-title">{product.name}</h3>
                 </a>
-                <a href="#" className="showcase-category">Sports</a>
-                <div className="price-box">
-                    <p className="price">$49.00</p>
-                    <del>$15.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/sports-2.jpg")} alt="trekking & running shoes - black" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
                 <a href="#">
-                    <h4 className="showcase-title">Trekking &amp; Running Shoes - black</h4>
+                    <h3 className="showcase-title">{product.description}</h3>
                 </a>
-                <a href="#" className="showcase-category">Sports</a>
+                <div className="showcase-rating">
+                    {Array(product.evaluate).fill().map((_, index) => (
+                        <IonIcon key={index} icon={star} />
+                    ))}
+                    {Array(5 - product.evaluate).fill().map((_, index) => (
+                        <IonIcon key={product.evaluate + index} icon={starOutline} />
+                    ))}
+                </div>
                 <div className="price-box">
-                    <p className="price">$78.00</p>
-                    <del>$36.00</del>
+                    <p className="price">${product.price}</p>
+                    <del>${product.previousPrice}</del>
                 </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/party-wear-1.jpg")} alt="womens party wear shoes" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Womens Party Wear Shoes</h4>
-                </a>
-                <a href="#" className="showcase-category">Party wear</a>
-                <div className="price-box">
-                    <p className="price">$94.00</p>
-                    <del>$42.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/sports-3.jpg")} alt="sports claw women's shoes" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Sports Claw Women's Shoes</h4>
-                </a>
-                <a href="#" className="showcase-category">Sports</a>
-                <div className="price-box">
-                    <p className="price">$54.00</p>
-                    <del>$65.00</del>
-                </div>
-                </div>
-            </div>
-            </div>
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/sports-6.jpg")} alt="air tekking shoes - white" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Air Trekking Shoes - white</h4>
-                </a>
-                <a href="#" className="showcase-category">Sports</a>
-                <div className="price-box">
-                    <p className="price">$52.00</p>
-                    <del>$55.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shoe-3.jpg")} alt="Boot With Suede Detail" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Boot With Suede Detail</h4>
-                </a>
-                <a href="#" className="showcase-category">boots</a>
-                <div className="price-box">
-                    <p className="price">$20.00</p>
-                    <del>$30.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shoe-1.jpg")} alt="men's leather formal wear shoes" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Men's Leather Formal Wear shoes</h4>
-                </a>
-                <a href="#" className="showcase-category">formal</a>
-                <div className="price-box">
-                    <p className="price">$56.00</p>
-                    <del>$78.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shoe-2.jpg")} alt="casual men's brown shoes" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Casual Men's Brown shoes</h4>
-                </a>
-                <a href="#" className="showcase-category">Casual</a>
-                <div className="price-box">
-                    <p className="price">$50.00</p>
-                    <del>$55.00</del>
-                </div>
-                </div>
-            </div>
             </div>
         </div>
-        </div>
-        <div className="product-showcase">
-        <h2 className="title">Top Rated</h2>
-        <div className="showcase-wrapper  has-scrollbar">
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/watch-3.jpg")} alt="pocket watch leather pouch" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Pocket Watch Leather Pouch</h4>
-                </a>
-                <a href="#" className="showcase-category">Watches</a>
-                <div className="price-box">
-                    <p className="price">$50.00</p>
-                    <del>$34.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jewellery-3.jpg")} alt="silver deer heart necklace" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Silver Deer Heart Necklace</h4>
-                </a>
-                <a href="#" className="showcase-category">Jewellery</a>
-                <div className="price-box">
-                    <p className="price">$84.00</p>
-                    <del>$30.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/perfume.jpg")} alt="titan 100 ml womens perfume" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Titan 100 Ml Womens Perfume</h4>
-                </a>
-                <a href="#" className="showcase-category">Perfume</a>
-                <div className="price-box">
-                    <p className="price">$42.00</p>
-                    <del>$10.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/belt.jpg")} alt="men's leather reversible belt" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Men's Leather Reversible Belt</h4>
-                </a>
-                <a href="#" className="showcase-category">Belt</a>
-                <div className="price-box">
-                    <p className="price">$24.00</p>
-                    <del>$10.00</del>
-                </div>
-                </div>
-            </div>
-            </div>
-            <div className="showcase-container">
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jewellery-2.jpg")} alt="platinum zircon classic ring" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">platinum Zircon Classic Ring</h4>
-                </a>
-                <a href="#" className="showcase-category">jewellery</a>
-                <div className="price-box">
-                    <p className="price">$62.00</p>
-                    <del>$65.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/watch-1.jpg")} alt="smart watche vital plus" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Smart watche Vital Plus</h4>
-                </a>
-                <a href="#" className="showcase-category">Watches</a>
-                <div className="price-box">
-                    <p className="price">$56.00</p>
-                    <del>$78.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/shampoo.jpg")} alt="shampoo conditioner packs" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">shampoo conditioner packs</h4>
-                </a>
-                <a href="#" className="showcase-category">cosmetics</a>
-                <div className="price-box">
-                    <p className="price">$20.00</p>
-                    <del>$30.00</del>
-                </div>
-                </div>
-            </div>
-            <div className="showcase">
-                <a href="#" className="showcase-img-box">
-                <img src={require("../../../../assets/images/products/jewellery-1.jpg")} alt="rose gold peacock earrings" className="showcase-img" width={70} />
-                </a>
-                <div className="showcase-content">
-                <a href="#">
-                    <h4 className="showcase-title">Rose Gold Peacock Earrings</h4>
-                </a>
-                <a href="#" className="showcase-category">jewellery</a>
-                <div className="price-box">
-                    <p className="price">$20.00</p>
-                    <del>$30.00</del>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
     );
 };
 

@@ -25,10 +25,14 @@ public interface ProductService {
     ProductResponse update(UUID id, ProductRequest productRequest);
     
     ProductResponse delete(UUID id);
+
+    List<ProductResponse> findByUser(UUID id);
     
     List<ProductResponse> findByBrandId(UUID brandId);
     
     List<ProductResponse> getNewProducts();
 
     List<ProductResponse> getRelatedProducts(UUID id);
+
+    List<ProductResponse> searchByName(String name);
 }

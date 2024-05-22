@@ -37,5 +37,11 @@ const ProductService = {
     delete: (id) => {
         return httpAxios.delete(`product-services/api/products/delete/${id}`);
     },
+    search: (name) => {
+        return httpAxios.get(`product-services/api/products/search/${name}`);
+    },
+    getByUser: (id) => {
+        return httpAxios.get(`product-services/api/products/get-by-user/${id}`);
+    },
 }
 export default ProductService;

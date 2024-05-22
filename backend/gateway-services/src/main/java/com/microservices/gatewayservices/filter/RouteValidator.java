@@ -14,7 +14,8 @@ public class RouteValidator {
         "/user-services/api/users/token",
         "/user-services/api/**",
         "/image-service/**",
-            "/eureka"
+            "/eureka",
+        "/onfig-services/api/sliders/get-all"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

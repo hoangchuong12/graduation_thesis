@@ -6,34 +6,37 @@ import { FaEdit } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 
+
 const ProductImportIndex = () => {
     const [imports, setImports] = useState([]);
     const [reload] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        const fetchImports = async () => {
             const result = await ProductStoreService.getImports();
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setImports(result);
-            // console.log("imports is:", result);
-        })();
+        };
+        fetchImports();
     }, [reload]);
 
     return (
-        <div className="content">
+        <div className="content mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý nhập hàng</h1>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý nhập hàng</h1>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/store/index">Về kho hàng</a>
+                            <Link to="/admin/product/store/index" className="text-white text-decoration-none">Về kho hàng</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -69,18 +72,14 @@ const ProductTableRow = ({ importItem }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // console.log("import item: ", importItem);
                 const fetchedStore = await ProductStoreService.getById(importItem.storeId);
-                // console.log("store: ", fetchedStore);
                 setStore(fetchedStore);
 
-                // Fetch product only if store is fetched successfully
                 if (fetchedStore) {
                     const fetchedProduct = await ProductService.getById(fetchedStore.productId);
                     setProduct(fetchedProduct);
                 }
 
-                // Fetch option value only if store is fetched successfully
                 if (fetchedStore && fetchedStore.optionValueId !== null) {
                     const fetchedOptionValue = await ProductOptionService.getOptionValue(fetchedStore.optionValueId);
                     setOptionValue(fetchedOptionValue);
@@ -111,11 +110,10 @@ const ProductTableRow = ({ importItem }) => {
                         <span>Loading...</span>
                     )}
                 </div>
-                <div className="function_style">
-                    <Link to={store && `/admin/product/import/edit/${importItem.id}`} className='px-1 text-primary'>
-                        <FaEdit size={24}/>
+                <div className="d-flex justify-content-start mt-2">
+                    <Link to={store && `/admin/product/import/edit/${importItem.id}`} className='btn btn-primary me-1'>
+                        <FaEdit size={24} />
                     </Link>
-                    
                 </div>
             </td>
             <td>
@@ -133,6 +131,5 @@ const ProductTableRow = ({ importItem }) => {
         </tr>
     );
 };
-
 
 export default ProductImportIndex;

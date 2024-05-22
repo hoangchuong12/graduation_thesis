@@ -26,18 +26,47 @@ public class InformationServiceImpl implements InformationService {
     public InfomationsResponse create(InformationRequest informationRequest) {
         Information information = new Information();
         mapRequestToEntity(informationRequest, information);
+        information.setCreatedAt(LocalDateTime.now());
         Information savedInformation = informationRepository.save(information);
         return mapInformationToInformationResponse(savedInformation);
     }
 
-    @Override
+   @Override
     public void setImage(UUID id, String image) {
-        // Implement logic to set image for Information entity by id
+        Information information = informationRepository.findById(id).orElse(null);
+        information.setLogo(image);
+        informationRepository.save(information);
+    }
+
+    @Override
+    public void switchStatus(UUID id) {
+        Information information = informationRepository.findById(id).orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+        // Toggle the status value
+        int currentStatus = information.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        information.setStatus(newStatus);
+        informationRepository.save(information);
     }
 
     @Override
     public void trash(UUID id) {
-        // Implement logic to set status to trashed for Information entity by id
+        Information information = informationRepository.findById(id).orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+        // Set status to 2 (indicating trashed)
+        information.setStatus(2);
+        informationRepository.save(information);
+    }
+
+    @Override
+    public void isDisplay(UUID id) {
+        Information information = informationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+         // Chuyển đổi giá trị của status
+         int currentStatus = information.getStatus();
+         int newStatus = (currentStatus == 3) ? 1 : 3;
+         information.setStatus(newStatus);
+         // Lưu trạng thái đã chuyển đổi
+         informationRepository.save(information);
     }
 
     @Override

@@ -7,3 +7,5 @@ export const urlImageTag= "http://localhost:9191/image-service/images/tags/";
 export const urlImageProduct= "http://localhost:9191/image-service/images/products/";  
 export const urlImageSlider= "http://localhost:9191/image-service/images/sliders/";  
 export const urlImageProductGallary= "http://localhost:9191/image-service/images/product-gallaries/"; 
+export const urlImageInformation= "http://localhost:9191/image-service/images/informations/";  
+export const urlImageFeedback= "http://localhost:9191/image-service/images/feedbacks/";  

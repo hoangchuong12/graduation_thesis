@@ -26,5 +26,9 @@ public class InformationRequest {
 
     private String repersentPhone;
 
+    private UUID createdBy;
+
     private UUID updatedBy;
+
+    private int status;
 }

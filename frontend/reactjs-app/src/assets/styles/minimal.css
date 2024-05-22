@@ -1,0 +1,32 @@
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* Adjust based on your layout */
+}
+
+.btn-action {
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: 0 10px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-action:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-action:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+.btn-action IonIcon {
+    font-size: 20px; /* Adjust size as needed */
+    color: #333; /* Adjust the icon color */
+}
+

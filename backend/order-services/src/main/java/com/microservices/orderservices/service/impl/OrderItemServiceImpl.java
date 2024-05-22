@@ -78,11 +78,61 @@ public class OrderItemServiceImpl implements OrderItemService {
         return null;
     }
 
+    @Override
+    public void switchStatus(UUID id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Chuyển đổi giá trị của status
+        int currentStatus = orderItem.getStatus();
+        int newStatus = (currentStatus == 1) ? 0 : 1;
+        orderItem.setStatus(newStatus);
+        // Lưu trạng thái đã chuyển đổi
+        orderItemRepository.save(orderItem);
+    }
+
+    @Override
+    public void trash(UUID id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 2
+        orderItem.setStatus(2);
+
+        // Lưu trạng thái đã thay đổi
+        orderItemRepository.save(orderItem);
+    }
+
+    @Override
+    public void export(UUID id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 3
+        orderItem.setStatus(3);
+
+        // Lưu trạng thái đã thay đổi
+        orderItemRepository.save(orderItem);
+    }
+
+    @Override
+    public void complete(UUID id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+
+        // Đặt trạng thái thành 4
+        orderItem.setStatus(4);
+
+        // Lưu trạng thái đã thay đổi
+        orderItemRepository.save(orderItem);
+    }
+
     private OrderItemResponse mapOrderItemToResponse(OrderItem orderItem) {
         return OrderItemResponse.builder()
                 .id(orderItem.getId())
                 .orderId(orderItem.getOrderId())
                 .productId(orderItem.getProductId())
+                .optionValueId(orderItem.getOptionValueId())
                 .quantity(orderItem.getQuantity())
                 .totalPrice(orderItem.getTotalPrice())
                 .createdAt(orderItem.getCreatedAt())

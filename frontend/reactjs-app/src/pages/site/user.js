@@ -27,6 +27,7 @@ const MyUser = () => {
                 }
                 const resultOrders = await OrderService.getByUser(user.userId);
                 if (resultOrders) {
+                    resultOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     console.log('orders in MyUser:', resultOrders);
                     setOrders(resultOrders);
                 }
@@ -47,6 +48,7 @@ const MyUser = () => {
             for (const order of orders) {
                 const orderItems = await OrderItemService.getByOrder(order.id);
                 if (orderItems) {
+                    orderItems.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     for (const item of orderItems) {
                         const product = await ProductService.getById(item.productId);
                         if (product) {
@@ -116,18 +118,23 @@ const MyUser = () => {
                         <div className="col-lg-4">
                             <div className="card mb-4 align-items-center">
                                 <div className="card-body text-center">
-                                    <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : ''} alt="avatar" className="rounded-circle img-fluid mb-3" style={{ width: '150px' }} />
-                                    <h5 className="my-3">{userInfor && userInfor.name ? userInfor.name : ""}</h5>
-                                    <p className="text-muted mb-1">{userInfor && userInfor.role.name === "Buyer" ? "Người mua hàng" : "Người bán hàng"}</p>
-                                    <p className="text-muted mb-4">{userInfor && userInfor.address ? userInfor.address : ""}</p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : ''} alt="avatar" className="rounded-circle img-fluid mb-3" style={{ width: '150px', alignSelf: 'center' }} />
+                                        <h5 className="my-3">{userInfor && userInfor.name ? userInfor.name : ""}</h5>
+                                        <p className="text-muted mb-1">{userInfor && userInfor.role.name === "Buyer" ? "Người mua hàng" : "Người bán hàng"}</p>
+                                        <p className="text-muted mb-4">{userInfor && userInfor.address ? userInfor.address : ""}</p>
+                                    </div>
                                     <div className="d-flex justify-content-center mb-2">
-                                        {userInfor && userInfor.role.name === "Seller" && (
-                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2">Cửa hàng</button>
+                                        {userInfor && userInfor.role.name === "Seller" ? (
+                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/my-store/${user.userId}`)}>Cửa hàng</button>
+                                        ) : (
+                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/register-store/${user.userId}`)}>Đăng ký cửa hàng</button>
                                         )}
-                                        <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-outline-primary">Tài khoản</button>
+                                        <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-outline-primary" onClick={() => navigate(`/my-user-manager`)}>Tài khoản</button>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                         <div className="col-lg-8">
                             <div className="card mb-4">

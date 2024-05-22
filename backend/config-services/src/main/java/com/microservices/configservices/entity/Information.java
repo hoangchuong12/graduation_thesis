@@ -35,7 +35,13 @@ public class Information {
 
     private String repersentPhone;
 
+    private UUID createdBy;
+
+    private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     private UUID updatedBy;
+
+    private int status;
 }

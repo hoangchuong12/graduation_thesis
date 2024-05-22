@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageTag } from '../../../config';
 
+
 const TagIndex = () => {
     const [tags, setTags] = useState([]);
     const [reload, setReload] = useState(0);
@@ -44,22 +45,25 @@ const TagIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
     return (
-        <div className="content">
+        <div className="content mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý nhãn</h1>
-                <Link to="/admin/tag/add" className="btn-add">Thêm mới</Link>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý nhãn</h1>
+                    <Link to="/admin/tag/add" className="btn btn-primary">Thêm mới</Link>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/tag/trash">Thùng rác</a>
+                            <Link to="/admin/tag/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -74,58 +78,54 @@ const TagIndex = () => {
                     </thead>
                     <tbody>
                         {tags && tags.length > 0 &&
-                            tags.map((tag, index) => {
-                                return (
-                                    <tr key={tag.id} className="datarow">
-                                        <td className="text-center">
-                                            <input type="checkbox" id={`checkId${index}`} />
-                                        </td>
-                                        <td>
-                                            <div className="name">
-                                                <a href="menu_index.html">
-                                                    {tag.name}
-                                                </a>
-                                            </div>
-                                            <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(tag.id, tag.status)}
-                                                        className={
-                                                            tag.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {tag.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/tag/edit/" + tag.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(tag.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
-                                        </td>
-                                        <td>
-                                            {tag.image ? (
-                                                <img src={urlImageTag + tag.image} className="img-fluid user-avatar" alt="Hinh anh" />
-                                            ) : (
-                                                <p>Không có ảnh</p>
-                                            )}
-                                        </td>
-                                        <td>{tag.description}</td>
-                                        <td>{tag.createdAt}</td>
-                                        <td>{tag.createdBy}</td>
-                                        <td>
+                            tags.map((tag, index) => (
+                                <tr key={tag.id} className="datarow">
+                                    <td className="text-center">
+                                        <input type="checkbox" id={`checkId${index}`} />
+                                    </td>
+                                    <td>
+                                        <div className="name">
+                                            <Link to={`/admin/tag/edit/${tag.id}`}>
+                                                {tag.name}
+                                            </Link>
+                                        </div>
+                                        <div className="d-flex justify-content-start mt-2">
+                                            <button
+                                                onClick={() => handleStatus(tag.id, tag.status)}
+                                                className={`btn ${tag.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                            >
+                                                {tag.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                            </button>
+                                            <Link to={`/admin/tag/edit/${tag.id}`} className='btn btn-primary me-1'>
+                                                <FaEdit size={20}/>
+                                            </Link>
+                                            <button
+                                                onClick={() => HandTrash(tag.id)}
+                                                className="btn btn-danger">
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {tag.image ? (
+                                            <img src={`${urlImageTag}/${tag.image}`} className="img-fluid user-avatar" alt="Hinh anh" />
+                                        ) : (
+                                            <p>Không có ảnh</p>
+                                        )}
+                                    </td>
+                                    <td>{tag.description}</td>
+                                    <td>{tag.createdAt}</td>
+                                    <td>{tag.createdBy}</td>
+                                    <td>
                                         <button
-                                                        onClick={() => handleDislay(tag.id)}
-                                                        className={
-                                                            tag.status === 3 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {tag.status === 3 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
+                                            onClick={() => handleDislay(tag.id)}
+                                            className={`btn ${tag.status === 3 ? 'btn-success' : 'btn-danger'} me-1`}
+                                        >
+                                            {tag.status === 3 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
                         }
                     </tbody>
                 </table>

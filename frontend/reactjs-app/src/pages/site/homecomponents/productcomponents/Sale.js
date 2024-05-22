@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IonIcon } from '@ionic/react';
 import { Link } from 'react-router-dom';
-import { star, starOutline,bagAddOutline,repeatOutline,eyeOutline , heartOutline } from 'ionicons/icons';
+import { star, starOutline, bagAddOutline, repeatOutline, eyeOutline, heartOutline, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import ProductSaleService from '../../../../services/ProductSaleService';
 import { urlImageProduct } from '../../../../config';
 import ProductService from '../../../../services/ProductService';

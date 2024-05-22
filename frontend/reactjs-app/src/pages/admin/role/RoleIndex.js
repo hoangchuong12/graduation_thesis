@@ -35,21 +35,23 @@ const RoleIndex = () => {
     };
 
     return (
-        <div className="content">
+        <div className="content ">
             <section className="content-header my-2">
-                <h1 className="d-inline">Phân Quyền</h1>
-                <Link to="/admin/role/add" className="btn-add">Thêm mới</Link>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Phân Quyền</h1>
+                    <Link to="/admin/role/add" className="btn btn-primary">Thêm mới</Link>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/role/trash">Thùng rác</a>
+                            <Link to="/admin/role/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -67,28 +69,27 @@ const RoleIndex = () => {
                                     return (
                                         <tr key={role.id} className="datarow">
                                             <td className="text-center">
-                                                <input type="checkbox" id="checkId" />
+                                                <input type="checkbox" id={`checkId${index}`} />
                                             </td>
                                             <td>
                                                 <div className="name">
-                                                    <a href="menu_index.html">
+                                                    <Link to={`/admin/role/edit/${role.id}`}>
                                                         {role.name}
-                                                    </a>
+                                                    </Link>
                                                 </div>
-                                                <div className="function_style">
+                                                <div className="d-flex justify-content-start mt-2">
                                                     <button
                                                         onClick={() => handleStatus(role.id, role.status)}
-                                                        className={
-                                                            role.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
+                                                        className={`btn ${role.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                                    >
                                                         {role.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                                                     </button>
-                                                    <Link to={"/admin/role/edit/" + role.id} className='px-1 text-primary'>
+                                                    <Link to={`/admin/role/edit/${role.id}`} className='btn btn-primary me-1'>
                                                         <FaEdit />
                                                     </Link>
                                                     <button
                                                         onClick={() => HandTrash(role.id)}
-                                                        className="btn-none px-1 text-danger">
+                                                        className="btn btn-danger">
                                                         <FaTrash />
                                                     </button>
                                                 </div>
@@ -98,15 +99,15 @@ const RoleIndex = () => {
                                         </tr>
                                     );
                                 }
-                                // Add a return statement for the case where the condition isn't met
+                       
                                 return null;
                             })
                         }
                     </tbody>
                 </table>
-
             </section>
         </div>
     );
 };
+
 export default RoleIndex;

@@ -102,4 +102,16 @@ public class ProductController {
         }
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<ProductResponse>> searchProductsByName(@PathVariable String name) {
+        List<ProductResponse> products = productService.searchByName(name);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/get-by-user/{userId}")
+    public ResponseEntity<List<ProductResponse>> getByUser(@PathVariable UUID userId) {
+        List<ProductResponse> products = productService.findByUser(userId);
+        return ResponseEntity.ok(products);
+    }
+
 }

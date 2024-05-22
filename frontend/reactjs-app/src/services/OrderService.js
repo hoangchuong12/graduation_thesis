@@ -8,6 +8,9 @@ const OrderService = {
     getById: (id) => {
         return httpAxios.get(`order-services/api/orders/get-by-id/${id}`);
     },
+    getByUser: (id) => {
+        return httpAxios.get(`order-services/api/orders/get-by-user/${id}`);
+    },
     getAll: () => {
         return httpAxios.get(`order-services/api/orders/get-all`);
     },

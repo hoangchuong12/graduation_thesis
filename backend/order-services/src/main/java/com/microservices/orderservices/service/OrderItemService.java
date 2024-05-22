@@ -20,4 +20,11 @@ public interface OrderItemService {
 
     OrderItemResponse delete(UUID id);
 
+    void switchStatus(UUID id);
+
+    void trash(UUID id);
+
+    void export(UUID id);
+
+    void complete(UUID id);
 }

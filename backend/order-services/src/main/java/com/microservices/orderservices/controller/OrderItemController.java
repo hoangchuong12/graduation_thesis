@@ -64,4 +64,28 @@ public class OrderItemController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        orderItemService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/trash/{id}")
+    public ResponseEntity<Void> trash(@PathVariable UUID id) {
+        orderItemService.trash(id);
+        return ResponseEntity.ok().build();
+    }  
+
+    @PutMapping("/export/{id}")
+    public ResponseEntity<Void> export(@PathVariable UUID id) {
+        orderItemService.export(id);
+        return ResponseEntity.ok().build();
+    }  
+
+    @PutMapping("/complete/{id}")
+    public ResponseEntity<Void> complete(@PathVariable UUID id) {
+        orderItemService.complete(id);
+        return ResponseEntity.ok().build();
+    }  
 }

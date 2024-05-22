@@ -40,21 +40,23 @@ const SliderIndex = () => {
         }
     };
     return (
-        <div className="content">
+        <div className="content mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý slider</h1>
-                <Link to="/admin/slider/add" className="btn-add">Thêm mới</Link>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý slider</h1>
+                    <Link to="/admin/slider/add" className="btn btn-primary">Thêm mới</Link>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/slider/trash">Thùng rác</a>
+                            <Link to="/admin/slider/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -76,31 +78,30 @@ const SliderIndex = () => {
                                         </td>
                                         <td>
                                             <div className="name">
-                                                <a href="menu_index.html">
+                                                <Link to={`/admin/slider/edit/${slider.id}`}>
                                                     {slider.name}
-                                                </a>
+                                                </Link>
                                             </div>
-                                            <div className="function_style">
-                                                    <button
-                                                        onClick={() => handleStatus(slider.id, slider.status)}
-                                                        className={
-                                                            slider.status === 1 ? "border-0 px-1 text-success" : "border-0 px-1 text-danger"
-                                                        }>
-                                                        {slider.status === 1 ? <FaToggleOn size={24}/> : <FaToggleOff size={24}/>}
-                                                    </button>
-                                                    <Link to={"/admin/slider/edit/" + slider.id} className='px-1 text-primary'>
-                                                        <FaEdit size={20}/>
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => HandTrash(slider.id)}
-                                                        className="btn-none px-1 text-danger">
-                                                        <FaTrash />
-                                                    </button>
-                                                </div>
+                                            <div className="d-flex justify-content-start mt-2">
+                                                <button
+                                                    onClick={() => handleStatus(slider.id, slider.status)}
+                                                    className={`btn ${slider.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                                >
+                                                    {slider.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
+                                                </button>
+                                                <Link to={`/admin/slider/edit/${slider.id}`} className='btn btn-primary me-1'>
+                                                    <FaEdit />
+                                                </Link>
+                                                <button
+                                                    onClick={() => HandTrash(slider.id)}
+                                                    className="btn btn-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>
                                             {slider.image ? (
-                                                <img src={urlImageSlider + slider.image} className="img-fluid user-avatar" alt="Hinh anh" />
+                                                <img src={`${urlImageSlider}/${slider.image}`} className="img-fluid user-avatar" alt="Hinh anh" />
                                             ) : (
                                                 <p>Không có ảnh</p>
                                             )}
@@ -108,8 +109,6 @@ const SliderIndex = () => {
                                         <td>{slider.desciption}</td>
                                         <td>{slider.createdAt}</td>
                                         <td>{slider.createdBy}</td>
-                                        <td>
-                                        </td>
                                     </tr>
                                 );
                             })

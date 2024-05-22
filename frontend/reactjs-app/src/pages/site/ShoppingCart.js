@@ -113,14 +113,14 @@ const Cart = () => {
             status: 1,
         };
         const updateCartToOrder = await OrderService.update(cart.id, dataUpdateCart);
-        if(updateCartToOrder !== null){
+        if (updateCartToOrder !== null) {
             //Chạy vòng lặp orderItems ở đây
             if (orderItems) {
                 for (const item of orderItems) {
                     console.log("Inside loop:", item);
                     const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
                     console.log("store of item:", storeOfItem);
-                    if(storeOfItem !== null){
+                    if (storeOfItem !== null) {
                         const updatedProductStore = {
                             productId: storeOfItem.productId,
                             optionValueId: storeOfItem.optionValueId,
@@ -137,7 +137,7 @@ const Cart = () => {
                         }
                     }
                 }
-            }        
+            }
             const cart = await OrderService.getCart(user.userId);
             if (cart) {
                 setCart(cart);
@@ -150,7 +150,7 @@ const Cart = () => {
                     setOrderItems(itemsWithProducts);
                 }
             }
-            console.log("UPDATE cart to order:",updateCartToOrder);
+            console.log("UPDATE cart to order:", updateCartToOrder);
             toast.success("Đặt hàng thành công");
         }
     }
@@ -183,19 +183,7 @@ const Cart = () => {
                                             <div className="p-5">
                                                 <h3 className="fw-bold mb-5 mt-2 pt-1">Tổng đơn</h3>
                                                 <hr className="my-4" />
-                                                {/* <div className="d-flex justify-content-between mb-4">
-                                                    <h5 className="text-uppercase">Tổng giá</h5>
-                                                    <h5>{order.totalPrice}</h5>
-                                                </div> */}
-                                                {/* <h5 className="text-uppercase mb-3">Shipping</h5>
-                                                <div className="mb-4 pb-2">
-                                                    <select data-mdb-select-init>
-                                                        <option value={1}>Standard-Delivery- €5.00</option>
-                                                        <option value={2}>Two</option>
-                                                        <option value={3}>Three</option>
-                                                        <option value={4}>Four</option>
-                                                    </select>
-                                                </div> */}
+
                                                 <h5 className="text-uppercase mb-3">Thông tin nhận hàng</h5>
                                                 <div className="mb-5">
                                                     <div data-mdb-input-init className="form-outline">
@@ -216,7 +204,18 @@ const Cart = () => {
                                                     <h5 className="text-uppercase">Tổng thanh toán</h5>
                                                     <h5>{cart.totalPrice}</h5>
                                                 </div>
-                                                <button type="button" onClick={submitOrderInCart} data-mdb-button-init data-mdb-ripple-init className="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Đặt hàng</button>
+                                                <button
+                                                    type="button"
+                                                    onClick={submitOrderInCart}
+                                                    data-mdb-button-init
+                                                    data-mdb-ripple-init
+                                                    className="btn btn-dark btn-block btn-lg"
+                                                    data-mdb-ripple-color="dark"
+                                                    disabled={!orderItems || orderItems.length === 0} // Kiểm tra và vô hiệu hóa nút nếu không có sản phẩm trong giỏ hàng
+                                                >
+                                                    Đặt hàng
+                                                </button>
+
                                             </div>
                                         )}
                                     </div>

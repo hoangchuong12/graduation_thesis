@@ -14,6 +14,8 @@ public interface InformationService {
 
     void setImage(UUID id, String image);
 
+    void switchStatus(UUID id);
+
     void trash(UUID id);
 
     InfomationsResponse getById(UUID id);
@@ -23,4 +25,6 @@ public interface InformationService {
     InfomationsResponse update(UUID id, InformationRequest InformationRequest);
 
     InfomationsResponse delete(UUID id);
+
+    void isDisplay(UUID id);
 }

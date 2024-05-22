@@ -23,6 +23,12 @@ const OrderItemService = {
     trash: (id) => {
         return httpAxios.put(`order-services/api/order-items/trash/${id}`);
     },
+    export: (id) => {
+        return httpAxios.put(`order-services/api/order-items/export/${id}`);
+    },
+    complete: (id) => {
+        return httpAxios.put(`order-services/api/order-items/complete/${id}`);
+    },
     delete: (id) => {
         return httpAxios.delete(`order-services/api/order-items/delete/${id}`);
     }

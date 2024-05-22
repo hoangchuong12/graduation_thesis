@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Outlet, useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css'; // Ensure this line is correctly importing the icons
 import './layoutAdmin.css';
 import { FaProductHunt, FaClone, FaRegUser } from "react-icons/fa";
 import { MdExitToApp, MdContactSupport } from "react-icons/md";
@@ -19,29 +20,28 @@ export const useAdminContext = () => useContext(AdminContext);
 
 const LayoutAdmin = () => {
     const [user, setUser] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const sessionUserAdmin = sessionStorage.getItem('useradmin');
         if (sessionUserAdmin !== null) {
-            // console.log("userId and token: ", sessionUserAdmin);
             try {
                 const parsedUser = JSON.parse(sessionUserAdmin);
                 if (parsedUser && typeof parsedUser === 'object') {
                     UserService.getUserById(parsedUser.userId)
-                    .then(userGet => {
-                        if(userGet.role.role === 1){
-                            // console.log("user infor: ", userGet);
-                        setUser(userGet);
-                        }else{
-                            sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
-                            setUser(null);
-                            navigate("/admin/login");
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user:', error);
-                    });
+                        .then(userGet => {
+                            if (userGet.role.role === 1) {
+                                setUser(userGet);
+                            } else {
+                                sessionStorage.removeItem('useradmin');
+                                setUser(null);
+                                navigate("/admin/login");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching user:', error);
+                        });
                 } else {
                     console.error('Stored user is not a valid JSON object.');
                 }
@@ -55,26 +55,23 @@ const LayoutAdmin = () => {
         try {
             const response = await UserService.loginAdmin(authRequest);
             if (response) {
-                // console.log("userid and token : ", response);
                 const { userId, token } = response;
                 const userData = { userId, token };
-                // console.log("user login = ",userData)
                 sessionStorage.setItem('useradmin', JSON.stringify(userData));
                 UserService.getUserById(userData.userId)
-                        .then(userGet => {
-                            if(userGet.role.role === 1){
-                                // console.log("user infor cuccess: ", userGet);
+                    .then(userGet => {
+                        if (userGet.role.role === 1) {
                             setUser(userGet);
-                            }else{
-                                sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
-                                setUser(null);
-                                navigate("/admin/login");
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching user:', error);
-                        });
-                        console.log('Đăng nhập thành công');
+                        } else {
+                            sessionStorage.removeItem('useradmin');
+                            setUser(null);
+                            navigate("/admin/login");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user:', error);
+                    });
+                toast.success('Đăng nhập thành công');
                 navigate("/admin");
             } else {
                 toast.error("Đăng nhập thất bại!");
@@ -86,7 +83,7 @@ const LayoutAdmin = () => {
     };
 
     const logout = () => {
-        sessionStorage.removeItem('useradmin'); // Xóa thông tin người dùng từ Session Storage
+        sessionStorage.removeItem('useradmin');
         setUser(null);
         navigate("/admin");
     };
@@ -131,124 +128,129 @@ const LayoutAdmin = () => {
                         <section className="hdl-content">
                             <div className="container-fluid">
                                 <div className="row">
-                                    <div className="col-md-2 bg-dark p-0 hdl-left">
-                                        <div className="hdl-left">
-                                            <div className="dashboard-name">
-                                                Bản điều khiển
-                                            </div>
-                                            <nav className="m-2 mainmenu">
-                                                <ul className="main">
-                                                    <li className="hdlitem item-sub" id="item1" onClick={() => handleItemClick('item1')}>
-                                                        <FaProductHunt className="icon-left" />
-                                                        <a href="#nqt">Sản phẩm</a>
-                                                        <i className="fa-solid fa-plus icon-right"></i>
-                                                        <ul className="submenu">
-                                                            <li>
-                                                                <a href="/admin/product/index" className="margin-left-submenu">Tất cả sản phẩm</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                    <li className="hdlitem item-sub" id="item2" onClick={() => handleItemClick('item2')}>
-                                                        <RiArticleFill className="icon-left" />
-                                                        <a href="#nqt">Bài viết</a>
-                                                        <i className="fa-solid fa-plus icon-right"></i>
-                                                        <ul className="submenu">
-                                                            <li>
-                                                                <a href="/admin/post/index">Tất cả bài viết</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/topic/index">Chủ đề</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/page/index">Trang đơn</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
+                                    {isSidebarOpen && (
+                                        <div className="col-md-2 bg-dark p-0 hdl-left">
+                                            <div className="hdl-left">
+                                                <div className="dashboard-name">
+                                                    Bản điều khiển
+                                                </div>
+                                                <nav className="m-2 mainmenu">
+                                                    <ul className="main">
+                                                        <li className="hdlitem item-sub" id="item1" onClick={() => handleItemClick('item1')}>
+                                                            <FaProductHunt className="icon-left" />
+                                                            <a href="#nqt">Sản phẩm</a>
+                                                            <i className="fa-solid fa-plus icon-right"></i>
+                                                            <ul className="submenu">
+                                                                <li>
+                                                                    <a href="/admin/product/index" className="margin-left-submenu">Tất cả sản phẩm</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <li className="hdlitem item-sub" id="item2" onClick={() => handleItemClick('item2')}>
+                                                            <RiArticleFill className="icon-left" />
+                                                            <a href="#nqt">Bài viết</a>
+                                                            <i className="fa-solid fa-plus icon-right"></i>
+                                                            <ul className="submenu">
+                                                                <li>
+                                                                    <a href="/admin/post/index">Tất cả bài viết</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/topic/index">Chủ đề</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/page/index">Trang đơn</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
 
-                                                    <li className="hdlitem item-sub" id="item3" onClick={() => handleItemClick('item3')}>
-                                                        <SiSellfy className="icon-left" />
-                                                        {/* <i className="fa-brands fa-product-hunt icon-left"></i> */}
-                                                        <a href="#nqt">Quản lý bán hàng</a>
-                                                        <i className="fa-solid fa-plus icon-right"></i>
-                                                        <ul className="submenu">
-                                                            <li>
-                                                                <a href="/admin/order/index">Tất cả đơn hàng</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/order/export">Xuất hàng</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                    <li className="hdlitem">
-                                                        <BiSolidUserRectangle className="icon-left" />
-                                                        {/* <i className="fa-regular fa-circle icon-left"></i> */}
-                                                        <a href="/admin/user/index">Khách hàng</a>
-                                                    </li>
-                                                    <li className="hdlitem">
-                                                        <MdContactSupport className="icon-left" />
-                                                        {/* <i className="fa-regular fa-circle icon-left"></i> */}
-                                                        <a href="/admin/contact/index">Liên hệ</a>
-                                                    </li>
-                                                    <li className="hdlitem item-sub" id={'item4'} onClick={() => handleItemClick('item4')}>
-                                                        <BsDisplay className="icon-left" />
-                                                        {/* <i className="fa-brands fa-product-hunt icon-left"></i> */}
-                                                        <a href="#nqt">Giao diện</a>
-                                                        <i className="fa-solid fa-plus icon-right"></i>
-                                                        <ul className="submenu">
-                                                            {/* <li>
-                                                                <a href="/admin/menu/index">Menu</a>
-                                                            </li> */}
-                                                            <li>
-                                                                <a href="/admin/banner/index">Banner</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/slider/index">Slider</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                    <li className="hdlitem item-sub" id="item5" onClick={() => handleItemClick('item5')}>
-                                                        <GrSystem className="icon-left" />
-                                                        {/* <i className="fa-brands fa-product-hunt icon-left"></i> */}
-                                                        <a href="#nqt">Hệ thống</a>
-                                                        <i className="fa-solid fa-plus icon-right"></i>
-                                                        <ul className="submenu">
-                                                            <li>
-                                                                <a href="/admin/staff/index">Thành viên</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/notification/index">Thông báo</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/information/index">Cấu hình</a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="/admin/role/index">Quyền</a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </nav>
+                                                        <li className="hdlitem item-sub" id="item3" onClick={() => handleItemClick('item3')}>
+                                                            <SiSellfy className="icon-left" />
+                                                            <a href="#nqt">Quản lý bán hàng</a>
+                                                            <i className="fa-solid fa-plus icon-right"></i>
+                                                            <ul className="submenu">
+                                                                <li>
+                                                                    <a href="/admin/order/index">Tất cả đơn hàng</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/order/export">Xuất hàng</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <li className="hdlitem">
+                                                            <BiSolidUserRectangle className="icon-left" />
+                                                            <a href="/admin/user/index">Khách hàng</a>
+                                                        </li>
+                                                        <li className="hdlitem">
+                                                            <MdContactSupport className="icon-left" />
+                                                            <a href="/admin/contact/index">Liên hệ</a>
+                                                        </li>
+                                                        <li className="hdlitem item-sub" id="item4" onClick={() => handleItemClick('item4')}>
+                                                            <BsDisplay className="icon-left" />
+                                                            <a href="#nqt">Giao diện</a>
+                                                            <i className="fa-solid fa-plus icon-right"></i>
+                                                            <ul className="submenu">
+                                                                <li>
+                                                                    <a href="/admin/banner/index">Banner</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/slider/index">Slider</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <li className="hdlitem item-sub" id="item5" onClick={() => handleItemClick('item5')}>
+                                                            <GrSystem className="icon-left" />
+                                                            <a href="#nqt">Hệ thống</a>
+                                                            <i className="fa-solid fa-plus icon-right"></i>
+                                                            <ul className="submenu">
+                                                                <li>
+                                                                    <a href="/admin/staff/index">Thành viên</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/notification/index">Thông báo</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/information/index">Cấu hình</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="/admin/role/index">Quyền</a>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-md-10">
+                                    )}
+                                    <div className={`col-md-${isSidebarOpen ? '10' : '12'}`}>
+                                        <button
+                                            className="btn btn-dark position-fixed m-2"
+                                            style={{ bottom: '20px', zIndex: 1000 }}
+                                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        >
+                                            {isSidebarOpen ? (
+                                                <i className="bi bi-chevron-left"></i>
+                                            ) : (
+                                                <i className="bi bi-chevron-right"></i>
+                                            )}
+                                        </button>
                                         <div className="content">
                                             <Outlet />
                                         </div>
@@ -258,10 +260,9 @@ const LayoutAdmin = () => {
                         </section>
                     </>
                 )}
-
             </AdminContext.Provider>
         </>
     );
-
 };
+
 export default LayoutAdmin;

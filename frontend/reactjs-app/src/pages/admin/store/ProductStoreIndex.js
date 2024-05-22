@@ -5,35 +5,38 @@ import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit, FaDollyFlatbed } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProductStoreIndex = () => {
     const [stores, setStores] = useState([]);
     const [reload] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        const fetchStores = async () => {
             const result = await ProductStoreService.getAll();
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setStores(result);
-            // console.log("stores is:", result);
-        })();
+        };
+        fetchStores();
     }, [reload]);
 
     return (
-        <div className="content">
+        <div className="content mt-4">
             <section className="content-header my-2">
-                <h1 className="d-inline">Quản lý kho hàng</h1>
-                <div className="row mt-3 align-items-center">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1>Quản lý kho hàng</h1>
+                </div>
+                <div className="row mt-3">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <a href="/admin/product/import/index">Lịch sử nhập hàng</a>
+                            <Link to="/admin/product/import/index" className="text-white text-decoration-none">Lịch sử nhập hàng</Link>
                         </button>
                     </div>
                 </div>
             </section>
             <section className="content-body my-2">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-hover table-bordered">
+                    <thead className="table-dark">
                         <tr>
                             <th className="text-center" style={{ width: '30px' }}>
                                 <input type="checkbox" id="checkAll" />
@@ -68,7 +71,6 @@ const ProductTableRow = ({ store }) => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                // console.log("store:", store);
                 const fetchedProduct = await ProductService.getById(store.productId);
                 setProduct(fetchedProduct);
             } catch (error) {
@@ -82,12 +84,10 @@ const ProductTableRow = ({ store }) => {
                 if (fetched !== null) {
                     const option = await ProductOptionService.getById(fetched.optionId);
                     setOption(option);
-                    // console.log("option: ", option);
-                    // console.log("value: ", fetched);
                 }
                 setOptionValue(fetched);
             } catch (error) {
-                console.error('Error fetching:', error);
+                console.error('Error fetching option value:', error);
             }
         };
         fetchOptionValue();
@@ -107,12 +107,11 @@ const ProductTableRow = ({ store }) => {
                         <span>Loading...</span>
                     )}
                 </div>
-                <div className="function_style">
-
-                    <Link to={`/admin/product/store/edit/${store.id}`} className='px-1 text-primary'>
+                <div className="d-flex justify-content-start mt-2">
+                    <Link to={`/admin/product/store/edit/${store.id}`} className='btn btn-primary me-1'>
                         <FaEdit size={24}/>
                     </Link>
-                    <Link to={`/admin/product/import/add/${store.id}`} className="px-1">
+                    <Link to={`/admin/product/import/add/${store.id}`} className="btn btn-secondary me-1">
                         <FaDollyFlatbed size={24} />
                     </Link>
                 </div>
@@ -134,4 +133,3 @@ const ProductTableRow = ({ store }) => {
 };
 
 export default ProductStoreIndex;
-

@@ -118,11 +118,11 @@ const ProductSaleTableRow = ({ sale }) => {
 
     return (
         <div className="showcase mb-3">
-                 <Link to={'/productdetail/' + sale.id} className="showcase-img-box">
+                 <Link to={'/productdetail/' + product.id} className="showcase-img-box">
                 <img src={productImage} alt={sale.productName} width={75} height={75} className="showcase-img" />
                 </Link>
             <div className="showcase-content">
-            <Link to={'/productdetail/' + sale.id}>
+            <Link to={'/productdetail/' + product.id}>
                     <h4 className="showcase-title">{sale.productName}</h4>
             </Link>
                 <div className="price-box">
