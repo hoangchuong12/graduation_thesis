@@ -76,4 +76,9 @@ public class OrderController {
         }
     }
 
+    @PostMapping("/set-payment/{id}")
+    public ResponseEntity<Void> updatePayment(@PathVariable UUID id, @RequestParam String pay) {
+        orderService.payment(id, pay);
+        return ResponseEntity.ok().build();
+    }
 }

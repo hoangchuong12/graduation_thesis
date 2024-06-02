@@ -15,7 +15,7 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: background-color 0.3s, box-shadow 0.3s;
 }
-
+a
 .btn-action:hover {
     background-color: #f0f0f0;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
@@ -28,5 +28,15 @@
 .btn-action IonIcon {
     font-size: 20px; /* Adjust size as needed */
     color: #333; /* Adjust the icon color */
+}
+.product-grid.transitioning .showcase {
+    opacity: 0; /* Fade out */
+    transform: translateX(-100%); /* Slide out */
+}
+
+.product-grid {
+    transition: transform 2.6s ease-out, opacity 2.6s ease-out; /* Slow transition */
+    overflow: hidden;
+    position: relative;
 }
 

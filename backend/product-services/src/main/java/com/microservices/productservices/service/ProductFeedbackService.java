@@ -8,7 +8,10 @@ import java.util.UUID;
 
 public interface ProductFeedbackService {
 
+   
     ProductFeedbackResponse create(ProductFeedbackRequest productFeedbackRequest);
+
+    void setImage(UUID id, String image);
 
     ProductFeedbackResponse getById(UUID id);
 
@@ -19,4 +22,6 @@ public interface ProductFeedbackService {
     ProductFeedbackResponse delete(UUID id);
 
     List<ProductFeedbackResponse> findByProductId(UUID productId);
+
+    Integer getAverageEvaluateByProductId(UUID productId);
 }

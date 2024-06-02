@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Ensure this line is correctly importing the icons
 import './layoutAdmin.css';
+import { Link } from 'react-router-dom';
 import { FaProductHunt, FaClone, FaRegUser } from "react-icons/fa";
 import { MdExitToApp, MdContactSupport } from "react-icons/md";
 import { RiArticleFill } from "react-icons/ri";
@@ -142,25 +143,25 @@ const LayoutAdmin = () => {
                                                             <i className="fa-solid fa-plus icon-right"></i>
                                                             <ul className="submenu">
                                                                 <li>
-                                                                    <a href="/admin/product/index" className="margin-left-submenu">Tất cả sản phẩm</a>
+                                                                    <Link to="/admin/product/index" className="margin-left-submenu" >Tất cả sản phẩm</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/product/store/index" className="margin-left-submenu">Kho hàng</a>
+                                                                    <Link to="/admin/product/store/index" className="margin-left-submenu">Kho hàng</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</a>
+                                                                    <Link to="/admin/category/index" className="margin-left-submenu">Loại sản phẩm</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/tag/index" className="margin-left-submenu">Nhãn</a>
+                                                                    <Link to="/admin/tag/index" className="margin-left-submenu">Nhãn</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/brand/index" className="margin-left-submenu">Thương hiệu</a>
+                                                                    <Link to="/admin/brand/index" className="margin-left-submenu">Thương hiệu</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</a>
+                                                                    <Link to="/admin/product/sale-index" className="margin-left-submenu">Khuyễn mãi</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</a>
+                                                                    <Link to="/admin/product/option-index" className="margin-left-submenu">Lựa chọn sản phẩm</Link>
                                                                 </li>
                                                             </ul>
                                                         </li>
@@ -170,13 +171,13 @@ const LayoutAdmin = () => {
                                                             <i className="fa-solid fa-plus icon-right"></i>
                                                             <ul className="submenu">
                                                                 <li>
-                                                                    <a href="/admin/post/index">Tất cả bài viết</a>
+                                                                    <Link to="/admin/post/index">Tất cả bài viết</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/topic/index">Chủ đề</a>
+                                                                    <Link to="/admin/topic/index">Chủ đề</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/page/index">Trang đơn</a>
+                                                                    <Link to="/admin/page/index">Trang đơn</Link>
                                                                 </li>
                                                             </ul>
                                                         </li>
@@ -187,20 +188,20 @@ const LayoutAdmin = () => {
                                                             <i className="fa-solid fa-plus icon-right"></i>
                                                             <ul className="submenu">
                                                                 <li>
-                                                                    <a href="/admin/order/index">Tất cả đơn hàng</a>
+                                                                    <Link to="/admin/order-item/index">Tất cả đơn hàng</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/order/export">Xuất hàng</a>
+                                                                    <Link to="/admin/order/export">Xuất hàng</Link>
                                                                 </li>
                                                             </ul>
                                                         </li>
                                                         <li className="hdlitem">
                                                             <BiSolidUserRectangle className="icon-left" />
-                                                            <a href="/admin/user/index">Khách hàng</a>
+                                                            <Link to="/admin/user/index">Khách hàng</Link>
                                                         </li>
                                                         <li className="hdlitem">
                                                             <MdContactSupport className="icon-left" />
-                                                            <a href="/admin/contact/index">Liên hệ</a>
+                                                            <Link to="/admin/contact/index">Liên hệ</Link>
                                                         </li>
                                                         <li className="hdlitem item-sub" id="item4" onClick={() => handleItemClick('item4')}>
                                                             <BsDisplay className="icon-left" />
@@ -208,10 +209,10 @@ const LayoutAdmin = () => {
                                                             <i className="fa-solid fa-plus icon-right"></i>
                                                             <ul className="submenu">
                                                                 <li>
-                                                                    <a href="/admin/banner/index">Banner</a>
+                                                                    <Link to="/admin/banner/index">Banner</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/slider/index">Slider</a>
+                                                                    <Link to="/admin/slider/index">Slider</Link>
                                                                 </li>
                                                             </ul>
                                                         </li>
@@ -221,16 +222,16 @@ const LayoutAdmin = () => {
                                                             <i className="fa-solid fa-plus icon-right"></i>
                                                             <ul className="submenu">
                                                                 <li>
-                                                                    <a href="/admin/staff/index">Thành viên</a>
+                                                                    <Link to="/admin/staff/index">Thành viên</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/notification/index">Thông báo</a>
+                                                                    <Link to="/admin/notification/index">Thông báo</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/information/index">Cấu hình</a>
+                                                                    <Link to="/admin/information/index">Cấu hình</Link>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="/admin/role/index">Quyền</a>
+                                                                    <Link to="/admin/role/index">Quyền</Link>
                                                                 </li>
                                                             </ul>
                                                         </li>

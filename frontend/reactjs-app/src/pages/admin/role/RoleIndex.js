@@ -35,7 +35,7 @@ const RoleIndex = () => {
     };
 
     return (
-        <div className="content ">
+        <div className="container m-4 ">
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Phân Quyền</h1>

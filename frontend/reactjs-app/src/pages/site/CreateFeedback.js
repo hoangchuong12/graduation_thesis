@@ -47,7 +47,7 @@ const CreateFeedback = () => {
                     }
                 }
                 console.log("brand added = ", result);
-                navigate("/my-user", { replace: true });
+                navigate("/user", { replace: true });
             }
         } catch (error) {
             console.error("Error adding user:", error);

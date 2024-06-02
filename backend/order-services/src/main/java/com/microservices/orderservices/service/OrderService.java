@@ -22,4 +22,6 @@ public interface OrderService {
     List<OrderResponse> getByUserId(UUID userId);
 
     Optional<OrderResponse> getCart(UUID userId);
+
+    void payment(UUID id, String pay);
 }

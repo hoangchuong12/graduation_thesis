@@ -21,9 +21,11 @@ public class Order {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    private UUID userId;
+    private UUID userId;    
 
     private Double totalPrice;
+
+    private String payment;
 
     private String deliveryAddress;
 

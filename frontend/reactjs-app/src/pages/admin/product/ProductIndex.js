@@ -95,7 +95,7 @@ const ProductIndex = () => {
     };
 
     return (
-        <div className="mt-4">
+        <div className="container mt-4">
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Quản lý sản phẩm</h1>

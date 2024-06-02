@@ -192,4 +192,38 @@ public class ImageController {
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
+    @GetMapping("/topics/{filename:.+}")
+    public ResponseEntity<Resource> getImageTopic(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/topics").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
+    @GetMapping("/posts/{filename:.+}")
+    public ResponseEntity<Resource> getImagePost(@PathVariable String filename) {
+        try {
+            Path fileStorageLocation = Paths.get("src/main/resources/static/posts").toAbsolutePath().normalize();
+            Path filePath = fileStorageLocation.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG) 
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
 }

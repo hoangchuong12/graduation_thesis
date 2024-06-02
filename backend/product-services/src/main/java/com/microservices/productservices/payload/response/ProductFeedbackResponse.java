@@ -1,7 +1,6 @@
 package com.microservices.productservices.payload.response;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +17,8 @@ public class ProductFeedbackResponse {
 
     private Integer evaluate;
 
+    private String image;
+
     private String description;
 
     private String detail;
@@ -29,6 +30,4 @@ public class ProductFeedbackResponse {
     private UUID createdBy;
 
     private UUID updatedBy;
-
-    private List<FeedbackGallaryResponse> galleries;
 }

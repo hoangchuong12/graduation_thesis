@@ -71,6 +71,14 @@ import InformationTrash from "../pages/admin/information/InformationTrash";
 import OrderItemIndex from "../pages/admin/orderItem/OrderItemIndex";
 import OrderItemTrash from "../pages/admin/orderItem/OrderItemTrash";
 import ProductExportIndex from "../pages/admin/store/ProductExportIndex";
+import TopicIndex from "../pages/admin/topic/TopicIndex";
+import TopicAdd from "../pages/admin/topic/TopicAdd";
+import TopicTrash from "../pages/admin/topic/TopicTrash";
+import TopicEdit from "../pages/admin/topic/topicEdit";
+import PostAdd from "../pages/admin/post/PostAdd";
+import PostIndex from "../pages/admin/post/PostIndex";
+import PostTrash from "../pages/admin/post/postTrash";
+import PostEdit from "../pages/admin/post/PostEdit";
 
 const RouteAdmin = [
     //user
@@ -137,9 +145,9 @@ const RouteAdmin = [
     { path: '/admin/slider/add', component: SliderAdd },
     { path: '/admin/slider/edit/:id', component: SliderEdit },
     //banner
-    { path: '/admin/banner/index', component:  BannerIndex},
+    { path: '/admin/banner/index', component: BannerIndex },
     { path: '/admin/banner/trash', component: BannerTrash },
-    { path: '/admin/banner/add', component:  BannerAdd },
+    { path: '/admin/banner/add', component: BannerAdd },
     { path: '/admin/banner/edit/:id', component: BannerEdit },
 
     //product gallary
@@ -155,5 +163,19 @@ const RouteAdmin = [
     { path: '/admin/order-item/trash', component: OrderItemTrash },
     //order-export
     { path: '/admin/order/export', component: ProductExportIndex },
+
+    //topic
+    { path: '/admin/topic/index', component: TopicIndex },
+    { path: '/admin/topic/trash', component: TopicTrash },
+    { path: '/admin/topic/add', component: TopicAdd },
+    { path: '/admin/topic/edit/:id', component: TopicEdit },
+
+
+    //post
+    { path: '/admin/post/index', component: PostIndex },
+    { path: '/admin/post/trash', component: PostTrash },
+    { path: '/admin/post/add', component: PostAdd },
+    { path: '/admin/post/edit/:id', component: PostEdit },
+
 ];
 export default RouteAdmin;

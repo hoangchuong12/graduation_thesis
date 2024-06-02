@@ -9,3 +9,5 @@ export const urlImageSlider= "http://localhost:9191/image-service/images/sliders
 export const urlImageProductGallary= "http://localhost:9191/image-service/images/product-gallaries/"; 
 export const urlImageInformation= "http://localhost:9191/image-service/images/informations/";  
 export const urlImageFeedback= "http://localhost:9191/image-service/images/feedbacks/";  
+export const urlImageTopic= "http://localhost:9191/image-service/images/topics/";  
+export const urlImagePosts= "http://localhost:9191/image-service/images/posts/";  

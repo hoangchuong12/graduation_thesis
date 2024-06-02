@@ -14,6 +14,8 @@ public class ProductFeedbackRequest {
 
     private Integer evaluate;
 
+    private String image;
+
     private String description;
 
     private String detail;

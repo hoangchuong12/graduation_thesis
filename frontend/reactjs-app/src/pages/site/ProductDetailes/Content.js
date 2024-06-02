@@ -118,18 +118,18 @@ const Content = () => {
                         <div className="border rounded-2 px-3 py-2 bg-white">
                             <ul className="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                                 <li className="nav-item" role="presentation">
-                                    <a className={`nav-link ${activeTab === 'spec' ? 'active' : ''}`} onClick={() => handleTabClick('spec')} id="ex1-tab-1" href="#ex1-pills-1" role="tab">Description</a>
+                                    <a className={`nav-link ${activeTab === 'spec' ? 'active' : ''}`} onClick={() => handleTabClick('spec')} id="ex1-tab-1" href="#ex1-pills-1" role="tab">Comments</a>
                                 </li>
                                 <li className="nav-item" role="presentation">
-                                    <a className={`nav-link ${activeTab === 'warranty' ? 'active' : ''}`} onClick={() => handleTabClick('warranty')} id="ex1-tab-2" href="#ex1-pills-2" role="tab">Comments</a>
+                                    <a className={`nav-link ${activeTab === 'warranty' ? 'active' : ''}`} onClick={() => handleTabClick('warranty')} id="ex1-tab-2" href="#ex1-pills-2" role="tab">Description</a>
                                 </li>
                             </ul>
                             <div className="tab-content" id="ex1-content">
                                 <div className={`tab-pane fade ${activeTab === 'spec' ? 'show active' : ''}`} id="ex1-pills-1" role="tabpanel">
-                                    <p>{product?.description}</p>
+                               {comments()} 
                                 </div>
                                 <div className={`tab-pane fade ${activeTab === 'warranty' ? 'show active' : ''}`} id="ex1-pills-2" role="tabpanel">
-                                    {comments()}
+                                        <p>{product?.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +139,7 @@ const Content = () => {
                             <div className="card">
                                 <div className="card-body">
                                     <h5 className="card-title">Similar items</h5>
-                                    <div className="overflow-auto" style={{ maxHeight: '400px' }}>
+                                    <div className="overflow-auto" style={{ maxHeight: '700px' }}>
                                         {productRelateds.map(productRelated => (
                                             <div className="d-flex mb-3" key={productRelated.id}>
                                                 <Link to={`/productdetail/${productRelated.id}`} className="me-3">

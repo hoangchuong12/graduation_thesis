@@ -29,6 +29,12 @@ const OrderService = {
     getCart: (id) => {
         return httpAxios.get(`order-services/api/orders/get-cart/${id}`);
     },
+     payVNPAY: (amount) => {
+        return httpAxios.get(`order-services/api/order-pay/pay?amount=${amount}`);
+    },
+    setPay: (id, pay) => {
+        return httpAxios.post(`order-services/api/orders/set-payment/${id}`, null, { params: { pay } });
+    },
 };
 
 export default OrderService;

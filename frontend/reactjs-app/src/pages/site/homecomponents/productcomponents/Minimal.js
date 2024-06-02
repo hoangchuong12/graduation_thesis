@@ -9,8 +9,9 @@ import '../../../../assets/styles/minimal.css';
 const Minimal = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [transitioning, setTransitioning] = useState(false);
     const productsPerPage = 4;
-    const autoScrollInterval = 3000; // 3 seconds
+    const autoScrollInterval = 5000; // 3 seconds
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -29,21 +30,33 @@ const Minimal = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentPage(prevPage => {
-                const nextPage = (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1;
-                return nextPage;
-            });
+            setTransitioning(true);
+            setTimeout(() => {
+                setCurrentPage(prevPage => {
+                    const nextPage = (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1;
+                    return nextPage;
+                });
+                setTransitioning(false);
+            }, 600);
         }, autoScrollInterval);
 
         return () => clearInterval(interval);
     }, [products]);
 
     const handlePrevious = () => {
-        setCurrentPage(prevPage => prevPage === 0 ? Math.floor(products.length / productsPerPage) : prevPage - 1);
+        setTransitioning(true);
+        setTimeout(() => {
+            setCurrentPage(prevPage => prevPage === 0 ? Math.floor(products.length / productsPerPage) : prevPage - 1);
+            setTransitioning(false);
+        }, 600);
     };
 
     const handleNext = () => {
-        setCurrentPage(prevPage => (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1);
+        setTransitioning(true);
+        setTimeout(() => {
+            setCurrentPage(prevPage => (prevPage + 1) * productsPerPage >= products.length ? 0 : prevPage + 1);
+            setTransitioning(false);
+        }, 600);
     };
 
     const displayedProducts = products.slice(currentPage * productsPerPage, (currentPage + 1) * productsPerPage);
@@ -51,12 +64,11 @@ const Minimal = () => {
     return (
         <div className="product-main">
             <h2 className="title">Best Selling Items</h2>
-            <div className="product-grid">
-                {displayedProducts.map(product => (
-                    <ProductShowcase key={product.id} product={product} />
+            <div className={`product-grid ${transitioning ? 'transitioning' : ''}`}>
+                {displayedProducts.map((product, index) => (
+                    <ProductShowcase key={product.id} product={product} transitioning={transitioning} />
                 ))}
             </div>
-            <div className="slider-controls">
             <div className="slider-controls">
                 <button onClick={handlePrevious} className="btn-action">
                     <IonIcon icon={chevronBackOutline} style={{ fontSize: '24px' }} />
@@ -65,17 +77,15 @@ const Minimal = () => {
                     <IonIcon icon={chevronForwardOutline} style={{ fontSize: '24px' }} />
                 </button>
             </div>
-
-            </div>
         </div>
     );
 };
 
-const ProductShowcase = ({ product }) => {
+const ProductShowcase = ({ product, transitioning }) => {
     const productImage = product.image ? `${urlImageProduct}/${product.image}` : 'placeholder-image.jpg';
 
     return (
-        <div className="showcase">
+        <div className={`showcase ${transitioning ? 'showing' : ''}`}>
             <div className="showcase-banner">
                 <img src={productImage} className="product-img default" alt="Product" />
                 <img src={productImage} width={300} className="product-img hover" alt="Product Hover" />

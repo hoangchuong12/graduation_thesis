@@ -34,7 +34,7 @@ const NotificationIndex = () => {
     };
 
     return (
-        <div className="content mt-4">
+        <div className="container mt-4">
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Thông báo</h1>

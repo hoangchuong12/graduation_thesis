@@ -96,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
             Order newOrder = new Order();
             newOrder.setUserId(userId);
             newOrder.setStatus(3);
+            newOrder.setPayment("COD");
             newOrder.setCreatedAt(LocalDateTime.now());
             newOrder.setTotalPrice(0.0);
             newOrder.setDeliveryName("");
@@ -107,11 +108,22 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public void payment(UUID id, String pay) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setPayment(pay);
+            orderRepository.save(order);
+        }
+    }
+
     private OrderResponse mapOrderToOrderResponse(Order order) {
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUserId())
                 .totalPrice(order.getTotalPrice())
+                .payment(order.getPayment())
                 .deliveryAddress(order.getDeliveryAddress())
                 .deliveryPhone(order.getDeliveryPhone())
                 .deliveryName(order.getDeliveryName())

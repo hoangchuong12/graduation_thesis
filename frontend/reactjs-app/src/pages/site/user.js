@@ -115,67 +115,56 @@ const MyUser = () => {
             <section className="profile-section">
                 <div className="container py-5">
                     <div className="row">
-                        <div className="col-lg-4">
-                            <div className="card mb-4 align-items-center">
-                                <div className="card-body text-center">
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : ''} alt="avatar" className="rounded-circle img-fluid mb-3" style={{ width: '150px', alignSelf: 'center' }} />
-                                        <h5 className="my-3">{userInfor && userInfor.name ? userInfor.name : ""}</h5>
-                                        <p className="text-muted mb-1">{userInfor && userInfor.role.name === "Buyer" ? "Người mua hàng" : "Người bán hàng"}</p>
-                                        <p className="text-muted mb-4">{userInfor && userInfor.address ? userInfor.address : ""}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-center mb-2">
-                                        {userInfor && userInfor.role.name === "Seller" ? (
-                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/my-store/${user.userId}`)}>Cửa hàng</button>
-                                        ) : (
-                                            <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-primary me-2" onClick={() => navigate(`/register-store/${user.userId}`)}>Đăng ký cửa hàng</button>
-                                        )}
-                                        <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-outline-primary" onClick={() => navigate(`/my-user-manager`)}>Tài khoản</button>
-                                    </div>
-                                </div>
-                            </div>
-
+                    <div className="col-lg-4">
+                    <div className="card mb-4 text-center">
+                        <div className="card-img-top mx-auto mt-4" style={{ width: '150px', height: '150px', overflow: 'hidden', borderRadius: '50%' }}>
+                            <img src={userInfor && userInfor.avatar ? urlImageUser + userInfor.avatar : 'default-avatar.jpg'} alt="avatar" className="img-fluid" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
-                        <div className="col-lg-8">
-                            <div className="card mb-4">
-                                <div className="card-body">
-                                    <div className="row mb-4">
-                                        <div className="col-sm-3 fw-bold">Tên:</div>
-                                        <div className="col-sm-9">{userInfor && userInfor.name ? userInfor.name : ""}</div>
-                                    </div>
-                                    <div className="row mb-4">
-                                        <div className="col-sm-3 fw-bold">Email:</div>
-                                        <div className="col-sm-9">{userInfor && userInfor.email ? userInfor.email : ""}</div>
-                                    </div>
-                                    <div className="row mb-4">
-                                        <div className="col-sm-3 fw-bold">Số điện thoại:</div>
-                                        <div className="col-sm-9">{userInfor && userInfor.phone ? userInfor.phone : ""}</div>
-                                    </div>
-                                    <div className="row mb-4">
-                                        <div className="col-sm-3 fw-bold">Địa chỉ:</div>
-                                        <div className="col-sm-9">{userInfor && userInfor.address ? userInfor.address : ""}</div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-3 fw-bold">Ngày tham gia:</div>
-                                        <div className="col-sm-9">{userInfor && userInfor.createdAt ? formatDateToLocalDate(userInfor.createdAt) : ""}</div>
-                                    </div>
-                                </div>
+                        <div className="card-body">
+                            <h5 className="card-title">{userInfor && userInfor.name ? userInfor.name : "User's Name"}</h5>
+                            <p className="text-muted">{userInfor && userInfor.role ? userInfor.role.name : "Role"}</p>
+                            <p>{userInfor && userInfor.address ? userInfor.address : "No Address Provided"}</p>
+                            <div className="d-flex justify-content-center gap-2">
+                                {userInfor && userInfor.role.name === "Seller" ? (
+                                    <button className="btn btn-primary" onClick={() => navigate(`/my-store/${user.userId}`)}>My Store</button>
+                                ) : (
+                                    <button className="btn btn-secondary" onClick={() => navigate(`/register-store/${user.userId}`)}>Register Store</button>
+                                )}
+                                <button className="btn btn-outline-primary" onClick={() => navigate(`/my-user-manager`)}>Account Settings</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                        <div className="col-lg-8">
+
                             <div className="card">
-                                <div className="card-body">
-                                    <h5 className="card-title mb-4">Lịch sử đặt hàng</h5>
-                                    {currentItems.length > 0 ? currentItems : <p className="text-muted">Chưa có đơn hàng nào được hoàn tất</p>}
-                                    <nav className="mt-4">
-                                        <ul className="pagination justify-content-center">
-                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={prevPage} disabled={currentPage === 1}>Trang trước</button>
-                                            </li>
-                                            <li className={`page-item ${currentPage === Math.ceil(renderedOrderItems.length / itemsPerPage) ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={nextPage} disabled={currentPage === Math.ceil(renderedOrderItems.length / itemsPerPage)}>Trang tiếp theo</button>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <div className="card mb-4">
+                                    <div className="card-header">
+                                        Order History
+                                    </div>
+                                    <div className="card-body">
+                                        {currentItems.length > 0 ? (
+                                            <div className="list-group">
+                                                {currentItems}
+                                            </div>
+                                        ) : (
+                                            <p className="text-muted">No orders completed yet.</p>
+                                        )}
+                                        <nav aria-label="Page navigation example" className="mt-4">
+                                            <ul className="pagination justify-content-center">
+                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={prevPage}>Previous</button>
+                                                </li>
+                                                <li className={`page-item ${currentPage === Math.ceil(renderedOrderItems.length / itemsPerPage) ? 'disabled' : ''}`}>
+                                                    <button className="page-link" onClick={nextPage}>Next</button>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

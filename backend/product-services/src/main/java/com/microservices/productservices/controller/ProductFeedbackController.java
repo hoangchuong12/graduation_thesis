@@ -1,6 +1,7 @@
 package com.microservices.productservices.controller;
 
 import com.microservices.productservices.payload.request.ProductFeedbackRequest;
+import com.microservices.productservices.payload.request.SetImageRequest;
 import com.microservices.productservices.payload.response.ProductFeedbackResponse;
 import com.microservices.productservices.service.ProductFeedbackService;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,12 @@ public class ProductFeedbackController {
     public ResponseEntity<ProductFeedbackResponse> createProductFeedback(@RequestBody ProductFeedbackRequest productFeedbackRequest) {
         ProductFeedbackResponse createdProductFeedback = productFeedbackService.create(productFeedbackRequest);
         return new ResponseEntity<>(createdProductFeedback, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/set-image")
+    public ResponseEntity<String> setImage(@RequestBody SetImageRequest setImageRequest) {
+        productFeedbackService.setImage(setImageRequest.getId(), setImageRequest.getImage());
+        return ResponseEntity.ok("Set image done");
     }
 
     @GetMapping("/get-all")
