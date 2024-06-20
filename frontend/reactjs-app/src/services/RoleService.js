@@ -7,11 +7,17 @@ const RoleService = {
     getById: (id) => {
         return httpAxios.get(`user-services/api/roles/get-by-id/${id}`);
     },
+    getByRole: (role) => {
+        return httpAxios.get(`user-services/api/roles/get-by-role/${role}`);
+    },
     getAll: () => {
         return httpAxios.get(`user-services/api/roles/get-all`);
     },
     update: (id, role) => {
         return httpAxios.put(`user-services/api/roles/update/${id}`, role);
+    },
+    sitchStatus: (id) => {
+        return httpAxios.put(`user-services/api/roles/switch-status/${id}`);
     },
     trash: (id) => {
         return httpAxios.put(`user-services/api/roles/trash/${id}`);
@@ -22,3 +28,4 @@ const RoleService = {
 };
 
 export default RoleService;
+

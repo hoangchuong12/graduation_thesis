@@ -19,6 +19,7 @@ const StaffEdit = () => {
     const [selectedRole, setSelectedRole] = useState('');
     const [status, setStatus] = useState(1);
     const [avatar, setAvatar] = useState(null);
+    const [stringImageDefault, setStringImageDefault] = useState("");
 
     const sessionUserAdmin = sessionStorage.getItem('useradmin');
     let updatedBy = null;
@@ -41,6 +42,7 @@ const StaffEdit = () => {
                 setAddress(userData.address);
                 setSelectedRole(userData.role || '');
                 setStatus(userData.status);
+                setStringImageDefault(userData.avatar);
 
                 setRoles(rolesData.filter(role => role.role === 1));
             } catch (error) {
@@ -67,24 +69,59 @@ const StaffEdit = () => {
                 role: selectedRole,
                 status: status,
             };
+            const path = {
+                path: "users"
+            };
+            const deleteIfExitsImage = await UserService.getUserById(id);
+            console.log("image ole = ", deleteIfExitsImage.avatar);
+            if(avatar !== null){
+                console.log("thuc hien xoa anh")
+                if(deleteIfExitsImage.avatar !== null){
+                    const deleteImage = {
+                        path: "users",
+                        filename: deleteIfExitsImage.avatar
+                    };
+                    console.log("delete data = ", deleteImage);
+                    await UserService.deleteImage(deleteImage);
+                }
+            }
     
+            const result = await UserService.update(id, userData);
+            if (result) {
+                if (avatar !== null) { // Kiểm tra avatar khác null
+                    const stringImage = await UserService.saveImage(id, path, avatar);
+                    if(stringImage !== null){
+                        const data = {
+                            id: result.id,
+                            image: stringImage
+                        };
+                        console.log("setimage data is: ", data);
+                        await UserService.setImage(data);
+                    }
+                }else{
+                    const data = {
+                        id: result.id,
+                        image: stringImageDefault
+                    };
+                    console.log("setimage data is: ", data);
+                    await UserService.setImage(data);
+                }
+                toast.success("User updated successfully!");
+                navigate("/admin/staff/index", { replace: true });
+            }
     
-            // Sending the FormData to the update API
-            console.log("update data = ", userData);
-            await UserService.update(id, userData, avatar);
-            toast.success("User updated successfully!");
-            navigate("/admin/staff/index", { replace: true });
         } catch (error) {
             console.error('Error updating user:', error);
             toast.error("Failed to update user.");
         }
     };
     
+    
     return (
         <form onSubmit={handleSubmit}>
             <div className="content">
                 <section className="content-header my-2">
-                    <h1 className="d-inline">Cập nhật người dùng</h1>
+                    <h1 className="d-inline">Cập nhật thành viên</h1>
                     <div className="row mt-2 align-items-center">
                         <div className="col-md-12 text-end">
                             <Button variant="success" size="sm" as={Link} to="/admin/staff/index">

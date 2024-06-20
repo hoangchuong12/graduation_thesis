@@ -108,6 +108,13 @@ public class InformationServiceImpl implements InformationService {
         return null;
     }
 
+    @Override
+    public InfomationsResponse getInformationDisplay() {
+        Information information = informationRepository.findLatestInformationWithStatusThree()
+                .orElseThrow(() -> new RuntimeException("NOT_FOUND"));
+        return mapInformationToInformationResponse(information);
+    }
+
     private InfomationsResponse mapInformationToInformationResponse(Information information) {
         if (information != null) {
             InfomationsResponse response = new InfomationsResponse();

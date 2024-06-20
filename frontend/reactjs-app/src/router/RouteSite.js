@@ -12,10 +12,15 @@ import TagFortune from "../pages/site/Tagfortune";
 import FavoriteProduct from "../pages/site/FavoriteProduct";
 import OrderItemDetail from "../pages/site/OrderItemDetail";
 import CreateFeedback from "../pages/site/CreateFeedback";
+import UserManager from "../pages/site/UserManager";
+import ErrorPage from "../pages/site/ErrorPage";
 
 
 
 const RouteSite = [
+
+    { path: '*', component: ErrorPage },
+
     { path: '/', component: Home },
 
     { path: '/productdetail/:id', component: productdetail },
@@ -31,6 +36,8 @@ const RouteSite = [
     { path: '/register', component: Register },
 
     { path: '/user', component: user },
+
+    { path: '/my-user-manager', component: UserManager },
     
     { path: '/categoryFortune/:id', component: CategoryFortune },
 

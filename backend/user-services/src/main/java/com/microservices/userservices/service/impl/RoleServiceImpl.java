@@ -84,6 +84,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public RoleResponse getByRole(int role) {
+        Role roleEntity = roleRepository.findFirstByRole(role)
+                .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));
+        return convertToResponse(roleEntity);
+    }
+    @Override
     public void trash(UUID id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Role not found", "ROLE_NOT_FOUND"));

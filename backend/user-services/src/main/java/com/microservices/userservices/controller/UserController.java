@@ -17,6 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
+
+
 import java.util.List;
 import java.util.UUID;
 
@@ -33,8 +35,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-    
 
     @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(

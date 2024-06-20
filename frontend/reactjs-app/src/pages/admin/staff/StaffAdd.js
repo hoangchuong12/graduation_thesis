@@ -54,10 +54,25 @@ const StaffAdd = () => {
             role: selectedRole,
             status: status,
         };
+        const path = {
+            path: "users"
+        };
 
         try {
-            const result = await UserService.createCustomer(userData, avatar); // Truyền hình ảnh đại diện
-            if (result) {
+            const result = await UserService.create(userData);
+            if (result) { 
+                if(avatar !== null){
+                    const imageString = await UserService.saveImage(result.id, path, avatar)
+                    console.log("string image save user : ", imageString); 
+                    if(imageString !== null){
+                        const data = {
+                            id: result.id,
+                            image: imageString
+                        };
+                        console.log("setimage data is: ", data);
+                        await UserService.setImage(data);
+                    }
+                }
                 console.log("usser added = ", result);
                 toast.success("Thêm thành công");
                 navigate("/admin/staff/index", { replace: true });

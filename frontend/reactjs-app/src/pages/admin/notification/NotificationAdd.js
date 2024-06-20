@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import NotificationService from '../../../services/NotificationService';
 import { toast } from 'react-toastify';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { FaSave } from 'react-icons/fa';
+import React, { useState } from 'react';
 
 const NotificationAdd = () => {
     const { id } = useParams();
@@ -29,7 +29,12 @@ const NotificationAdd = () => {
         };
 
         try {
-            const result = await NotificationService.create(formData);
+            const authToken = "your_auth_token"; // Replace with your actual token
+            const result = await NotificationService.create(formData, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
+            });
             console.log("added notification", result);
             toast.success("Thêm thông báo thành công!");
             navigate("/admin/notification/index", { replace: true });

@@ -12,6 +12,8 @@ import ProductService from '../../../services/ProductService';
 import ProductSaleService from '../../../services/ProductSaleService';
 import ProductStoreService from '../../../services/ProductStoreService';
 import { toast } from 'react-toastify';
+import ImageModal from '../ImageModal'; // Import the ImageModal component
+
 const ProductGallery = () => {
     const { id } = useParams();
     const [galleries, setGalleries] = useState([]);
@@ -24,6 +26,7 @@ const ProductGallery = () => {
     const navigate = useNavigate();
     const [optionValueId, setOptionValueId] = useState(null);
     const [stockAvailability, setStockAvailability] = useState({});
+    const [showModal, setShowModal] = useState(false); // State to control modal visibility
 
     const fetchStockAvailability = async () => {
         const availability = {};
@@ -37,7 +40,7 @@ const ProductGallery = () => {
         await Promise.all(promises);
         setStockAvailability(availability);
     };
-   
+
     useEffect(() => {
         if (options.length > 0) {
             fetchStockAvailability();
@@ -87,7 +90,6 @@ const ProductGallery = () => {
         return <div>Loading...</div>;
     }
 
-
     const handleThumbnailClick = (image) => {
         setMainImage(image);
     };
@@ -122,102 +124,111 @@ const ProductGallery = () => {
     };
 
     const handleAddToCartClick = async () => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
-        if (!user) {
-            navigate("/login", { state: { redirectTo: `/productdetail/${id}` } });
-            return;
-        }
+        try {
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            if (!user) {
+                navigate("/login", { state: { redirectTo: `/productdetail/${id}` } });
+                return;
+            }
 
-        if (!stockAvailability[optionValueId]) { // Check if the selected option value is out of stock
-            toast.error("Sản phẩm bạn chọn hiện tại hết hàng.");
-            return;
-        }
+            if (!stockAvailability[optionValueId]) { // Check if the selected option value is out of stock
+                toast.error("Sản phẩm bạn chọn hiện tại hết hàng.");
+                return;
+            }
 
-        const cart = await OrderService.getCart(user.userId);
-        const totalPrice = quantity * priceToDisplay;
-        if (cart) {
-            const dataCreate = {
-                orderId: cart.id,
-                productId: id,
-                optionValueId: optionValueId,
-                quantity,
-                totalPrice,
-                status: 1,
-            };
-
-            const addedOrderItem = await OrderItemService.create(dataCreate);
-            if (addedOrderItem) {
-                const dataUpdateCart = {
-                    userId: cart.userId,
-                    totalPrice: cart.totalPrice + totalPrice,
-                    deliveryAddress: cart.deliveryAddress,
-                    deliveryPhone: cart.deliveryPhone,
-                    deliveryName: cart.deliveryName,
-                    status: cart.status,
+            const cart = await OrderService.getCart(user.userId);
+            const totalPrice = quantity * priceToDisplay;
+            if (cart) {
+                const dataCreate = {
+                    orderId: cart.id,
+                    productId: id,
+                    optionValueId: optionValueId,
+                    quantity,
+                    totalPrice,
+                    status: 1,
                 };
-                await OrderService.update(cart.id, dataUpdateCart);
-                toast.success("Thêm vào giỏ hàng thành công");
+
+                const addedOrderItem = await OrderItemService.create(dataCreate);
+                if (addedOrderItem) {
+                    const dataUpdateCart = {
+                        userId: cart.userId,
+                        totalPrice: cart.totalPrice + totalPrice,
+                        deliveryAddress: cart.deliveryAddress,
+                        deliveryPhone: cart.deliveryPhone,
+                        deliveryName: cart.deliveryName,
+                        status: cart.status,
+                    };
+                    await OrderService.update(cart.id, dataUpdateCart);
+                    toast.success("Thêm vào giỏ hàng thành công");
+                } else {
+                    toast.error("Không thể thêm vào giỏ hàng");
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 503) {
+                // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                navigate('/404');
             } else {
-                toast.error("Không thể thêm vào giỏ hàng");
+                // Nếu là các lỗi khác, in ra console để debug
+                console.error("Error fetching data:", error);
             }
         }
     };
-  
+
     const ThumbnailsCarousel = ({ galleries, handleThumbnailClick }) => {
         const [visibleStart, setVisibleStart] = useState(0);
         const maxVisible = 4; // Number of thumbnails visible at any time
-    
+
         const handlePrevClick = () => {
             setVisibleStart(Math.max(0, visibleStart - maxVisible));
         };
-    
+
         const handleNextClick = () => {
             setVisibleStart(Math.min(galleries.length - maxVisible, visibleStart + maxVisible));
         };
-    
+
         return (
             <div className="thumbnail-carousel d-flex align-items-center justify-content-center">
-            <button className="btn btn-outline-secondary me-2" onClick={handlePrevClick} disabled={visibleStart === 0}>
-                &lt;
-            </button>
-            <div className="thumbnails d-flex overflow-auto" style={{ width: 'calc(100% - 100px)' }}>
-                {galleries.slice(visibleStart, visibleStart + maxVisible).map((gallery, index) => (
-                    <a key={index}
-                        className="border mx-1"
-                        target="_blank"
-                        data-type="image"
-                        href={gallery.image}
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleThumbnailClick(gallery.image);
-                        }}>
-                        <img width="120"
-                             height="120"
-                             className="img-fluid rounded"
-                             src={urlImageProductGallary + gallery.image}
-                             alt={`Thumbnail ${index + 1}`} />
-                    </a>
-                ))}
+                <button className="btn btn-outline-secondary me-2" onClick={handlePrevClick} disabled={visibleStart === 0}>
+                    &lt;
+                </button>
+                <div className="thumbnails d-flex overflow-auto" style={{ width: 'calc(100% - 100px)' }}>
+                    {galleries.slice(visibleStart, visibleStart + maxVisible).map((gallery, index) => (
+                        <a key={index}
+                            className="border mx-1"
+                            target="_blank"
+                            data-type="image"
+                            href={gallery.image}
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleThumbnailClick(gallery.image);
+                            }}>
+                            <img width="120"
+                                height="120"
+                                className="img-fluid rounded"
+                                src={urlImageProductGallary + gallery.image}
+                                alt={`Thumbnail ${index + 1}`} />
+                        </a>
+                    ))}
+                </div>
+                <button className="btn btn-outline-secondary ms-2" onClick={handleNextClick} disabled={visibleStart + maxVisible >= galleries.length}>
+                    &gt;
+                </button>
             </div>
-            <button className="btn btn-outline-secondary ms-2" onClick={handleNextClick} disabled={visibleStart + maxVisible >= galleries.length}>
-                &gt;
-            </button>
-        </div>
-        
+
         );
     };
-    
 
     return (
         <section className="py-5">
             <div className="container">
                 <div className="row gx-5">
                     <aside className="col-lg-6">
-                         <div className="border rounded-4 mb-3 d-flex justify-content-center">
+                        <div className="border rounded-4 mb-3 d-flex justify-content-center">
                             <a href='#nqt' onClick={(e) => {
                                 e.preventDefault();
-                          
+                                setShowModal(true); // Show the modal when the main image is clicked
                             }} className="rounded-4" target="_blank" data-type="image">
                                 <img style={{ maxWidth: '100%', maxHeight: '100vh', margin: 'auto' }} src={urlImageProductGallary + mainImage} alt="Main Product" />
                             </a>
@@ -230,15 +241,15 @@ const ProductGallery = () => {
                             <h4 className="title text-dark">{product.name}</h4>
                             <div className="d-flex flex-row my-3">
                                 <div className="text-warning mb-1 me-2">
-                                {[...Array(product.evaluate)].map((star, index) => (
-                                                        <FontAwesomeIcon icon={faStar} key={index} />
-                                                    ))}
+                                    {[...Array(product.evaluate)].map((star, index) => (
+                                        <FontAwesomeIcon icon={faStar} key={index} />
+                                    ))}
                                 </div>
                             </div>
                             <div className="mb-3">
                                 <span className="h5">Giá bán: {priceToDisplay}.VND</span>
                             </div>
-                       
+
                             <main className="col-lg-6">
                                 <div className="product-options" style={{ margin: '10px 0', padding: '10px' }}>
                                     <h2>Chọn sản phẩm</h2>
@@ -263,8 +274,6 @@ const ProductGallery = () => {
                                                     ))}
                                                 </ul>
                                             )}
-
-
                                         </div>
                                     )) : <p>Sản phẩm chỉ có 1 mẫu, không có sự lựa chọn.</p>}
 
@@ -286,22 +295,31 @@ const ProductGallery = () => {
                                 </div>
                             </div>
                             <div className="row">
-                                <button
-                                    className="btn btn-primary shadow-0"
-                                    onClick={handleAddToCartClick}
-                                    disabled={!stockAvailability[optionValueId]} // Disable based on stock availability
-                                >
-                                    <FontAwesomeIcon icon={faShoppingBasket} /> Thêm vào giỏ
-                                </button>
-
-                                <button className="btn btn-danger border border-secondary py-2 px-3">
-                                    <FontAwesomeIcon icon={faHeart} /> Thêm vào yêu thích
-                                </button>
+                                <div className="col-md-6 mb-3">
+                                    <button
+                                        className="btn btn-primary btn-block shadow-0"
+                                        onClick={handleAddToCartClick}
+                                        disabled={!stockAvailability[optionValueId]} // Disable based on stock availability
+                                    >
+                                        <FontAwesomeIcon icon={faShoppingBasket} /> Thêm vào giỏ
+                                    </button>
+                                </div>
+                                <div className="col-md-6 mb-3">
+                                    <button className="btn btn-danger btn-block border border-secondary py-2 px-3">
+                                        <FontAwesomeIcon icon={faHeart} /> Thêm vào yêu thích
+                                    </button>
+                                </div>
                             </div>
+
                         </div>
                     </main>
                 </div>
             </div>
+            <ImageModal
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                imageSrc={urlImageProductGallary + mainImage}
+            />
         </section>
     );
 };

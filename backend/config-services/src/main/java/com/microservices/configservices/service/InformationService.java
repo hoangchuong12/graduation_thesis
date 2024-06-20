@@ -10,6 +10,7 @@ import com.microservices.configservices.payload.response.InfomationsResponse;
 
 public interface InformationService {
 
+    
     InfomationsResponse create(InformationRequest InformationRequest);
 
     void setImage(UUID id, String image);
@@ -27,4 +28,6 @@ public interface InformationService {
     InfomationsResponse delete(UUID id);
 
     void isDisplay(UUID id);
+
+    InfomationsResponse getInformationDisplay();
 }

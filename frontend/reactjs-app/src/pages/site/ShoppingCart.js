@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { MdDelete } from "react-icons/md";
@@ -10,25 +10,29 @@ import ProductStoreService from '../../services/ProductStoreService';
 import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
 import { toast } from 'react-toastify';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const CartItem = ({ item, reload, setReload }) => {
     const [product, setProduct] = useState(null);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const product = await ProductService.getById(item.productId);
                 setProduct(product);
             } catch (error) {
-                console.error('Error fetching product:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 
         if (item) {
             fetchProduct();
         }
-    }, [item]);
+    }, [item, navigate]);
 
     if (!item || !product) {
         return <div>Loading...</div>; // Hiển thị thông báo hoặc hiệu ứng tải dữ liệu
@@ -42,6 +46,7 @@ const CartItem = ({ item, reload, setReload }) => {
             console.error('Error deleting item:', error);
         }
     };
+    
 
     return (
         <div className="row mb-4 d-flex justify-content-between align-items-center">
@@ -75,17 +80,16 @@ const CartItem = ({ item, reload, setReload }) => {
 
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
-    // console.log("user in cart", user);
     const location = useLocation();
-
-    const [orderItems, setOrderItems] = useState(null);
+    const navigate = useNavigate();
+    const [orderItems, setOrderItems] = useState([]);
     const [cart, setCart] = useState(null);
-
     const [deliveryAddress, setDeliveryAddress] = useState("");
     const [deliveryPhone, setDeliveryPhone] = useState("");
     const [deliveryName, setDeliveryName] = useState("");
 
     const [reload, setReload] = useState(false);
+    const hasHandledPayment = useRef(false);
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -93,18 +97,14 @@ const Cart = () => {
                 const cart = await OrderService.getCart(user.userId);
                 const getUserFull = await UserService.getUserById(user.userId);
                 if (getUserFull) {
-                    // console.log("full user in cart:", getUserFull);
                     setDeliveryAddress(getUserFull.address);
                     setDeliveryPhone(getUserFull.phone);
                     setDeliveryName(getUserFull.name);
                 }
                 if (cart) {
-                    // console.log("cart in cart:", cart);
                     setCart(cart);
                     const cartItems = await OrderItemService.getByOrder(cart.id);
-                    // console.log("items in cart:", cartItems);
                     if (cartItems) {
-                        // console.log("items in cart", cartItems);
                         const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
                             const product = await ProductService.getById(item.productId);
                             return { ...item, product };
@@ -113,41 +113,58 @@ const Cart = () => {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching cart items:', error);
+                if (error.response && error.response.status === 503) {
+                    navigate('/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            }
+        };
+        const handleSuccessfulPayment = async () => {
+            if (hasHandledPayment.current) return; // If payment has already been handled, exit the function
+
+            if (!cart) {
+                console.error("Cart is null");
+                return;
+            }
+            try {
+                const searchParams = new URLSearchParams(location.search);
+                const responseCode = searchParams.get("vnp_ResponseCode");
+                if (responseCode) {
+                    hasHandledPayment.current = true; // Set flag to true to indicate payment has been handled
+                    const txnRef = searchParams.get("vnp_TxnRef");
+                    await OrderService.setPay(cart.id, txnRef);
+                    setReload(!reload);
+                    toast.success("Thanh toán thành công!");
+                }
+            } catch (error) {
+                console.error('Error handling successful payment:', error);
+                toast.error("Đã xảy ra lỗi khi xử lý thanh toán.");
             }
         };
 
+        handleSuccessfulPayment();
         fetchCartItems();
-    }, [user.userId, reload]);
+    }, [user.userId, reload, cart, location.search, navigate]);
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const responseCode = searchParams.get("vnp_ResponseCode");
-        const txnRef = searchParams.get("vnp_TxnRef");
-
-        if (responseCode === "00" && txnRef) {
-            handleSuccessfulPayment(txnRef);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location]);
-
-    const handleSuccessfulPayment = async (txnRef) => {
-        if (!cart) {
-            console.error("Cart is null");
-            return;
-        }
-
+    const submitOrderInCartPay = async (amount) => {
         try {
-            await OrderService.setPay(cart.id, txnRef);
-            await submitOrderInCart();
-            toast.success("Thanh toán thành công và đơn hàng đã được cập nhật!");
+            const linkToPay = await OrderService.payVNPAY(amount);
+            if (linkToPay) {
+                // console.log("link:",response)
+                window.location.href = linkToPay;
+            }
         } catch (error) {
-            console.error('Error handling successful payment:', error);
-            toast.error("Đã xảy ra lỗi khi xử lý thanh toán.");
+            console.error('Error calling VNPAY payment:', error);
+            toast.error("Đã xảy ra lỗi khi gọi thanh toán VNPAY.");
         }
     };
 
     const submitOrderInCart = async () => {
+        if (!cart) {
+            console.error("Cart is null");
+            return;
+        }
         const dataUpdateCart = {
             userId: cart.userId,
             totalPrice: cart.totalPrice,
@@ -156,77 +173,80 @@ const Cart = () => {
             deliveryName: deliveryName,
             status: 1,
         };
-        const updateCartToOrder = await OrderService.update(cart.id, dataUpdateCart);
-        if (updateCartToOrder !== null) {
-            if (orderItems) {
-                for (const item of orderItems) {
-                    try {
-                        console.log("Inside loop:", item);
-    
-                        // Update the product store
-                        const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
-                        console.log("store of item:", storeOfItem);
-                        if (storeOfItem !== null) {
-                            const updatedProductStore = {
-                                productId: storeOfItem.productId,
-                                optionValueId: storeOfItem.optionValueId,
-                                quantity: storeOfItem.quantity - item.quantity,
-                                soldQuantity: storeOfItem.soldQuantity + item.quantity,
-                                price: storeOfItem.price,
-                                createdBy: storeOfItem.createdBy,
-                            };
-                            await ProductStoreService.update(storeOfItem.id, updatedProductStore);
+
+        try {
+            const updateCartToOrder = await OrderService.update(cart.id, dataUpdateCart);
+            if (updateCartToOrder) {
+                if (orderItems) {
+                    for (const item of orderItems) {
+                        try {
+                            const storeOfItem = await ProductStoreService.getByOptionValue(item.optionValueId);
+                            if (storeOfItem) {
+                                const updatedProductStore = {
+                                    productId: storeOfItem.productId,
+                                    optionValueId: storeOfItem.optionValueId,
+                                    quantity: storeOfItem.quantity - item.quantity,
+                                    soldQuantity: storeOfItem.soldQuantity + item.quantity,
+                                    price: storeOfItem.price,
+                                    createdBy: storeOfItem.createdBy,
+                                };
+                                await ProductStoreService.update(storeOfItem.id, updatedProductStore);
+                            }
+
+                            const sales = await ProductSaleService.getByProduct(item.productId);
+                            const activeSale = sales.find(sale => sale.status === 1);
+
+                            if (activeSale) {
+                                await ProductSaleService.exportSale(item.productId, item.quantity);
+                            }
+                        } catch (error) {
+                            console.error('Error processing item:', error);
+                            toast.error("Đã xảy ra lỗi khi xử lý sản phẩm.");
+                            return;
                         }
-    
-                        // Check if the product has an active sale before calling exportSale
-                        const sales = await ProductSaleService.getByProduct(item.productId);
-                        const activeSale = sales.find(sale => sale.status === 1);
-    
-                        if (activeSale) {
-                            // Call exportSale for the active sale
-                            await ProductSaleService.exportSale(item.productId, item.quantity);
-                        } else {
-                            console.warn(`No active sale for product ${item.productId}`);
-                        }
-                    } catch (error) {
-                        console.error('Error processing item:', error);
-                        toast.error("Đã xảy ra lỗi khi xử lý sản phẩm.");
-                        return;
                     }
                 }
-            }
-    
-            // Refresh the cart after successful order
-            const cart = await OrderService.getCart(user.userId);
-            if (cart) {
-                setCart(cart);
-                const cartItems = await OrderItemService.getByOrder(cart.id);
-                if (cartItems) {
-                    const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
-                        const product = await ProductService.getById(item.productId);
-                        return { ...item, product };
-                    }));
-                    setOrderItems(itemsWithProducts);
+
+                const newCart = await OrderService.getCart(user.userId);
+                if (newCart) {
+                    setCart(newCart);
+                    const cartItems = await OrderItemService.getByOrder(newCart.id);
+                    if (cartItems) {
+                        const itemsWithProducts = await Promise.all(cartItems.map(async (item) => {
+                            const product = await ProductService.getById(item.productId);
+                            return { ...item, product };
+                        }));
+                        setOrderItems(itemsWithProducts);
+                    }
                 }
+
+                toast.success("Đặt hàng thành công");
             }
-            console.log("UPDATE cart to order:", updateCartToOrder);
-            toast.success("Đặt hàng thành công");
+        } catch (error) {
+            console.error('Error updating cart to order:', error);
+            toast.error("Đã xảy ra lỗi khi đặt hàng.");
         }
     };
 
-    const submitOrderInCartPay = async (amount) => {
-        try {
-            const response = await OrderService.payVNPAY(amount);
-            console.log("Response from VNPAY:", response);
-            if (response && response) {
-                window.location.href = response;
-            }
-        } catch (error) {
-            console.error('Error calling VNPAY payment:', error);
-            toast.error("Đã xảy ra lỗi khi gọi thanh toán VNPAY.");
-        }
-    };  
-    
+    //////css internal
+    const buttonStyle = {
+        backgroundColor: '#6c757d', // Dark gray background
+        color: 'white', // White text
+        borderRadius: '20px', // Rounded corners
+        fontSize: '1rem', // Adjust font size
+        padding: '10px 20px', // Adjust padding
+        width: '200px', // Fixed width
+        margin: '10px auto', // Center align and add space between buttons
+        display: 'block', // Ensure block display for centering
+        border: 'none', // Remove default border
+    };
+
+    const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#aaa', // Lighter gray for disabled state
+        cursor: 'not-allowed', // Not-allowed cursor for disabled state
+    };
+
     return (
         <section className="h-100 h-custom" style={{ backgroundColor: '#d2c9ff' }}>
             <div className="container py-5 h-100">
@@ -277,31 +297,28 @@ const Cart = () => {
                                                     <h5 className="text-uppercase">Tổng thanh toán</h5>
                                                     <h5>{cart.totalPrice}</h5>
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={submitOrderInCart}
-                                                    data-mdb-button-init
-                                                    data-mdb-ripple-init
-                                                    className="btn btn-dark btn-block btn-lg"
-                                                    data-mdb-ripple-color="dark"
-                                                    disabled={!orderItems || orderItems.length === 0} // Kiểm tra và vô hiệu hóa nút nếu không có sản phẩm trong giỏ hàng
-                                                >
-                                                    Ship COD
-                                                </button>
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={submitOrderInCart}
+                                                        style={!orderItems || orderItems.length === 0 ? disabledButtonStyle : buttonStyle} // Apply styles conditionally
+                                                        disabled={!orderItems || orderItems.length === 0} // Disable button if no items in the cart
+                                                    >
+                                                        Ship COD
+                                                    </button>
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() => submitOrderInCartPay(cart.totalPrice)}
-                                                    data-mdb-button-init
-                                                    data-mdb-ripple-init
-                                                    className="btn btn-dark btn-block btn-lg"
-                                                    data-mdb-ripple-color="dark"
-                                                    disabled={!orderItems || orderItems.length === 0} // Kiểm tra và vô hiệu hóa nút nếu không có sản phẩm trong giỏ hàng
-                                                >
-                                                    Thanh toán VNPAY
-                                                </button>
-
-
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            submitOrderInCartPay(cart.totalPrice);
+                                                            submitOrderInCart();
+                                                        }}
+                                                        style={!orderItems || orderItems.length === 0 ? disabledButtonStyle : buttonStyle} // Apply styles conditionally
+                                                        disabled={!orderItems || orderItems.length === 0} // Disable button if no items in the cart
+                                                    >
+                                                        Thanh toán VNPAY
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

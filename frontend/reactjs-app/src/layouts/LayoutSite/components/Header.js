@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import IonIcon from '@reacticons/ionicons';
-import logo from '../../../assets/images/logo/logo.svg';
+import logo from '../../../assets/images/logochuong.png';
 import Menu from '../../../pages/site/header/menu';
 import '../../../assets/styles/searchResult.css';
 import { useNavigate } from 'react-router-dom';
@@ -116,7 +116,7 @@ export default function Header() {
                 <div className="header-main">
                     <div className="container">
                         <a href="/" className="header-logo">
-                            <img src={logo} alt="Anon's logo" width="120" height="36" />
+                            <img src={logo} alt="Anon's logo" width="120" height="120" />
                         </a>
 
                         <div className="header-search-container">

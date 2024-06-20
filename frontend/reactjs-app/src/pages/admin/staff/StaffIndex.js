@@ -9,22 +9,30 @@ import { urlImageUser } from '../../../config';
 const StaffIndex = () => {
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const usersPerPage = 10; // Số thành viên trên mỗi trang
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 let result = await UserService.getStaffs();
-                // Filter out users with status 2 and the admin user
+                // Filter out users with status 2 and admin user
                 result = result.filter(user => user.status !== 2 && user.userName !== "admin");
                 // Sort users by createdAt in descending order
                 const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setUsers(sortedUsers);
+                setTotalPages(Math.ceil(sortedUsers.length / usersPerPage));
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
         };
         fetchUsers();
     }, [reload]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const HandTrash = async (id) => {
         await UserService.trash(id);
@@ -34,7 +42,7 @@ const StaffIndex = () => {
 
     const handleStatus = async (id, currentStatus) => {
         try {
-            await UserService.switchStatus(id);
+            await UserService.sitchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -43,17 +51,19 @@ const StaffIndex = () => {
         }
     };
 
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
     return (
-        <div className="container mt-4">
+        <div className="content">
             <section className="content-header my-2">
-                <div className="d-flex justify-content-between align-items-center">
-                    <h1>Danh sách thành viên</h1>
-                    <Link to="/admin/staff/add" className="btn btn-primary">Thêm mới</Link>
-                </div>
-                <div className="row mt-3">
+                <h1 className="d-inline">Danh sách thành viên</h1>
+                <Link to="/admin/staff/add" className="btn btn-primary" >Thêm mới</Link>
+                <div className="row mt-3 align-items-center">
                     <div className="col-12">
                         <button type="button" className="btn btn-warning">
-                            <Link to="/admin/staff/trash" className="text-white text-decoration-none">Thùng rác</Link>
+                            <a href="/admin/staff/trash">Thùng rác</a>
                         </button>
                     </div>
                 </div>
@@ -75,48 +85,57 @@ const StaffIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users && users.length > 0 &&
-                            users.map((user, index) => (
-                                <tr key={user.id} className="datarow">
-                                    <td className="text-center">
-                                        <input type="checkbox" id={`checkId${index}`} />
-                                    </td>
-                                    <td>
-                                        <div className="name">
-                                            <Link to={`/admin/staff/edit/${user.id}`}>
-                                                {user.userName}
-                                            </Link>
-                                        </div>
-                                        <div className="d-flex justify-content-start mt-2">
-                                            <button
-                                                onClick={() => handleStatus(user.id, user.status)}
-                                                className={`btn ${user.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
-                                            >
-                                                {user.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
-                                            </button>
-                                            <Link to={`/admin/staff/edit/${user.id}`} className='btn btn-primary me-1'>
-                                                <FaEdit />
-                                            </Link>
-                                            <button
-                                                onClick={() => HandTrash(user.id)}
-                                                className="btn btn-danger">
-                                                <FaTrash />
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>{user.name}</td>
-                                    <td>
-                                        <img src={`${urlImageUser}/${user.avatar}`} className="img-fluid user-avatar" alt="User" />
-                                    </td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone}</td>
-                                    <td>{user.address}</td>
-                                    <td>Quản trị</td>
-                                </tr>
-                            ))
+                        {currentUsers && currentUsers.length > 0 &&
+                            currentUsers.map((user, index) => {
+                                return (
+                                    <tr key={user.id} className="datarow">
+                                        <td className="text-center">
+                                            <input type="checkbox" id={`checkId${index}`} />
+                                        </td>
+                                        <td>
+                                            <div className="name">
+                                                <a href="menu_index.html">
+                                                    {user.userName}
+                                                </a>
+                                            </div>
+                                            <div className="function_style">
+                                               
+                                                <button
+                                                     onClick={() => handleStatus(user.id, user.status)}
+                                                    className={`btn ${user.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
+                                                >
+                                                     {user.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
+                                                </button>
+                                                <Link to={"/admin/staff/edit/" + user.id}className='btn btn-primary me-1'>
+                                                    <FaEdit />
+                                                </Link>
+                                                <button
+                                                     onClick={() => HandTrash(user.id)}
+                                                    className="btn btn-danger">
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>{user.name}</td>
+                                        <td>
+                                            {user.avatar ? (
+                                                <img src={urlImageUser + user.avatar} className="img-fluid user-avatar" alt="User" />
+                                            ) : (
+                                                <p>Không có ảnh</p>
+                                            )}
+                                        </td>
+
+                                        <td>{user.email}</td>
+                                        <td>{user.phone}</td>
+                                        <td>{user.address}</td>
+                                        <td>Quản trị</td>
+                                    </tr>
+                                );
+                            })
                         }
                     </tbody>
                 </table>
+            
             </section>
         </div>
     );

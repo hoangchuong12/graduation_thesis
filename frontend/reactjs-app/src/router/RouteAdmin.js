@@ -81,7 +81,7 @@ import PostTrash from "../pages/admin/post/postTrash";
 import PostEdit from "../pages/admin/post/PostEdit";
 
 const RouteAdmin = [
-    //user
+    //user *
     { path: '/admin/user/index', component: UserIndex },
     { path: '/admin/user/trash', component: UserTrash },
     { path: '/admin/user/add', component: UserAdd },
@@ -91,87 +91,87 @@ const RouteAdmin = [
     { path: '/admin/staff/trash', component: StaffTrash },
     { path: '/admin/staff/add', component: StaffAdd },
     { path: '/admin/staff/edit/:id', component: StaffEdit },
-    //role
+    //role *
     { path: '/admin/role/index', component: RoleIndex },
     { path: '/admin/role/trash', component: RoleTrash },
     { path: '/admin/role/add', component: RoleAdd },
     { path: '/admin/role/edit/:id', component: RoleEdit },
-    //notification
+    //notification *
     { path: '/admin/notification/index', component: NotificationIndex },
     { path: '/admin/notification/trash', component: NotificationTrash },
     { path: '/admin/notification/add/:id', component: NotificationAdd },
     { path: '/admin/notification/edit/:id', component: NotificationEdit },
-    //brand
+    //brand *
     { path: '/admin/brand/index', component: BrandIndex },
     { path: '/admin/brand/trash', component: BrandTrash },
     { path: '/admin/brand/add', component: BrandAdd },
     { path: '/admin/brand/edit/:id', component: BrandEdit },
-    //category
+    //category *
     { path: '/admin/category/index', component: CategoryIndex },
     { path: '/admin/category/trash', component: CategoryTrash },
     { path: '/admin/category/add', component: CategoryAdd },
     { path: '/admin/category/edit/:id', component: CategoryEdit },
-    //tag
+    //tag *
     { path: '/admin/tag/index', component: TagIndex },
     { path: '/admin/tag/trash', component: TagTrash },
     { path: '/admin/tag/add', component: TagAdd },
     { path: '/admin/tag/edit/:id', component: TagEdit },
-    //product
+    //product *
     { path: '/admin/product/index', component: ProductIndex },
     { path: '/admin/product/add', component: ProductAdd },
     { path: '/admin/product/edit/:id', component: ProductEdit },
     { path: '/admin/product/trash', component: ProductTrash },
-    //product sale
+    //product sale *
     { path: '/admin/product/sale-index', component: ProductSaleIndex },
     { path: '/admin/product/sale-trash', component: ProductSaleTrash },
     { path: '/admin/product/sale-add/:id', component: ProductSaleAdd },
     { path: '/admin/product/sale-edit/:id', component: ProductSaleEdit },
-    //product option
+    //product option *
     { path: '/admin/product/option-index', component: ProductOptionIndex },
     { path: '/admin/product/option-edit/:id', component: ProductOptionEdit },
     { path: '/admin/product/option-add/:id', component: ProductOptionAdd },
     { path: '/admin/product/option-trash', component: ProductOptionTrash },
 
-    //product store
+    //product store *
     { path: '/admin/product/store/index', component: ProductStoreIndex },
     { path: '/admin/product/import/index', component: ProductImportIndex },
     { path: '/admin/product/store/edit/:id', component: ProductStoreEdit },
     { path: '/admin/product/import/add/:id', component: ProductImportAdd },
     { path: '/admin/product/import/edit/:id', component: ProductImportEdit },
 
-    //slider
+    //slider *
     { path: '/admin/slider/index', component: SliderIndex },
     { path: '/admin/slider/trash', component: SliderTrash },
     { path: '/admin/slider/add', component: SliderAdd },
     { path: '/admin/slider/edit/:id', component: SliderEdit },
-    //banner
+    //banner *
     { path: '/admin/banner/index', component: BannerIndex },
     { path: '/admin/banner/trash', component: BannerTrash },
     { path: '/admin/banner/add', component: BannerAdd },
     { path: '/admin/banner/edit/:id', component: BannerEdit },
 
-    //product gallary
+    //product gallary *
     { path: '/admin/product/gallary-index/:id', component: ProductGallaryIndex },
 
-    //information
+    //information *
     { path: '/admin/information/index', component: InformationIndex },
     { path: '/admin/information/trash', component: InformationTrash },
     { path: '/admin/information/add', component: InformationAdd },
     { path: '/admin/information/edit/:id', component: InformationEdit },
-    //order-item
+    //order-item *
     { path: '/admin/order-item/index', component: OrderItemIndex },
     { path: '/admin/order-item/trash', component: OrderItemTrash },
-    //order-export
+    //order-export *
     { path: '/admin/order/export', component: ProductExportIndex },
 
-    //topic
+    //topic *
     { path: '/admin/topic/index', component: TopicIndex },
     { path: '/admin/topic/trash', component: TopicTrash },
     { path: '/admin/topic/add', component: TopicAdd },
     { path: '/admin/topic/edit/:id', component: TopicEdit },
 
 
-    //post
+    //post *
     { path: '/admin/post/index', component: PostIndex },
     { path: '/admin/post/trash', component: PostTrash },
     { path: '/admin/post/add', component: PostAdd },

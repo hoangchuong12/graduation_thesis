@@ -62,4 +62,9 @@ public class RoleController {
         RoleResponse deletedRole = roleService.delete(id);
         return ResponseEntity.ok(deletedRole);
     }
+    @GetMapping("/get-by-role/{role}")
+    public ResponseEntity<RoleResponse> getRoleByRole(@PathVariable int role) {
+        RoleResponse roleResponse = roleService.getByRole(role);
+        return ResponseEntity.ok(roleResponse);
+    }
 }

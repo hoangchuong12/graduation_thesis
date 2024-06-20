@@ -27,6 +27,7 @@ const ProductExportIndex = () => {
         <div className="content">
             <section className="content-header my-2">
                 <h1 className="d-inline">Quản lý lịch sử xuất hàng</h1>
+                <Link to="/admin/slider/add" className="btn btn-primary">Thêm mới</Link>
             </section>
             <section className="content-body my-2">
                 <table className="table table-bordered">

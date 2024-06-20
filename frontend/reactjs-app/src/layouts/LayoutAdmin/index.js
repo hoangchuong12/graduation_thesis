@@ -191,6 +191,9 @@ const LayoutAdmin = () => {
                                                                     <Link to="/admin/order-item/index">Tất cả đơn hàng</Link>
                                                                 </li>
                                                                 <li>
+                                                                    <Link to="/admin/product/import/index">nhập hàng</Link>
+                                                                </li>
+                                                                <li>
                                                                     <Link to="/admin/order/export">Xuất hàng</Link>
                                                                 </li>
                                                             </ul>

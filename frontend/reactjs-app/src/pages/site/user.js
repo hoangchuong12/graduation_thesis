@@ -125,11 +125,7 @@ const MyUser = () => {
                             <p className="text-muted">{userInfor && userInfor.role ? userInfor.role.name : "Role"}</p>
                             <p>{userInfor && userInfor.address ? userInfor.address : "No Address Provided"}</p>
                             <div className="d-flex justify-content-center gap-2">
-                                {userInfor && userInfor.role.name === "Seller" ? (
-                                    <button className="btn btn-primary" onClick={() => navigate(`/my-store/${user.userId}`)}>My Store</button>
-                                ) : (
-                                    <button className="btn btn-secondary" onClick={() => navigate(`/register-store/${user.userId}`)}>Register Store</button>
-                                )}
+
                                 <button className="btn btn-outline-primary" onClick={() => navigate(`/my-user-manager`)}>Account Settings</button>
                             </div>
                         </div>

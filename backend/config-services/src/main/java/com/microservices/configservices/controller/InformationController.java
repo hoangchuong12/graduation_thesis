@@ -34,11 +34,23 @@ public class InformationController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/switch-status/{id}")
+    public ResponseEntity<Void> switchStatus(@PathVariable UUID id) {
+        informationService.switchStatus(id);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/trash/{id}")
     public ResponseEntity<Void> trash(@PathVariable UUID id) {
         informationService.trash(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/display/{id}")
+    public ResponseEntity<Void> display(@PathVariable UUID id) {
+        informationService.isDisplay(id);
+        return ResponseEntity.ok().build();
+    }  
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<InfomationsResponse> getInformationById(@PathVariable UUID id) {
@@ -69,6 +81,14 @@ public class InformationController {
         InfomationsResponse deletedInformation = informationService.delete(id);
         if (deletedInformation != null) {
             return ResponseEntity.ok(deletedInformation);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    @GetMapping("/get-display")
+    public ResponseEntity<InfomationsResponse> getInformationDisplay() {
+        InfomationsResponse information = informationService.getInformationDisplay();
+        if (information != null) {
+            return ResponseEntity.ok(information);
         }
         return ResponseEntity.notFound().build();
     }

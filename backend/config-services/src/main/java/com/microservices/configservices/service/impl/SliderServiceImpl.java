@@ -37,7 +37,6 @@ public class SliderServiceImpl implements SliderService {
         slider.setImage(image);
         sliderRepository.save(slider);
     }
-
     @Override
     public void switchStatus(UUID id) {
         Slider slider = sliderRepository.findById(id).orElseThrow(() -> new RuntimeException("NOT_FOUND"));

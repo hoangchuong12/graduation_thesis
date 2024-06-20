@@ -7,6 +7,9 @@ const ProductStoreService = {
     import: (data) => {
         return httpAxios.post(`store-services/api/product-imports/create`, data);
     },
+    export: (data) => {
+        return httpAxios.post(`store-services/api/product-exports/create`, data);
+    },
     getById: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-id/${id}`);
     },
@@ -15,6 +18,12 @@ const ProductStoreService = {
     },
     getAll: () => {
         return httpAxios.get(`store-services/api/product-stores/get-all`);
+    },
+    getExports: () => {
+        return httpAxios.get(`store-services/api/product-exports/get-all`);
+    },
+    getExportsByUser: (id) => {
+        return httpAxios.get(`store-services/api/product-exports/get-by-user/${id}`);
     },
     getImports: () => {
         return httpAxios.get(`store-services/api/product-imports/get-all`);
@@ -31,14 +40,17 @@ const ProductStoreService = {
     deleteByOptionValue: (id) => {
         return httpAxios.delete(`store-services/api/product-stores/delete-by-option-value/${id}`);
     },
+    getByOptionValue: (id) => {
+        return httpAxios.get(`store-services/api/product-stores/get-by-option-value/${id}`);
+    },
     getByProductId: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-product/${id}`);
     },
     getbyUserId: (id) => {
         return httpAxios.get(`store-services/api/product-stores/get-by-user/${id}`);
     },
-    getByOptionValue: (id) => {
-        return httpAxios.get(`store-services/api/product-stores/get-by-option-value/${id}`);
+    getImportsByUserId: (id) => {
+        return httpAxios.get(`store-services/api/product-imports/get-by-user/${id}`);
     },
 }
 export default ProductStoreService;

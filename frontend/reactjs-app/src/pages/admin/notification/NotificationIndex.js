@@ -38,6 +38,7 @@ const NotificationIndex = () => {
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Thông báo</h1>
+                            <Link to="/admin/notification/add" className="btn btn-primary">Thêm mới</Link>
                 </div>
                 <div className="row mt-3">
                     <div className="col-12">

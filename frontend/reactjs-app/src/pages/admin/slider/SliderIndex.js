@@ -39,6 +39,7 @@ const SliderIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
@@ -82,14 +83,14 @@ const SliderIndex = () => {
                                                     {slider.name}
                                                 </Link>
                                             </div>
-                                            <div className="d-flex justify-content-start mt-2">
+                                            <div className="d-flex align-items-center mt-2">
                                                 <button
                                                     onClick={() => handleStatus(slider.id, slider.status)}
                                                     className={`btn ${slider.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
                                                 >
                                                     {slider.status === 1 ? <FaToggleOn /> : <FaToggleOff />}
                                                 </button>
-                                                <Link to={`/admin/slider/edit/${slider.id}`} className='btn btn-primary me-1'>
+                                                <Link to={`/admin/slider/edit/${slider.id}`} className="btn btn-primary me-1">
                                                     <FaEdit />
                                                 </Link>
                                                 <button

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageInformation } from '../../../config';
 const InformationIndex = () => {
-    const [informations, setInformations] = useState([]);
+    const [informations, SetInformations] = useState([]);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ const InformationIndex = () => {
                 result = result.filter(inf => inf.status !== 2);
                 // Sort users by createdAt in descending order
                 const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setInformations(sortedData);
+                SetInformations(sortedData);
             } catch (error) {
                 console.error("Error fetching:", error);
             }
@@ -30,9 +30,9 @@ const InformationIndex = () => {
         toast.success("Chuyển vào thùng rác");
     };
 
-    const handleStatus = async (id) => {
+    const handleStatus = async (id, currentStatus) => {
         try {
-            await InformationService.switchStatus(id);
+            await InformationService.sitchStatus(id);
             setReload(Date.now());
             toast.success("Thành công");
         } catch (error) {
@@ -41,7 +41,7 @@ const InformationIndex = () => {
         }
     };
 
-    const handleDisplay = async (id) => {
+    const handleDislay = async (id) => {
         await InformationService.display(id);
         setReload(Date.now());
         toast.success("Đã chuyển đổi trưng bày");
@@ -127,7 +127,7 @@ const InformationIndex = () => {
                                     <td>{information.createdAt}</td>
                                     <td>
                                         <button
-                                            onClick={() => handleDisplay(information.id)}
+                                            onClick={() => handleDislay(information.id)}
                                             className={`btn ${information.status === 3 ? 'btn-success' : 'btn-danger'} me-1`}
                                         >
                                             {information.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}

@@ -1,0 +1,48 @@
+.banner {
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-item {
+    position: relative;
+    display: inline-block;
+}
+
+.banner-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Example background color for content overlay */
+    color: #fff; /* Example text color */
+}
+
+.banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.slider-navigation {
+    position: absolute;
+    bottom: 20px; /* Adjust distance from bottom */
+    left: 20px; /* Adjust distance from left */
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 40px); /* Adjust width to fit within the container */
+    z-index: 10;
+}
+
+.prev-slide-btn,
+
+
+.prev-slide-btn:hover,
+.next-slide-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Example background color on hover */
+}
+
+.prev-slide-btn:focus,
+.next-slide-btn:focus {
+    outline: none; /* Remove default focus outline */
+}
