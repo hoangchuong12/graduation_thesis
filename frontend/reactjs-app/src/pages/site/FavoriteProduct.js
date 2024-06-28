@@ -7,12 +7,14 @@ import ProductSaleService from '../../services/ProductSaleService';
 import { urlImageProduct } from '../../config';
 import ReactPaginate from 'react-paginate';
 import '../../assets/styles/favoriteProduct.css';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const FavoriteProduct = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const [favorites, setFavorites] = useState([]);
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const navigate = useNavigate(); 
     const productsPerPage = 5;
 
     useEffect(() => {
@@ -43,7 +45,13 @@ const FavoriteProduct = () => {
                 const products = await Promise.all(productPromises);
                 setProducts(products);
             } catch (error) {
-                console.error('Error fetching products:', error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
 

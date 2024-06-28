@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageUser } from '../../../config';
 
@@ -12,6 +12,7 @@ const StaffIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const usersPerPage = 10; // Số thành viên trên mỗi trang
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -24,7 +25,11 @@ const StaffIndex = () => {
                 setUsers(sortedUsers);
                 setTotalPages(Math.ceil(sortedUsers.length / usersPerPage));
             } catch (error) {
-                console.error("Error fetching users:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error("Error fetching users:", error);}
             }
         };
         fetchUsers();

@@ -23,7 +23,7 @@ const Sale = () => {
 
     return (
         <div className="product-main">
-        <h2 className="title">Products Sale</h2>
+        <h2 className="title">sản phẩm giảm giá</h2>
         <div className="product-grid">
 
         {sales && sales.length > 0 &&

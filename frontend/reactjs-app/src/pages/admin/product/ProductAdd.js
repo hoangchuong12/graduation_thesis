@@ -191,42 +191,46 @@ const ProductAdd = () => {
                                 {categories && categories.length > 0 && (
                                     <div>
                                         {categories.map((category) => (
-                                            <div key={category.id}>
+                                            <div className="form-check" key={category.id}>
                                                 <input
+                                                    className="form-check-input"
                                                     type="checkbox"
-                                                    id={category.id}
+                                                    id={`category-${category.id}`}
                                                     value={category.id}
                                                     checked={selectedCategoryIds.includes(category.id)}
                                                     onChange={(e) => handleCategoryChange(e.target.value)}
                                                 />
-                                                <label htmlFor={category.id}>{category.name}</label>
+                                                <label className="form-check-label" htmlFor={`category-${category.id}`}>
+                                                    {category.name}
+                                                </label>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
 
-                            {/* Tags */}
                             <div className="mb-3">
                                 <label><strong>Tags</strong></label>
                                 {tags && tags.length > 0 && (
                                     <div>
                                         {tags.map((tag) => (
-                                            <div key={tag.id}>
+                                            <div className="form-check" key={tag.id}>
                                                 <input
+                                                    className="form-check-input"
                                                     type="checkbox"
-                                                    id={tag.id}
+                                                    id={`tag-${tag.id}`}
                                                     value={tag.id}
                                                     checked={selectedTagIds.includes(tag.id)}
                                                     onChange={(e) => handleTagChange(e.target.value)}
                                                 />
-                                                <label htmlFor={tag.id}>{tag.name}</label>
+                                                <label className="form-check-label" htmlFor={`tag-${tag.id}`}>
+                                                    {tag.name}
+                                                </label>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
-
 
                             <div className="mb-3">
                                 <label><strong>Trạng thái</strong></label>

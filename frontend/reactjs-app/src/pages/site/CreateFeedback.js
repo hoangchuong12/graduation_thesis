@@ -50,7 +50,13 @@ const CreateFeedback = () => {
                 navigate("/user", { replace: true });
             }
         } catch (error) {
-            console.error("Error adding user:", error);
+            if (error.response && error.response.status === 503) {
+                // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                navigate('/404');
+            } else {
+                // Nếu là các lỗi khác, in ra console để debug
+                console.error("Error fetching data:", error);
+            }
         }
     };
 

@@ -3,22 +3,41 @@ import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 import ProductOptionService from '../../../services/ProductOptionService';
 import { FaEdit } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProductImportIndex = () => {
     const [imports, setImports] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Số mục trên mỗi trang
     const [reload] = useState(0);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchImports = async () => {
+            try{
             const result = await ProductStoreService.getImports();
             result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setImports(result);
+        } catch (error) {
+            if (error.response && error.response.status === 503) {
+                // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                navigate('/admin/404');
+            } else {
+            console.error("Error fetching exports:", error);}
+        }
         };
         fetchImports();
     }, [reload]);
+
+    // Tính toán chỉ mục bắt đầu và chỉ mục kết thúc của mỗi trang
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = imports.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Chuyển đổi trang
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div className="container mt-4">
@@ -51,13 +70,20 @@ const ProductImportIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {imports && imports.length > 0 &&
-                            imports.map((importItem, index) => (
+                        {currentItems && currentItems.length > 0 &&
+                            currentItems.map((importItem, index) => (
                                 <ProductTableRow key={index} importItem={importItem} />
                             ))
                         }
                     </tbody>
                 </table>
+                {/* Phân trang */}
+                <Pagination
+                    itemsPerPage={itemsPerPage}
+                    totalItems={imports.length}
+                    paginate={paginate}
+                    currentPage={currentPage}
+                />
             </section>
         </div>
     );
@@ -129,6 +155,28 @@ const ProductTableRow = ({ importItem }) => {
             <td>{importItem && importItem.description}</td>
             <td>{importItem && importItem.createdBy}</td>
         </tr>
+    );
+};
+
+const Pagination = ({ itemsPerPage, totalItems, paginate, currentPage }) => {
+    const pageNumbers = [];
+
+    for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
+    return (
+        <nav>
+            <ul className="pagination">
+                {pageNumbers.map(number => (
+                    <li key={number} className={`page-item ${number === currentPage ? 'active' : ''}`}>
+                        <button onClick={() => paginate(number)} className="page-link">
+                            {number}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </nav>
     );
 };
 

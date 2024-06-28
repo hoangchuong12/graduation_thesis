@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductService from '../../../services/ProductService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
@@ -11,9 +11,12 @@ import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 const ProductOptionIndex = () => {
     const [options, setOptions] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const navigate = useNavigate(); 
+    const optionsPerPage = 5;
     useEffect(() => {
         (async () => {
+            try{
             const result = await ProductOptionService.getAll();
             if (result !== null) {
                 console.log("option list: ", result);
@@ -23,6 +26,13 @@ const ProductOptionIndex = () => {
             // Sort the filtered sales array by createdAt property from newest to oldest
             filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setOptions(filteredSales);
+        } catch (error) {
+            if (error.response && error.response.status === 503) {
+                // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                navigate('/admin/404');
+            } else {
+            console.error("Error fetching brand:", error);
+        }}
         })();
     }, [reload]);
 
@@ -42,7 +52,33 @@ const ProductOptionIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+    const indexOfLastOption = currentPage * optionsPerPage;
+    const indexOfFirstOption = indexOfLastOption - optionsPerPage;
+    const currentOptions = options.slice(indexOfFirstOption, indexOfLastOption);
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+
+        for (let i = 1; i <= Math.ceil(options.length / optionsPerPage); i++) {
+            pageNumbers.push(
+                <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(i)}>{i}</button>
+                </li>
+            );
+        }
+
+        return (
+            <nav aria-label="Page navigation">
+                <ul className="pagination">
+                    {pageNumbers}
+                </ul>
+            </nav>
+        );
+    };
     return (
         <div >
             <section className="content-header my-2">
@@ -69,8 +105,7 @@ const ProductOptionIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {options && options.length > 0 &&
-                            options.map((option, index) => (
+                    {currentOptions.map((option) => (
                                 <ProductOptionTableRow key={option.id} option={option} HandTrash={HandTrash} handleStatus={handleStatus} />
                             ))
                         }

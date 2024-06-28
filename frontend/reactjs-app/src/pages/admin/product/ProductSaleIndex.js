@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductSaleService from '../../../services/ProductSaleService';
 import ProductService from '../../../services/ProductService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { LocalDateTime, DateTimeFormatter } from 'js-joda';
@@ -11,16 +11,26 @@ import { LocalDateTime, DateTimeFormatter } from 'js-joda';
 const ProductSaleIndex = () => {
     const [sales, setSales] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         (async () => {
+            try{
             const result = await ProductSaleService.getAll();
             // Filter out sales with status 2
             const filteredSales = result.filter(sale => sale.status !== 2);
             // Sort the filtered sales array by createdAt property from newest to oldest
             filteredSales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSales(filteredSales);
+        } catch (error) {
+            if (error.response && error.response.status === 503) {
+                // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                navigate('/admin/404');
+            } else {
+            console.error("Error fetching brand:", error);
+        }}
         })();
+        
     }, [reload]);
 
     const HandTrash = async (id) => {

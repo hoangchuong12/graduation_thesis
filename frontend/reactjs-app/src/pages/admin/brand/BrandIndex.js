@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageBrand } from '../../../config';
 
 const BrandIndex = () => {
     const [brands, setBrands] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const brandsPerPage = 5;
 
     useEffect(() => {
         const fetchBrands = async () => {
@@ -17,8 +20,12 @@ const BrandIndex = () => {
                 const sortedBrands = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBrands(sortedBrands);
             } catch (error) {
-                console.error("Error fetching brands:", error);
-            }
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error('Error fetching data:', error);
+                }}
         };
         fetchBrands();
     }, [reload]);
@@ -44,6 +51,33 @@ const BrandIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastBrand = currentPage * brandsPerPage;
+    const indexOfFirstBrand = indexOfLastBrand - brandsPerPage;
+    const currentBrands = brands.slice(indexOfFirstBrand, indexOfLastBrand);
+    const totalPages = Math.ceil(brands.length / brandsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
@@ -75,8 +109,8 @@ const BrandIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {brands && brands.length > 0 &&
-                            brands.map((brand, index) => (
+                        {currentBrands && currentBrands.length > 0 &&
+                            currentBrands.map((brand, index) => (
                                 <tr key={brand.id} className="datarow">
                                     <td className="text-center">
                                         <input type="checkbox" id={`checkId${index}`} />
@@ -119,15 +153,20 @@ const BrandIndex = () => {
                                         >
                                             {brand.status === 3 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
                                         </button>
-                            
                                     </td>
                                 </tr>
                             ))
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );
 };
+
 export default BrandIndex;

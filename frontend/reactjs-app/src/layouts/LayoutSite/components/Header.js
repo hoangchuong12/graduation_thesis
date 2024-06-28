@@ -8,14 +8,16 @@ import ProductService from '../../../services/ProductService';
 import OrderService from '../../../services/OrderService';
 import OrderItemService from '../../../services/OrderItemService';
 import FavoriteService from '../../../services/FavoriteService'; // Import FavoriteService
-import { urlImageProduct } from '../../../config';
+import { urlImageProduct, urlImageUser } from '../../../config';
+import NotificationService from '../../../services/NotificationService';
 
 export default function Header() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [notification, setNotification] = useState([]);
     const [cartItemCount, setCartItemCount] = useState(0);
-    const [favoriteItemCount, setFavoriteItemCount] = useState(0); // State để lưu số lượng sản phẩm yêu thích
+    const [favoriteItemCount, setFavoriteItemCount] = useState(0); // State để lưu số lượng sản phẩm yêu thích4
 
     useEffect(() => {
         // Hàm này sẽ được gọi mỗi khi searchTerm thay đổi
@@ -31,7 +33,17 @@ export default function Header() {
                 console.error('Error fetching search results:', error);
             }
         };
-
+        const fetchNotification = async () => {
+            try {
+                let result = await NotificationService.getAll();
+                const sortedbnotification = result.filter(notification => notification.status == 1);
+                console.log("thong ton",sortedbnotification)
+                setNotification(sortedbnotification);
+            } catch (error) {
+                console.error("Error fetching:", error);
+            }
+        };
+        fetchNotification();
         fetchSearchResults();
     }, [searchTerm]);
 
@@ -113,6 +125,31 @@ export default function Header() {
     return (
         <>
             <header>
+                <div>{notification.map(notification => (
+                    <div key={notification.id}  className="notification-toast" data-toast>
+                        <button className="toast-close-btn" data-toast-close>
+                            <ion-icon name="close-outline" />
+                        </button>
+                        <div className="toast-banner">
+                        <img src={urlImageUser + notification.user.avatar}  alt="Rose Gold Earrings" width={80} height={70} />
+                        </div>
+                        <div className="toast-detail">
+                            <p className="toast-message">
+                            {notification.user.name}
+                            </p>
+                            <p className="toast-title">
+                            {notification.description}
+                            </p>
+                            <p className="toast-meta">
+                                <time dateTime="PT2M">2 Minutes</time> ago
+                            </p>
+                        </div>
+                    </div>
+                ))
+                    }
+                    
+                </div>
+
                 <div className="header-main">
                     <div className="container">
                         <a href="/" className="header-logo">

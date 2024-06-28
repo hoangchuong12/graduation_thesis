@@ -16,7 +16,7 @@ const Testimonials = () => {
                 const filteredBanners = result.filter(banner => banner.status !== 0 && banner.status !== 2);
                 setSliders(filteredBanners);
             } catch (error) {
-                console.error("Error fetching banners:", error);
+                console.error("Lỗi khi tải banner:", error);
             }
         };
         fetchBanners();
@@ -42,12 +42,12 @@ const Testimonials = () => {
         <div className="container">
             <div className="testimonials-box">
                 <div className="testimonial">
-                    <h2 className="title">Testimonials</h2>
+                    <h2 className="title">Nhận xét của khách hàng</h2>
                     <div key={currentBanner.id} className="testimonial-card">
-                        <img src={urlImageBanner + currentBanner.image} alt={currentBanner.name}style={{ maxWidth: '100%', height: 'auto' }} />
+                        <img src={urlImageBanner + currentBanner.image} alt={currentBanner.name} style={{ maxWidth: '100%', height: 'auto' }} />
                         <p className="testimonial-name">{currentBanner.name}</p>
                         <p className="testimonial-title">{currentBanner.description}</p>
-                        <img src={quotes} alt="quotation" className="quotation-img" width={26} />
+                        <img src={quotes} alt="dấu ngoặc kép" className="quotation-img" width={26} />
                         <p className="testimonial-desc">
                             {currentBanner.description}
                         </p>
@@ -55,25 +55,25 @@ const Testimonials = () => {
                 </div>
 
                 <div className="cta-container">
-                    <img src={require("../../../assets/images/cta-banner.jpg")} alt="summer collection" className="cta-banner" />
+                    <img src={require("../../../assets/images/cta-banner.jpg")} alt="bộ sưu tập mùa hè" className="cta-banner" />
                     <a href="#" className="cta-content">
-                        <p className="discount">25% Discount</p>
-                        <h2 className="cta-title">Summer collection</h2>
-                        <p className="cta-text">Starting @ $10</p>
-                        <button className="cta-btn">Shop now</button>
+                        <p className="discount">Giảm giá 25%</p>
+                        <h2 className="cta-title">Bộ sưu tập mùa hè</h2>
+                        <p className="cta-text">Bắt đầu từ $10</p>
+                        <button className="cta-btn">Mua ngay</button>
                     </a>
                 </div>
 
                 <div className="service">
-                    <h2 className="title">Our Services</h2>
+                    <h2 className="title">Dịch vụ của chúng tôi</h2>
                     <div className="service-container">
                         <a href="#" className="service-item">
                             <div className="service-icon">
                                 <IonIcon icon={boatOutline} />
                             </div>
                             <div className="service-content">
-                                <h3 className="service-title">Worldwide Delivery</h3>
-                                <p className="service-desc">For Orders Over $100</p>
+                                <h3 className="service-title">Giao hàng toàn cầu</h3>
+                                <p className="service-desc">Đối với đơn hàng từ $100 trở lên</p>
                             </div>
                         </a>
                         <a href="#" className="service-item">
@@ -81,8 +81,8 @@ const Testimonials = () => {
                                 <IonIcon icon={rocketOutline} />
                             </div>
                             <div className="service-content">
-                                <h3 className="service-title">Next Day Delivery</h3>
-                                <p className="service-desc">UK Orders Only</p>
+                                <h3 className="service-title">Giao hàng trong ngày tiếp theo</h3>
+                                <p className="service-desc">Chỉ áp dụng đối với đơn hàng tại Anh</p>
                             </div>
                         </a>
                         <a href="#" className="service-item">
@@ -90,8 +90,8 @@ const Testimonials = () => {
                                 <IonIcon icon={callOutline} />
                             </div>
                             <div className="service-content">
-                                <h3 className="service-title">Best Online Support</h3>
-                                <p className="service-desc">Hours: 8AM - 11PM</p>
+                                <h3 className="service-title">Hỗ trợ trực tuyến tốt nhất</h3>
+                                <p className="service-desc">Giờ làm việc: 8AM - 11PM</p>
                             </div>
                         </a>
                         <a href="#" className="service-item">
@@ -99,8 +99,8 @@ const Testimonials = () => {
                                 <IonIcon icon={arrowUndoOutline} />
                             </div>
                             <div className="service-content">
-                                <h3 className="service-title">Return Policy</h3>
-                                <p className="service-desc">Easy & Free Return</p>
+                                <h3 className="service-title">Chính sách đổi trả</h3>
+                                <p className="service-desc">Đổi trả dễ dàng và miễn phí</p>
                             </div>
                         </a>
                         <a href="#" className="service-item">
@@ -108,8 +108,8 @@ const Testimonials = () => {
                                 <IonIcon icon={ticketOutline} />
                             </div>
                             <div className="service-content">
-                                <h3 className="service-title">30% Money Back</h3>
-                                <p className="service-desc">For Orders Over $100</p>
+                                <h3 className="service-title">Hoàn tiền 30%</h3>
+                                <p className="service-desc">Đối với đơn hàng từ $100 trở lên</p>
                             </div>
                         </a>
                     </div>

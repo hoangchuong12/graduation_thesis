@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageSlider } from '../../../config';
 import Sliderervice from '../../../services/SliderService';
@@ -8,6 +8,7 @@ import Sliderervice from '../../../services/SliderService';
 const SliderIndex = () => {
     const [sliders, setSliders] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchSliders = async () => {
@@ -17,8 +18,12 @@ const SliderIndex = () => {
                 const sortedSliders = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setSliders(sortedSliders);
             } catch (error) {
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
                 console.error("Error fetching:", error);
-            }
+            }}
         };
         fetchSliders();
     }, [reload]);

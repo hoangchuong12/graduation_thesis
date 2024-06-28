@@ -118,10 +118,10 @@ const Content = () => {
                         <div className="border rounded-2 px-3 py-2 bg-white">
                             <ul className="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
                                 <li className="nav-item" role="presentation">
-                                    <a className={`nav-link ${activeTab === 'spec' ? 'active' : ''}`} onClick={() => handleTabClick('spec')} id="ex1-tab-1" href="#ex1-pills-1" role="tab">Comments</a>
+                                    <a className={`nav-link ${activeTab === 'spec' ? 'active' : ''}`} onClick={() => handleTabClick('spec')} id="ex1-tab-1" href="#ex1-pills-1" role="tab">Đánh giá sản phẩm</a>
                                 </li>
                                 <li className="nav-item" role="presentation">
-                                    <a className={`nav-link ${activeTab === 'warranty' ? 'active' : ''}`} onClick={() => handleTabClick('warranty')} id="ex1-tab-2" href="#ex1-pills-2" role="tab">Description</a>
+                                    <a className={`nav-link ${activeTab === 'warranty' ? 'active' : ''}`} onClick={() => handleTabClick('warranty')} id="ex1-tab-2" href="#ex1-pills-2" role="tab">thông tin sản phẩm</a>
                                 </li>
                             </ul>
                             <div className="tab-content" id="ex1-content">
@@ -138,7 +138,7 @@ const Content = () => {
                         <div className="px-0 border rounded-2 shadow-0">
                             <div className="card">
                                 <div className="card-body">
-                                    <h5 className="card-title">Similar items</h5>
+                                    <h5 className="card-title">sản phẩm liên quan</h5>
                                     <div className="overflow-auto" style={{ maxHeight: '700px' }}>
                                         {productRelateds.map(productRelated => (
                                             <div className="d-flex mb-3" key={productRelated.id}>

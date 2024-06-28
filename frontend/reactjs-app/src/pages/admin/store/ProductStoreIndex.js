@@ -9,7 +9,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ProductStoreIndex = () => {
     const [stores, setStores] = useState([]);
-    const [reload] = useState(0);
+    const [filterQuantity, setFilterQuantity] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Số mục trên mỗi trang
 
     useEffect(() => {
         const fetchStores = async () => {
@@ -18,13 +20,38 @@ const ProductStoreIndex = () => {
             setStores(result);
         };
         fetchStores();
-    }, [reload]);
+    }, []);
+
+    const handleFilterChange = (e) => {
+        const value = e.target.value.trim();
+        setFilterQuantity(value === '' ? null : parseInt(value));
+    };
+
+    // Lọc và phân trang
+    const filteredStores = stores.filter(store => {
+        if (filterQuantity === null) {
+            return true;
+        }
+        return store.quantity >= filterQuantity;
+    });
+
+    // Tính toán chỉ mục bắt đầu và kết thúc của mỗi trang
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentStores = filteredStores.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Chuyển đổi trang
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Tính tổng số lượng sản phẩm
+    const totalQuantity = filteredStores.reduce((total, store) => total + store.quantity, 0);
 
     return (
         <div className="content mt-4">
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Quản lý kho hàng</h1>
+                    <p>Tổng số lượng: {totalQuantity}</p>
                 </div>
                 <div className="row mt-3">
                     <div className="col-12">
@@ -35,6 +62,10 @@ const ProductStoreIndex = () => {
                 </div>
             </section>
             <section className="content-body my-2">
+                <div className="input-group mb-3">
+                    <span className="input-group-text">Số lượng </span>
+                    <input type="number" className="form-control" id="filterQuantity" value={filterQuantity === null ? '' : filterQuantity} onChange={handleFilterChange} />
+                </div>
                 <table className="table table-hover table-bordered">
                     <thead className="table-dark">
                         <tr>
@@ -51,13 +82,18 @@ const ProductStoreIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {stores && stores.length > 0 &&
-                            stores.map((store, index) => (
-                                <ProductTableRow key={store.id} store={store} />
-                            ))
-                        }
+                        {currentStores.map((store, index) => (
+                            <ProductTableRow key={store.id} store={store} />
+                        ))}
                     </tbody>
                 </table>
+                {/* Phân trang */}
+                <Pagination
+                    itemsPerPage={itemsPerPage}
+                    totalItems={filteredStores.length}
+                    paginate={paginate}
+                    currentPage={currentPage}
+                />
             </section>
         </div>
     );
@@ -80,7 +116,6 @@ const ProductTableRow = ({ store }) => {
         const fetchOptionValue = async () => {
             try {
                 const fetched = await ProductOptionService.getOptionValue(store.optionValueId);
-
                 if (fetched !== null) {
                     const option = await ProductOptionService.getById(fetched.optionId);
                     setOption(option);
@@ -129,6 +164,28 @@ const ProductTableRow = ({ store }) => {
             <td>{store.soldQuantity}</td>
             <td>{store.createdBy}</td>
         </tr>
+    );
+};
+
+const Pagination = ({ itemsPerPage, totalItems, paginate, currentPage }) => {
+    const pageNumbers = [];
+
+    for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
+    return (
+        <nav>
+            <ul className="pagination">
+                {pageNumbers.map(number => (
+                    <li key={number} className={`page-item ${number === currentPage ? 'active' : ''}`}>
+                        <button onClick={() => paginate(number)} className="page-link">
+                            {number}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </nav>
     );
 };
 

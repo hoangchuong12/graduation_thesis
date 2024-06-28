@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import ProductStoreService from '../../../services/ProductStoreService';
 import ProductService from '../../../services/ProductService';
 // import { FaEye } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
 
 const ProductExportIndex = () => {
     const [exports, setExports] = useState([]);
     const [reload] = useState(0);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchExports = async () => {
@@ -18,7 +19,11 @@ const ProductExportIndex = () => {
                     setExports(result);
                 }
             } catch (error) {
-                console.error("Error fetching exports:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error("Error fetching exports:", error);}
             }
         };
         fetchExports();

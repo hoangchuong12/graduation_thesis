@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import UserService from '../../../services/UserService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
 import { IoIosNotifications } from 'react-icons/io';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageUser } from '../../../config';
 
 const UserIndex = () => {
     const [users, setUsers] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -20,7 +20,11 @@ const UserIndex = () => {
                 const sortedUsers = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setUsers(sortedUsers);
             } catch (error) {
-                console.error("Error fetching users:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error("Error fetching users:", error);}
             }
         };
         fetchUsers();

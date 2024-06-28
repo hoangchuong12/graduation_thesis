@@ -4,13 +4,20 @@ import OrderItemService from '../../../services/OrderItemService';
 import ProductService from '../../../services/ProductService';
 import ProductOptionService from '../../../services/ProductOptionService';
 import ProductStoreService from '../../../services/ProductStoreService';
-import { FaToggleOn, FaTrash, FaToggleOff, FaCheckSquare } from 'react-icons/fa';
+import { FaToggleOn, FaTrash, FaToggleOff, FaCheckSquare, FaRegFileAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { urlImageProduct } from '../../../config';
+import BillModal from './BillModal'; // Import the BillModal component
 
 const OrderItemIndex = () => {
     const [orderItems, setOrderItems] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showBillModal, setShowBillModal] = useState(false);
+    const [currentOrder, setCurrentOrder] = useState(null);
+    const orderItemsPerPage = 5; // Số lượng đơn hàng trên mỗi trang
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderItems = async () => {
@@ -33,20 +40,36 @@ const OrderItemIndex = () => {
                 const sorted = itemsWithProductFill.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setOrderItems(sorted);
             } catch (error) {
-                console.error("Error fetching order items:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                    console.error('Error fetching data:', error);
+                }
             }
         };
 
         fetchOrderItems();
-    }, [reload]);
+    }, [reload, navigate]);
 
-    const HandTrash = async (id) => {
+    const handleShowBillModal = async (orderId) => {
+        try {
+            const order = await OrderService.getById(orderId);
+            setCurrentOrder(order);
+            setShowBillModal(true);
+        } catch (error) {
+            console.error("Error fetching order details:", error);
+            toast.error("Error fetching order details");
+        }
+    };
+
+    const handleTrash = async (id) => {
         await OrderItemService.trash(id);
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
     };
 
-    const handExport = async (item) => {
+    const handleExport = async (item) => {
         try {
             await OrderItemService.export(item.id);
             const dataExport = {
@@ -85,6 +108,32 @@ const OrderItemIndex = () => {
         return "";
     };
 
+    const indexOfLastOrderItem = currentPage * orderItemsPerPage;
+    const indexOfFirstOrderItem = indexOfLastOrderItem - orderItemsPerPage;
+    const currentOrderItems = orderItems.slice(indexOfFirstOrderItem, indexOfLastOrderItem);
+    const totalPages = Math.ceil(orderItems.length / orderItemsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
@@ -115,8 +164,8 @@ const OrderItemIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orderItems && orderItems.length > 0 &&
-                            orderItems.map((item) => (
+                    {currentOrderItems && currentOrderItems.length > 0 &&
+        currentOrderItems.map((item) => (
                                 <tr key={item.id} className={`datarow ${getRowClassName(item.status)}`}>
                                     <td className="text-center">
                                         <input type="checkbox" />
@@ -133,14 +182,19 @@ const OrderItemIndex = () => {
                                                 {item.status === 0 ? <FaToggleOff size={24} /> : <FaToggleOn size={24} />}
                                             </button>
                                             <button
-                                                onClick={() => HandTrash(item.id)}
+                                                onClick={() => handleTrash(item.id)}
                                                 className="btn btn-danger me-1">
                                                 <FaTrash />
                                             </button>
                                             <button
-                                                onClick={() => handExport(item)}
-                                                className="btn btn-success">
+                                                onClick={() => handleExport(item)}
+                                                className="btn btn-success me-1">
                                                 <FaCheckSquare size={24} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleShowBillModal(item.orderId)}
+                                                className="btn btn-info me-1">
+                                                <FaRegFileAlt size={24} />
                                             </button>
                                         </div>
                                     </td>
@@ -160,7 +214,17 @@ const OrderItemIndex = () => {
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
+            <BillModal
+                show={showBillModal}
+                onHide={() => setShowBillModal(false)}
+                order={currentOrder}
+            />
         </div>
     );
 };

@@ -3,7 +3,7 @@ import '../../assets/styles/productfortune.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom'; // Import Link
 import { urlImageProduct } from '../../config';
 import BrandService from '../../services/BrandService';
@@ -14,6 +14,7 @@ const BrandFortune = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [brands, setBrands] = useState([]);
+    const navigate = useNavigate(); 
     const [filters, setFilters] = useState({
         priceRange: { min: 0, max: 10000 },
 
@@ -26,7 +27,13 @@ const BrandFortune = () => {
                 const brandFortunes = await ProductService.getByBrand(id);
                 setProducts(brandFortunes.filter(product => product.status !== 2));
             } catch (error) {
-                console.error("Error fetching products:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         const fetchBrands = async () => {
@@ -35,7 +42,13 @@ const BrandFortune = () => {
                 const sortedbrands = result.filter(brand => brand.status !== 0 && brand.status !== 2);
                 setBrands(sortedbrands);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchBrands();
@@ -152,7 +165,7 @@ const BrandFortune = () => {
                                                 ))}
                                             </div>
                                             <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                                <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                            <Link  to={'/productdetail/' + product.id} className="btn btn-primary shadow-0 me-1">chi tiết sản phẩm </Link>
                                                 <a href="#!" className="btn btn-light border icon-hover px-2 pt-2">
                                                     <FontAwesomeIcon icon={faHeart} />
                                                 </a>

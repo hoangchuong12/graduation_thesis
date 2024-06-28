@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import BannerService from '../../../services/BannerService';
@@ -9,6 +9,9 @@ import { urlImageBanner } from '../../../config';
 const BannerIndex = () => {
     const [banners, setBanner] = useState([]);
     const [reload, setReload] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const navigate = useNavigate(); 
+    const bannersPerPage = 5;
 
     useEffect(() => {
         const fetchBanner = async () => {
@@ -18,8 +21,12 @@ const BannerIndex = () => {
                 const sortedBanner = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setBanner(sortedBanner);
             } catch (error) {
-                console.error("Error fetching:", error);
-            }
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error('Error fetching data:', error);
+                }}
         };
         fetchBanner();
     }, [reload]);
@@ -40,6 +47,33 @@ const BannerIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastBanner = currentPage * bannersPerPage;
+    const indexOfFirstBanner = indexOfLastBanner - bannersPerPage;
+    const currentBanners = banners.slice(indexOfFirstBanner, indexOfLastBanner);
+    const totalPages = Math.ceil(banners.length / bannersPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
@@ -71,8 +105,8 @@ const BannerIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {banners && banners.length > 0 &&
-                            banners.map((banner, index) => (
+                        {currentBanners && currentBanners.length > 0 &&
+                            currentBanners.map((banner, index) => (
                                 <tr key={banner.id} className="datarow">
                                     <td className="text-center">
                                         <input type="checkbox" id={`checkId${index}`} />
@@ -95,7 +129,7 @@ const BannerIndex = () => {
                                     <td>
                                         <div className="d-flex justify-content-start">
                                             <button
-                                                onClick={() => handleStatus(banner.id)}
+                                                onClick={() => handleStatus(banner.id, banner.status)}
                                                 className={`btn ${banner.status === 1 ? 'btn-success' : 'btn-danger'} me-1`}
                                             >
                                                 {banner.status === 1 ? <FaToggleOn size={24} /> : <FaToggleOff size={24} />}
@@ -115,6 +149,11 @@ const BannerIndex = () => {
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );

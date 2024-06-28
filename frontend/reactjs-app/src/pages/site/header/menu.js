@@ -114,11 +114,11 @@ const Menu = () => {
             <ul className="desktop-menu-category-list">
 
                 <li className="menu-category">
-                    <a href="/" className="menu-title">Home</a>
+                    <a href="/" className="menu-title">trang chủ</a>
                 </li>
 
                 <li className="menu-category">
-                    <a href="#tag" className="menu-title">Categories</a>
+                    <a href="#tag" className="menu-title">Thể loại</a>
 
                     <div className="dropdown-panel">
 
@@ -128,14 +128,14 @@ const Menu = () => {
                 </li>
 
                 <li className="menu-category">
-                    <a href="#tag" className="menu-title">Brands</a>
+                    <a href="#tag" className="menu-title">Nhãn hiệu</a>
                     <ul className="dropdown-list">
                         {renderBrands()}
                     </ul>
                 </li>
 
                 <li className="menu-category">
-                    <a href="#tag" className="menu-title">Tags</a>
+                    <a href="#tag" className="menu-title">loại sản phẩm</a>
 
                     <ul className="dropdown-list">
 
@@ -145,7 +145,7 @@ const Menu = () => {
                 </li>
 
                 <li className="menu-category">
-                    <a href="/productfortune" className="menu-title">products</a>
+                    <a href="/productfortune" className="menu-title">tất cả sản phẩm</a>
                 </li>
 
             </ul>

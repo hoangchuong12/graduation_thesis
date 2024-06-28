@@ -27,7 +27,7 @@ const Grid = () => {
 
     return (
         <div className="product-main">
-            <h2 className="title">New Products</h2>
+            <h2 className="title">Sản phẩm mới</h2>
             <div className="product-grid">
                 {products.map(product => (
                     <div className="showcase" key={product.id}>

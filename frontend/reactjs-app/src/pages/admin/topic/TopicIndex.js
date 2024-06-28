@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import TopicService from '../../../services/TopicService'; // Import TopicService
 import { urlImageTopic } from '../../../config'; // Import urlImageTopic if necessary
@@ -8,7 +8,7 @@ import { urlImageTopic } from '../../../config'; // Import urlImageTopic if nece
 const TopicIndex = () => {
     const [topics, setTopics] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchTopics = async () => {
             try {
@@ -17,7 +17,11 @@ const TopicIndex = () => {
                 const sortedTopics = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTopics(sortedTopics);
             } catch (error) {
-                console.error("Error fetching topics:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error("Error fetching topics:", error);}
             }
         };
         fetchTopics();

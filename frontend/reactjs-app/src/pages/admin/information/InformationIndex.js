@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import InformationService from '../../../services/InformationService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate
+    
+} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageInformation } from '../../../config';
+
 const InformationIndex = () => {
-    const [informations, SetInformations] = useState([]);
+    const [informations, setInformations] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate(); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const informationsPerPage = 5;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 let result = await InformationService.getAll();
-                // Filter out users with status 2
+                // Filter out informations with status 2
                 result = result.filter(inf => inf.status !== 2);
-                // Sort users by createdAt in descending order
+                // Sort informations by createdAt in descending order
                 const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                SetInformations(sortedData);
+                setInformations(sortedData);
             } catch (error) {
-                console.error("Error fetching:", error);
-            }
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error('Error fetching data:', error);
+                }}
         };
         fetchData();
     }, [reload]);
@@ -45,6 +55,32 @@ const InformationIndex = () => {
         await InformationService.display(id);
         setReload(Date.now());
         toast.success("Đã chuyển đổi trưng bày");
+    };
+
+    const indexOfLastInformation = currentPage * informationsPerPage;
+    const indexOfFirstInformation = indexOfLastInformation - informationsPerPage;
+    const currentInformations = informations.slice(indexOfFirstInformation, indexOfLastInformation);
+    const totalPages = Math.ceil(informations.length / informationsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
     };
 
     return (
@@ -83,8 +119,8 @@ const InformationIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {informations && informations.length > 0 &&
-                            informations.map((information, index) => (
+                        {currentInformations && currentInformations.length > 0 &&
+                            currentInformations.map((information, index) => (
                                 <tr key={information.id} className="datarow">
                                     <td className="text-center">
                                         <input type="checkbox" id={`checkId${index}`} />
@@ -138,6 +174,11 @@ const InformationIndex = () => {
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );

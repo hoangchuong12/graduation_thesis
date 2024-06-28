@@ -79,8 +79,10 @@ import PostAdd from "../pages/admin/post/PostAdd";
 import PostIndex from "../pages/admin/post/PostIndex";
 import PostTrash from "../pages/admin/post/postTrash";
 import PostEdit from "../pages/admin/post/PostEdit";
+import ErrorPage from "../pages/site/ErrorPage";
 
 const RouteAdmin = [
+    { path: '/admin/*', component: ErrorPage },
     //user *
     { path: '/admin/user/index', component: UserIndex },
     { path: '/admin/user/trash', component: UserTrash },

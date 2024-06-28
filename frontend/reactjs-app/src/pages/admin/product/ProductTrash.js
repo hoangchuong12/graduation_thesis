@@ -4,11 +4,13 @@ import BrandService from '../../../services/BrandService';
 import { FaArrowAltCircleLeft, FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 const ProductTrash = () => {
     const [products, setProducts] = useState([]);
     const [reload, setReload] = useState(0);
     const [brandNames, setBrandNames] = useState({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTrashedProducts();
@@ -26,8 +28,14 @@ const ProductTrash = () => {
                         names[product.brandId] = "N/A";
                     } 
                 } catch (error) {
-                    console.error("Error fetching brand:", error);
-                    names[product.brandId] = "N/A";
+                    if (error.response && error.response.status === 503) {
+                        names[product.brandId] = "N/A";
+                        navigate('/admin/404');
+                    } else {
+                        names[product.brandId] = "N/A";
+                        console.error("Error fetching data:", error);
+                    }
+                    
                 }
             }
             setBrandNames(names);

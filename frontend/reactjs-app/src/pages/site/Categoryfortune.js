@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
@@ -14,6 +14,7 @@ const CategoryFortune = () => {
     const { id } = useParams();
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(3);
+    const navigate = useNavigate(); 
     const [filters, setFilters] = useState({
         priceRange: { min: 0, max: 10000 },
         ratings: []
@@ -35,7 +36,13 @@ const CategoryFortune = () => {
                     setProducts(productsData);
                 }
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         const fetchCategories = async () => {
@@ -44,7 +51,13 @@ const CategoryFortune = () => {
                 const sortedbrands = result.filter(brand => brand.status !== 0 && brand.status !== 2);
                 setCategories(sortedbrands);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchCategories();
@@ -154,7 +167,7 @@ const CategoryFortune = () => {
                                             ))}
                                         </div>
                                         <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                            <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                        <Link  to={'/productdetail/' + product.id} className="btn btn-primary shadow-0 me-1">chi tiết sản phẩm </Link>
                                             <a href="#!" className="btn btn-light border icon-hover px-2 pt-2">
                                                 <FontAwesomeIcon icon={faHeart} />
                                             </a>

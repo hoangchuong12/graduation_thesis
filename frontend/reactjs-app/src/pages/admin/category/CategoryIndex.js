@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import CategoryService from '../../../services/CategoryService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageCategory } from '../../../config';
 
 const CategoryIndex = () => {
     const [categories, setCategories] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate();
+    const [currentPage, setCurrentPage] = useState(1);
+    const categoriesPerPage = 5;
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -17,8 +20,12 @@ const CategoryIndex = () => {
                 const sortedCategories = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCategories(sortedCategories);
             } catch (error) {
-                console.error("Error fetching:", error);
-            }
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error('Error fetching data:', error);
+                }}
         };
         fetchCategories();
     }, [reload]);
@@ -28,6 +35,7 @@ const CategoryIndex = () => {
         setReload(Date.now());
         toast.success("Chuyển vào thùng rác");
     };
+
     const handleDislay = async (id) => {
         await CategoryService.display(id);
         setReload(Date.now());
@@ -44,6 +52,33 @@ const CategoryIndex = () => {
             toast.error("Đã xảy ra lỗi khi thay đổi trạng thái.");
         }
     };
+
+    const indexOfLastCategory = currentPage * categoriesPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
+    const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
+    const totalPages = Math.ceil(categories.length / categoriesPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
@@ -76,8 +111,8 @@ const CategoryIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {categories && categories.length > 0 &&
-                            categories.map((category, index) => (
+                        {currentCategories && currentCategories.length > 0 &&
+                            currentCategories.map((category, index) => (
                                 <tr key={category.id} className="datarow">
                                     <td className="text-center">
                                         <input type="checkbox" id={`checkId${index}`} />
@@ -127,6 +162,11 @@ const CategoryIndex = () => {
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );

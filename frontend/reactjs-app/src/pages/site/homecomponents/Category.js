@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link
 import CategoryService from '../../../services/CategoryService';
 import { urlImageCategory } from '../../../config';
-
+import { useParams, useNavigate } from 'react-router-dom';
 const Category = () => {
     const [categories, setCategories] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -14,7 +14,13 @@ const Category = () => {
                 const sortedCategories = result.filter(category => category.status == 3);
                 setCategories(sortedCategories);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchCategories();

@@ -5,6 +5,7 @@ import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import ProductService from '../../services/ProductService';
 import { urlImageProduct } from '../../config';
 import BrandService from '../../services/BrandService';
+import { Link ,useNavigate} from 'react-router-dom'; 
 
 const ProductFortune = () => {
     const [products, setProducts] = useState([]);
@@ -17,8 +18,8 @@ const ProductFortune = () => {
     });
     const [reload, setReload] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(3);
-
+    const [itemsPerPage, setItemsPerPage] = useState(9);
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -27,7 +28,13 @@ const ProductFortune = () => {
                 const sortedProducts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setProducts(sortedProducts);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         const fetchBrands = async () => {
@@ -35,7 +42,13 @@ const ProductFortune = () => {
                 const data = await BrandService.getAll(); // Assuming this returns a promise
                 setBrands(data);
             } catch (error) {
-                console.error("Error fetching brands:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/404');
+                } else {
+                    // Nếu là các lỗi khác, in ra console để debug
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchBrands();
@@ -173,7 +186,7 @@ const ProductFortune = () => {
                                                     ))}
                                                 </div>
                                                 <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                                    <a href="#!" className="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                                    <Link  to={'/productdetail/' + product.id} className="btn btn-primary shadow-0 me-1">chi tiết sản phẩm </Link>
                                                     <a href="#!" className="btn btn-light border icon-hover px-2 pt-2">
                                                         <FontAwesomeIcon icon={faHeart} />
                                                     </a>

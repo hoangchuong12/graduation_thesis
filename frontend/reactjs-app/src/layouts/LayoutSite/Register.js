@@ -56,7 +56,7 @@ const UserAdd = () => {
                                     <h3 className="text-center fw-bold mb-5">Register</h3>
                                     <Form onSubmit={handleRegister}>
                                         <Form.Group className="mb-3" controlId="username">
-                                            <Form.Label>Username</Form.Label>
+                                            <Form.Label>Tên đăng nhập</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 value={username}
@@ -74,7 +74,7 @@ const UserAdd = () => {
                                             />
                                         </Form.Group>
                                         <Form.Group className="mb-3" controlId="password">
-                                            <Form.Label>Password</Form.Label>
+                                            <Form.Label>mật khẩu</Form.Label>
                                             <Form.Control
                                                 type="password"
                                                 value={password}
@@ -84,7 +84,7 @@ const UserAdd = () => {
                                         </Form.Group>
                                         <Form.Check 
                                             type="checkbox" 
-                                            label="I agree to all statements in Terms of service" 
+                                            label="tôi ko phải người máy" 
                                             required 
                                             className="mb-4" 
                                         />

@@ -63,7 +63,7 @@ const Minimal = () => {
 
     return (
         <div className="product-main">
-            <h2 className="title">Best Selling Items</h2>
+            <h2 className="title">Mặt hàng bán chạy nhất</h2>
             <div className={`product-grid ${transitioning ? 'transitioning' : ''}`}>
                 {displayedProducts.map((product, index) => (
                     <ProductShowcase key={product.id} product={product} transitioning={transitioning} />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductService from '../../../services/ProductService';
 import BrandService from '../../../services/BrandService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff, FaTag, FaHandLizard } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageProduct } from '../../../config';
 import { MdOutlineCollections } from "react-icons/md";
@@ -15,6 +15,12 @@ const ProductIndex = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 5;
 
+    // States for filters
+    const [filterName, setFilterName] = useState("");
+    const [filterBrandId, setFilterBrandId] = useState("");
+    const [filterDescription, setFilterDescription] = useState("");
+    const [filterEvaluate, setFilterEvaluate] = useState("");
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -41,9 +47,13 @@ const ProductIndex = () => {
                         names[product.brandId] = "N/A";
                     } 
                 } catch (error) {
+                    if (error.response && error.response.status === 503) {
+                        // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                        navigate('/admin/404');
+                    } else {
                     console.error("Error fetching brand:", error);
                     names[product.brandId] = "N/A";
-                }
+                }}
             }
             setBrandNames(names);
         };
@@ -67,11 +77,21 @@ const ProductIndex = () => {
         }
     };
 
+    // Apply filters to the products
+    const filteredProducts = products.filter(product => {
+        return (
+            (filterName === "" || product.name.toLowerCase().includes(filterName.toLowerCase())) &&
+            (filterBrandId === "" || product.brandId === filterBrandId) &&
+            (filterDescription === "" || product.description.toLowerCase().includes(filterDescription.toLowerCase())) &&
+            (filterEvaluate === "" || product.evaluate.toString() === filterEvaluate)
+        );
+    });
+
     // Pagination logic
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-    const totalPages = Math.ceil(products.length / productsPerPage);
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -106,6 +126,47 @@ const ProductIndex = () => {
                         <button type="button" className="btn btn-warning">
                             <Link to="/admin/product/trash" className="text-white text-decoration-none">Thùng rác</Link>
                         </button>
+                    </div>
+                </div>
+                <div className="row mt-3">
+                    <div className="col-md-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Lọc theo tên" 
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)} 
+                        />
+                    </div>
+                    <div className="col-md-3">
+                        <select 
+                            className="form-select" 
+                            value={filterBrandId} 
+                            onChange={(e) => setFilterBrandId(e.target.value)}
+                        >
+                            <option value="">Lọc theo thương hiệu</option>
+                            {Object.entries(brandNames).map(([id, name]) => (
+                                <option key={id} value={id}>{name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Lọc theo mô tả" 
+                            value={filterDescription}
+                            onChange={(e) => setFilterDescription(e.target.value)} 
+                        />
+                    </div>
+                    <div className="col-md-3">
+                        <input 
+                            type="number" 
+                            className="form-control" 
+                            placeholder="Lọc theo đánh giá" 
+                            value={filterEvaluate}
+                            onChange={(e) => setFilterEvaluate(e.target.value)} 
+                        />
                     </div>
                 </div>
             </section>

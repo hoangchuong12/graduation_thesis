@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { urlImagePosts } from '../../../config';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaToggleOn, FaToggleOff, FaTrash, FaEdit } from 'react-icons/fa';
 import PostService from '../../../services/PostService'; // Adjust the import path as necessary
@@ -8,6 +8,9 @@ import PostService from '../../../services/PostService'; // Adjust the import pa
 const PostIndex = () => {
     const [posts, setPosts] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate(); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 5; // Số lượng bài đăng trên mỗi trang
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -17,9 +20,13 @@ const PostIndex = () => {
                 const sortedPosts = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setPosts(sortedPosts);
             } catch (error) {
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
                 console.error("Error fetching posts:", error);
                 toast.error("Failed to fetch posts!");
-            }
+            }}
         };
 
         fetchPosts();
@@ -42,6 +49,32 @@ const PostIndex = () => {
         }
     };
 
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    const totalPages = Math.ceil(posts.length / postsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header">
@@ -61,18 +94,19 @@ const PostIndex = () => {
                 <table className="table table-hover">
                     <thead>
                         <tr>
-                            <th>name</th>
-                            <th>description</th>
-                            <th>imgae</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Image</th>
                             <th>Date Created</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {posts.map((post) => (
+                        {currentPosts.map((post) => (
                             <tr key={post.id}>
                                 <td>{post.name}</td>
+                                <td>{post.description}</td>
                                 <td>
                                     {post.image ? (
                                         <img src={urlImagePosts + post.image} className="img-fluid user-avatar" alt="Hình ảnh" />
@@ -80,7 +114,6 @@ const PostIndex = () => {
                                         'Không có ảnh'
                                     )}
                                 </td>
-                                <td>{post.description}</td>
                                 <td>{new Date(post.createdAt).toLocaleDateString()}</td>
                                 <td>
                                     <button onClick={() => handleStatus(post.id)} className={`btn ${post.status === 1 ? 'btn-success' : 'btn-secondary'}`}>
@@ -100,6 +133,11 @@ const PostIndex = () => {
                     </tbody>
                 </table>
             </section>
+            <nav aria-label="Page navigation example">
+                <ul className="pagination justify-content-end">
+                    {renderPagination()}
+                </ul>
+            </nav>
         </div>
     );
 };

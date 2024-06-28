@@ -54,7 +54,7 @@ const Sidebar = () => {
         <div className="sidebar has-scrollbar p-3" data-mobile-menu>
             <div className="sidebar-category mb-4">
                 <div className="sidebar-top d-flex justify-content-between align-items-center mb-2">
-                    <h2 className="sidebar-title">Category</h2>
+                    <h2 className="sidebar-title">Thể loại</h2>
                     <button className="btn sidebar-close-btn" data-mobile-menu-close-btn>
                         <IonIcon icon={closeOutline} />
                     </button>
@@ -83,7 +83,7 @@ const Sidebar = () => {
                 </ul>
             </div>
             <div className="product-showcase">
-                <h3 className="showcase-heading mb-2">Best Sellers</h3>
+                <h3 className="showcase-heading mb-2">giảm giá</h3>
                 <div className="showcase-wrapper">
                     {sales.map((sale) => (
                         <ProductSaleTableRow key={sale.id} sale={sale} />

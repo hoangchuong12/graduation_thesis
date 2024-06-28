@@ -6,7 +6,7 @@ import com.microservices.productservices.payload.response.ProductTagResponse;
 import com.microservices.productservices.repository.ProductTagRepository;
 import com.microservices.productservices.service.ProductTagService;
 import org.springframework.stereotype.Service;
-
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,6 +46,7 @@ public class ProductTagServiceImpl implements ProductTagService {
         productTagRepository.deleteByProductIdAndTagId(productId, tagId);
     }
 
+    @Transactional
     @Override
     public void deleteProductTagsByProductId(UUID productId) {
         productTagRepository.deleteByProductId(productId);

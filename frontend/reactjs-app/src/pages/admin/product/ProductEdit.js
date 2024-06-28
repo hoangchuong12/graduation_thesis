@@ -18,7 +18,7 @@ const ProductEdit = () => {
     const [price, setPrice] = useState(1);
     const [description, setDescription] = useState("");
     const [detail, setDetail] = useState("");
-    const [evaluate, setEvaluate] = useState(1);
+    const [evaluate, setEvaluate] = useState(5);
     const [createdBy, setCreatedBy] = useState("");
     const [status, setStatus] = useState(1);
     const [stringImageDefault, setStringImageDefault] = useState("");
@@ -75,13 +75,15 @@ const ProductEdit = () => {
                 setCurrentCategories(selectedCategoryIds);
                 setCurrentTags(selectedTagIds);
             } catch (error) {
-                toast.error("Failed to fetch data.");
+                if (error.response && error.response.status === 503) {
+                    navigate('/admin/404');
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             }
         };
         fetchData();
     }, [id]);
-
-
 
     // Xử lý sự kiện khi thay đổi chọn tag và category
     const handleTagChange = (tagId, checked) => {
@@ -227,35 +229,45 @@ const ProductEdit = () => {
                             {/* Categories */}
                             <div className="mb-3">
                                 <label><strong>Danh mục</strong></label>
-                                {categories.map((category) => (
-                                    <div key={category.id}>
-                                        <input
-                                            type="checkbox"
-                                            id={category.id}
-                                            value={category.id}
-                                            checked={currentCategories.includes(category.id)}
-                                            onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                                        />
-                                        <label htmlFor={category.id}>{category.name}</label>
-                                    </div>
-                                ))}
+                                <div className="form-check">
+                                    {categories.map((category) => (
+                                        <div key={category.id} className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={category.id}
+                                                value={category.id}
+                                                checked={currentCategories.includes(category.id)}
+                                                onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor={category.id}>
+                                                {category.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Tags */}
                             <div className="mb-3">
                                 <label><strong>Tags</strong></label>
-                                {tags.map((tag) => (
-                                    <div key={tag.id}>
-                                        <input
-                                            type="checkbox"
-                                            id={tag.id}
-                                            value={tag.id}
-                                            checked={currentTags.includes(tag.id)}
-                                            onChange={(e) => handleTagChange(tag.id, e.target.checked)}
-                                        />
-                                        <label htmlFor={tag.id}>{tag.name}</label>
-                                    </div>
-                                ))}
+                                <div className="form-check">
+                                    {tags.map((tag) => (
+                                        <div key={tag.id} className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id={tag.id}
+                                                value={tag.id}
+                                                checked={currentTags.includes(tag.id)}
+                                                onChange={(e) => handleTagChange(tag.id, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor={tag.id}>
+                                                {tag.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="mb-3">

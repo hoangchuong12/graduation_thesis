@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TagService from '../../../services/TagService';
 import { FaToggleOn, FaTrash, FaEdit, FaToggleOff } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { urlImageTag } from '../../../config';
 
@@ -9,7 +9,7 @@ import { urlImageTag } from '../../../config';
 const TagIndex = () => {
     const [tags, setTags] = useState([]);
     const [reload, setReload] = useState(0);
-
+    const navigate = useNavigate(); 
     useEffect(() => {
         const fetchTags = async () => {
             try {
@@ -18,7 +18,11 @@ const TagIndex = () => {
                 const sortedTags = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setTags(sortedTags);
             } catch (error) {
-                console.error("Error fetching:", error);
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                console.error("Error fetching:", error);}
             }
         };
         fetchTags();

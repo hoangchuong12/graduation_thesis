@@ -2,16 +2,28 @@ import React, { useEffect, useState } from 'react';
 import NotificationService from '../../../services/NotificationService';
 import { FaTrash, FaEdit, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 
 const NotificationIndex = () => {
     const [notifications, setNotifications] = useState([]);
     const [reload, setReload] = useState(0);
+    const navigate = useNavigate(); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const notificationsPerPage = 5;
 
     useEffect(() => {
         const fetchNotifications = async () => {
-            const result = await NotificationService.getAll();
-            setNotifications(result);
+            try {
+                const result = await NotificationService.getAll();
+                setNotifications(result);
+            } catch (error) {
+                if (error.response && error.response.status === 503) {
+                    // Nếu lỗi có mã trạng thái 503, điều hướng người dùng đến trang 404
+                    navigate('/admin/404');
+                } else {
+                    console.error('Error fetching data:', error);
+                }
+            }
         };
         fetchNotifications();
     }, [reload]);
@@ -33,12 +45,38 @@ const NotificationIndex = () => {
         }
     };
 
+    const indexOfLastNotification = currentPage * notificationsPerPage;
+    const indexOfFirstNotification = indexOfLastNotification - notificationsPerPage;
+    const currentNotifications = notifications.slice(indexOfFirstNotification, indexOfLastNotification);
+    const totalPages = Math.ceil(notifications.length / notificationsPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${i === currentPage ? 'active' : ''}`}>
+                    <button
+                        onClick={() => handlePageChange(i)}
+                        className="page-link"
+                    >
+                        {i}
+                    </button>
+                </li>
+            );
+        }
+        return pages;
+    };
+
     return (
         <div className="container mt-4">
             <section className="content-header my-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <h1>Thông báo</h1>
-                            <Link to="/admin/notification/add" className="btn btn-primary">Thêm mới</Link>
+                    <Link to="/admin/notification/add" className="btn btn-primary">Thêm mới</Link>
                 </div>
                 <div className="row mt-3">
                     <div className="col-12">
@@ -63,8 +101,8 @@ const NotificationIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {notifications && notifications.length > 0 &&
-                            notifications.map((notification, index) => {
+                        {currentNotifications && currentNotifications.length > 0 &&
+                            currentNotifications.map((notification, index) => {
                                 if (notification.status !== 2) {
                                     return (
                                         <tr key={notification.id} className="datarow">
@@ -106,6 +144,11 @@ const NotificationIndex = () => {
                         }
                     </tbody>
                 </table>
+                <nav>
+                    <ul className="pagination justify-content-center">
+                        {renderPagination()}
+                    </ul>
+                </nav>
             </section>
         </div>
     );
